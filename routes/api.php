@@ -42,3 +42,13 @@ Route::middleware('auth:sanctum')->post('/players/note/{player_id}', [PlayerCont
 Route::middleware('auth:sanctum')->post('/staff/postLogin', [StaffController::class, 'postLogin']);
 Route::middleware('auth:sanctum')->post('/staff/postLoginDiscord', [StaffController::class, 'postLoginDiscord']);
 
+/**
+ * PERMISSION ROUTES
+ */
+Route::get('/not_authenticated', function () {
+    return view('api/not_authenticated');
+})->name('NOT_AUTHENTICATED');
+Route::get('/not_authorized', function () {
+    return view('api/not_authorized');
+})->name('NOT_AUTHORIZED');
+

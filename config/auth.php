@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'users',
+        'passwords' => 'staff',
     ],
 
     /*
@@ -38,8 +38,12 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'staff',
         ],
+        'api' => [
+            'driver' => 'session',
+            'provider' => 'api_user'
+        ]
     ],
 
     /*
@@ -60,15 +64,38 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'staff' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Staff::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'player' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Player::class,
+        ],
+        'player_data' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\PlayerData::class,
+        ],
+        'kick' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Kick::class,
+        ],
+        'ban' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Ban::class,
+        ],
+        'commend' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Commend::class,
+        ],
+        'note' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Note::class,
+        ],
+        'api_user' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\ApiUser::class,
+        ],
     ],
 
     /*
@@ -87,8 +114,8 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'staff' => [
+            'provider' => 'staff',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
