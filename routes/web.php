@@ -14,5 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('start');
+    $data = [];
+    $data['view_name'] = 'login/start';
+    return view('login/start', array('data' => $data));
 })->name('START');

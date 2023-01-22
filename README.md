@@ -1,4 +1,5 @@
 # BadgerStaffPanel+
+
 ## Features
 * Warning System
 * Kick System
@@ -12,3 +13,7 @@
 * Discord Based Permissions
 * Full Discord Logging
 * Bootstrap v5
+* 
+## Screenshots
+### Login Page
+![Login Page](https://i.gyazo.com/e703189fc976171c0a2941ca44043220.png)
