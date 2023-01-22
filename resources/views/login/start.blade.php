@@ -2,8 +2,8 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     @include('_partials/_html_header', $data)
-    <link rel="stylesheet" href="{{ asset('css/global.scss') }}" />
-    <link rel="stylesheet" href="{{ asset('/css/login/start.scss') }}" />
+    <link rel="stylesheet" href="{{ asset('css/global.css') }}" />
+    <link rel="stylesheet" href="{{ asset('/css/login/start.css') }}" />
 </head>
     <body>
         <section class="vh-100 gradient-custom">
