@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    @include('_partials/_html_header', $data)
-    <link rel="stylesheet" href="{{ asset('css/global.css') }}" />
-    <link rel="stylesheet" href="{{ asset('/css/login/start.css') }}" />
-</head>
+@include('_partials/_html_header', $data)
     <body>
         <section class="vh-100 gradient-custom">
             <div class="container h-100">
