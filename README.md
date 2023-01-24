@@ -13,7 +13,32 @@
 * Discord Based Permissions
 * Full Discord Logging
 * Bootstrap v5
-* 
+
+## Simple Documentation
+### Endpoints
+`/views/api` => Home of the views provided for the `/api` endpoint
+
+`/views/login` => Home of the views provided for the default `/web` endpoints
+
+`/views/verified` => Home of the views provided for `/web/verified` endpoints
+### Middleware
+Coming Soon
+### Navigation
+* Dashboard
+* Records
+  * Commends
+  * Warns
+  * Kicks
+  * Bans
+  * TrustScores
+* Players
+  * Recent Players
+  * All Players
+* Management
+  * Manage Staff
+  * Manage Account
+
 ## Screenshots
-### Login Page
-![Login Page](https://i.gyazo.com/e703189fc976171c0a2941ca44043220.png)
+### Login Related
+![Login Page](https://i.gyazo.com/6a400575d5ce1445664b25f201b834aa.jpg)
+![Forgot Password](https://i.gyazo.com/495f729e93d9f8014f0487909bd318f9.jpg)
