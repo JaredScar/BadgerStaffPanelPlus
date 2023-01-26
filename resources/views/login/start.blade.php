@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    @include('_partials/_html_header', $data)
+    @include('_partials._html_header', $data)
     <body>
+        @include('_partials._sidebar')
         <section class="min-vh-100 pt-5 background-sizing gta-bg@php echo rand(1, 3); @endphp">
             <div class="container h-100">
                 <div class="row d-flex justify-content-center align-items-center h-100">
@@ -33,6 +34,6 @@
                 </div>
             </div>
         </section>
-        @include('_partials/_html_footer')
+        @include('_partials._html_footer')
     </body>
 </html>

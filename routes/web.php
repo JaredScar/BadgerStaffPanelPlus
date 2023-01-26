@@ -27,16 +27,15 @@ Route::get('/forgot_password', function () {
     return view('login/forgot_password', array('data' => $data));
 })->name("FORGOT_PASSWORD");
 
-Route::post('/auth/login', function () {});
-Route::post('/auth/forgot_password', function () {});
+Route::post('/auth/login', function () {})->name("LOGIN_SUBMIT");
+Route::post('/auth/forgot_password', function () {})->name("FORGOT_PASSWORD_SUBMIT");
 
 Route::get('/bans', function () {
     // Show the bans for all users to see
-});
+})->name("SHOW_BANS");
 
 Route::middleware('auth:sanctum')->get('/profile', function () {
     // Show the logged-in user's profile
 })->name("SHOW_PROFILE");
 
-Route::middleware('auth:sanctum')->get('/verified/start', function () {});
-
+Route::middleware('auth:sanctum')->get('/verified/start', function () {})->name("DASHBOARD_PAGE");

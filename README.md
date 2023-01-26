@@ -32,11 +32,14 @@ Coming Soon
   * Bans
   * TrustScores
 * Players
-  * Recent Players
+  * Players Today
+  * Weekly Players
+  * Monthly Players
   * All Players
 * Management
   * Manage Staff
-  * Manage Account
+  * Settings
+  * Sign Out
 
 ## Screenshots
 ### Login Related
