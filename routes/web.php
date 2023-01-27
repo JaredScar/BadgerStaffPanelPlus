@@ -38,4 +38,9 @@ Route::middleware('auth:sanctum')->get('/profile', function () {
     // Show the logged-in user's profile
 })->name("SHOW_PROFILE");
 
-Route::middleware('auth:sanctum')->get('/verified/start', function () {})->name("DASHBOARD_PAGE");
+Route::get('/verified/dashboard', function () {
+    $data = [];
+    $data['css_path'] = 'verified/dashboard';
+    $data['view_name'] = 'DASHBOARD_PAGE';
+    return view('verified/dashboard', array('data' => $data));
+})->name("DASHBOARD_PAGE");

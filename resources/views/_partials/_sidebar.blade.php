@@ -1,18 +1,13 @@
 <style>
-    body {
+    .main-sidebar {
         min-height: 100vh;
-        min-height: -webkit-fill-available;
-    }
-
-    html {
-        height: -webkit-fill-available;
+        height: 100%;
     }
 
     main {
         display: flex;
         flex-wrap: nowrap;
         height: 100vh;
-        height: -webkit-fill-available;
         max-height: 100vh;
         overflow-x: auto;
         overflow-y: hidden;
@@ -40,31 +35,33 @@
         border-radius: 0;
     }
 
-    .btn-toggle {
+    .btn-toggle, .sidebar-btn {
         display: inline-flex;
         align-items: center;
         padding: .25rem .5rem;
         font-weight: 600;
-        color: rgba(0, 0, 0, .65);
+        color: rgb(255, 255, 255);
         background-color: transparent;
         border: 0;
     }
     .btn-toggle:hover,
-    .btn-toggle:focus {
-        color: rgba(0, 0, 0, .85);
-        background-color: #d2f4ea;
+    .sidebar-btn:hover
+    {
+        color: rgb(255, 255, 255);
+        background-color: #57BC54;
     }
 
     .btn-toggle::before {
         width: 1.25em;
         line-height: 0;
-        content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+        font-family: "Font Awesome 5 Free";
+        content: '\f0da';
         transition: transform .35s ease;
         transform-origin: .5em 50%;
     }
 
     .btn-toggle[aria-expanded="true"] {
-        color: rgba(0, 0, 0, .85);
+        color: rgba(255, 255, 255, 0.85);
     }
     .btn-toggle[aria-expanded="true"]::before {
         transform: rotate(90deg);
@@ -77,9 +74,8 @@
         margin-left: 1.25rem;
         text-decoration: none;
     }
-    .btn-toggle-nav a:hover,
-    .btn-toggle-nav a:focus {
-        background-color: #d2f4ea;
+    .btn-toggle-nav a:hover {
+        background-color: rgba(87, 188, 84, 0.61);
     }
 
     .scrollarea {
@@ -89,13 +85,13 @@
     .fw-semibold { font-weight: 600; }
     .lh-tight { line-height: 1.25; }
 </style>
-<div class="flex-shrink-0 p-3 bg-white main-sidebar" style="width: 280px;">
-    <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+<div class="flex-shrink-0 p-3 bg-custom-dark-80a main-sidebar d-inline-block" style="width: 240px;">
+    <a href="/" class="d-flex align-items-center pb-3 mb-3 link-light text-decoration-none border-bottom">
         <span class="fs-5 fw-semibold">BadgerStaffPanel+</span>
     </a>
     <ul class="list-unstyled ps-0">
         <li class="mb-1">
-            <a href="/verified/dashboard" class="btn btn-toggle align-items-center rounded">
+            <a href="/verified/dashboard" class="btn sidebar-btn align-items-center rounded">
                 Dashboard
             </a>
         </li>
@@ -105,12 +101,12 @@
             </button>
             <div class="collapse" id="dashboard-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="/verified/records/commends" class="link-dark rounded">Commends</a></li>
-                    <li><a href="/verified/records/warns" class="link-dark rounded">Warns</a></li>
-                    <li><a href="/verified/records/kicks" class="link-dark rounded">Kicks</a></li>
-                    <li><a href="/verified/records/bans" class="link-dark rounded">Bans</a></li>
-                    <li><a href="/verified/records/trustscores" class="link-dark rounded">TrustScores</a></li>
-                    <li><a href="/verified/records" class="link-dark rounded">All Records</a></li>
+                    <li><a href="/verified/records/commends" class="link-light rounded">Commends</a></li>
+                    <li><a href="/verified/records/warns" class="link-light rounded">Warns</a></li>
+                    <li><a href="/verified/records/kicks" class="link-light rounded">Kicks</a></li>
+                    <li><a href="/verified/records/bans" class="link-light rounded">Bans</a></li>
+                    <li><a href="/verified/records/trustscores" class="link-light rounded">TrustScores</a></li>
+                    <li><a href="/verified/records" class="link-light rounded">All Records</a></li>
                 </ul>
             </div>
         </li>
@@ -120,10 +116,10 @@
             </button>
             <div class="collapse" id="orders-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="/verified/players/players_today" class="link-dark rounded">Players Today</a></li>
-                    <li><a href="/verified/players/weekly_players" class="link-dark rounded">Weekly Players</a></li>
-                    <li><a href="/verified/players/monthly_players" class="link-dark rounded">Monthly Players</a></li>
-                    <li><a href="/verified/players" class="link-dark rounded">All Players</a></li>
+                    <li><a href="/verified/players/players_today" class="link-light rounded">Players Today</a></li>
+                    <li><a href="/verified/players/weekly_players" class="link-light rounded">Weekly Players</a></li>
+                    <li><a href="/verified/players/monthly_players" class="link-light rounded">Monthly Players</a></li>
+                    <li><a href="/verified/players" class="link-light rounded">All Players</a></li>
                 </ul>
             </div>
         </li>
@@ -134,9 +130,9 @@
             </button>
             <div class="collapse" id="account-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="/verified/management/manage_staff" class="link-dark rounded">Manage Staff</a></li>
-                    <li><a href="/verified/management/settings" class="link-dark rounded">Settings</a></li>
-                    <li><a href="/verified/management/signout" class="link-dark rounded">Sign out</a></li>
+                    <li><a href="/verified/management/manage_staff" class="link-light rounded">Manage Staff</a></li>
+                    <li><a href="/verified/management/settings" class="link-light rounded">Settings</a></li>
+                    <li><a href="/verified/management/signout" class="link-light rounded">Sign out</a></li>
                 </ul>
             </div>
         </li>

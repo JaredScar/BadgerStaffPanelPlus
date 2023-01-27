@@ -5,6 +5,9 @@
 .bg-custom-dark {
     background-color: rgba(52, 52, 52, 0.5);
 }
+.bg-custom-dark-80a {
+    background-color: rgba(52, 52, 52, 0.8);
+}
 .background-sizing {
     background-position: center center !important;
     background-repeat: no-repeat !important;
