@@ -13,32 +13,19 @@
         overflow-y: hidden;
     }
 
-    .b-example-divider {
-        flex-shrink: 0;
-        width: 1.5rem;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, .1);
-        border: solid rgba(0, 0, 0, .15);
-        border-width: 1px 0;
-        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-    }
-
-    .bi {
-        vertical-align: -.125em;
-        pointer-events: none;
-        fill: currentColor;
-    }
-
-    .dropdown-toggle { outline: 0; }
-
-    .nav-flush .nav-link {
-        border-radius: 0;
-    }
-
-    .btn-toggle, .sidebar-btn {
+    .btn-toggle, .sidebar-btn, .btn-toggle-icons {
         display: inline-flex;
         align-items: center;
         padding: .25rem .5rem;
+        font-weight: 600;
+        color: rgb(255, 255, 255);
+        background-color: transparent;
+        border: 0;
+    }
+    .btn-toggle-icons {
+        display: inline-flex;
+        align-items: center;
+        padding: .25rem 0;
         font-weight: 600;
         color: rgb(255, 255, 255);
         background-color: transparent;
@@ -51,7 +38,7 @@
         background-color: #57BC54;
     }
 
-    .btn-toggle::before {
+    .btn-toggle-icons::before {
         width: 1.25em;
         line-height: 0;
         font-family: "Font Awesome 5 Free";
@@ -63,7 +50,7 @@
     .btn-toggle[aria-expanded="true"] {
         color: rgba(255, 255, 255, 0.85);
     }
-    .btn-toggle[aria-expanded="true"]::before {
+    .btn-toggle[aria-expanded="true"] .btn-toggle-icons::before {
         transform: rotate(90deg);
     }
 
@@ -92,12 +79,12 @@
     <ul class="list-unstyled ps-0">
         <li class="mb-1">
             <a href="/verified/dashboard" class="btn sidebar-btn align-items-center rounded">
-                Dashboard
+                <span class="sidebar-link"><i class="fa-brands fa-fort-awesome"></i> Dashboard</span>
             </a>
         </li>
         <li class="mb-1">
             <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
-                Records
+                <span class="sidebar-link"><i class="fa-solid fa-compact-disc"></i><span class="btn-toggle-icons">Records</span></span>
             </button>
             <div class="collapse" id="dashboard-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
@@ -112,7 +99,7 @@
         </li>
         <li class="mb-1">
             <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
-                Players
+                <span class="sidebar-link"><i class="fa-solid fa-users"></i><span class="btn-toggle-icons">Players</span></span>
             </button>
             <div class="collapse" id="orders-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
@@ -126,7 +113,7 @@
         <li class="border-top my-3"></li>
         <li class="mb-1">
             <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
-                Management
+                <span class="sidebar-link"><i class="fa-solid fa-wrench"></i><span class="btn-toggle-icons">Management</span></span>
             </button>
             <div class="collapse" id="account-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
