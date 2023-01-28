@@ -3,7 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 
+/**
+ * @mixin Builder
+ */
 class Ban extends Model {
     /**
      * The storage format of the model's date columns.
@@ -11,6 +15,16 @@ class Ban extends Model {
      * @var string
      */
     protected $dateFormat = 'U';
+
+    public function store($player_id, $reason, $staff_id, $expires, $expiredDate, $server_id) {
+        $this->player_id = $player_id;
+        $this->reason = $reason;
+        $this->staff_id = $staff_id;
+        $this->expires = $expires;
+        $this->expiredDate = $expiredDate;
+        $this->server_id = $server_id;
+    }
+
     public function getStaffMember() {
         return $this->belongsTo(Staff::class, 'staff_id');
     }
