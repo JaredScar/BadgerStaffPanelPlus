@@ -1,0 +1,12 @@
+.page {
+    background-color: rgba(241, 241, 241, 0.85);
+    display: flex;
+    width: 100vw;
+    flex: 1;
+    margin: 20px 20px 95px 20px;
+    border-radius: 15px;
+}
+.gridster li {
+    background-color: orange;
+    list-style-type: none;
+}

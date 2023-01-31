@@ -16,4 +16,12 @@ class PlayerData extends Model {
      * @var string
      */
     protected $dateFormat = 'U';
+    public function store($server_id, $player_id, $playtime, $trust_score, $joins, $last_join_date) {
+        $this->server_id = $server_id;
+        $this->player_id = $player_id;
+        $this->playtime = $playtime;
+        $this->trust_score = $trust_score;
+        $this->joins = $joins;
+        $this->last_join_date = $last_join_date;
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\Commend;
 use App\Models\Kick;
 use App\Models\Note;
 use App\Models\Player;
+use App\Models\PlayerData;
 use Illuminate\Http\Request;
 
 class PlayerController extends Controller {
@@ -48,6 +49,13 @@ class PlayerController extends Controller {
         $player = new Player();
         $player->store($server_id, $discord_id, $license, $steam_id, $live, $xbl, $ip, $last_player_name);
         $saveSuccess = $player->save();
+        if ($saveSuccess) {
+            // Put data into PlayerData
+            $playerData = new PlayerData();
+            $player_id = $player->player_id;
+            $playerData->store($server_id, $player_id, 0, 0, 1, date("Y-m-d H:i:s"));
+            $playerData->save();
+        }
         return $player->aggregate;
     }
     public function banPlayer(Request $request, $player_id): bool {
