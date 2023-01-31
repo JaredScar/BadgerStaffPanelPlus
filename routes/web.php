@@ -17,6 +17,7 @@ Route::get('/', function () {
     $data = [];
     $data['css_path'] = 'login/start';
     $data['view_name'] = 'START';
+    $data['customize'] = false;
     return view('login/start', array('data' => $data));
 })->name('START');
 
@@ -24,6 +25,7 @@ Route::get('/forgot_password', function () {
     $data = [];
     $data['css_path'] = 'login/forgot_password';
     $data['view_name'] = 'FORGOT_PASSWORD';
+    $data['customize'] = false;
     return view('login/forgot_password', array('data' => $data));
 })->name("FORGOT_PASSWORD");
 
@@ -42,5 +44,6 @@ Route::get('/verified/dashboard', function () {
     $data = [];
     $data['css_path'] = 'verified/dashboard';
     $data['view_name'] = 'DASHBOARD_PAGE';
+    $data['customize'] = true;
     return view('verified/dashboard', array('data' => $data));
 })->name("DASHBOARD_PAGE");

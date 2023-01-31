@@ -37,6 +37,9 @@
         color: rgb(255, 255, 255);
         background-color: #57BC54;
     }
+    .no-color-hover:hover {
+        background-color: initial !important;
+    }
 
     .btn-toggle-icons::before {
         width: 1.25em;
@@ -71,12 +74,21 @@
 
     .fw-semibold { font-weight: 600; }
     .lh-tight { line-height: 1.25; }
+    .toggle-btn .btn-primary {
+        background-color: #57BC54;
+    }
+    .toggle-btn .btn-secondary {
+        background-color: black;
+    }
 </style>
 <div class="flex-shrink-0 p-3 bg-custom-dark-80a main-sidebar d-inline-block" style="width: 240px;">
     <a href="/" class="d-flex align-items-center pb-3 mb-3 link-light text-decoration-none border-bottom">
         <span class="fs-5 fw-semibold">BadgerStaffPanel+</span>
     </a>
     <ul class="list-unstyled ps-0">
+        <div class="d-block pb-2 link-light text-decoration-none sidebar-btn no-color-hover">
+            <span class="sidebar-link"><i class="fa-solid fa-pen-ruler"></i> Customize <span class="float-end toggle-btn"><input id="customize_val" type="checkbox" data-toggle="toggle" data-size="xs" /></span></span>
+        </div>
         <li class="mb-1">
             <a href="/verified/dashboard" class="btn sidebar-btn align-items-center rounded">
                 <span class="sidebar-link"><i class="fa-brands fa-fort-awesome"></i> Dashboard</span>
