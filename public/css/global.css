@@ -23,3 +23,16 @@
     background: url("/img/gta-bg3.jpg");
 }
 
+.gridster li {
+    list-style-type: none;
+}
+
+.bg-zap {
+    background-color: #57BC54;
+}
+.bg-checkered {
+    background-image: url("/img/checker-background.png");
+    background-position: center;
+    background-size: cover;
+}
+
