@@ -41,6 +41,18 @@ Coming Soon
   * Settings
   * Sign Out
 
+### Widgets
+* widget_commends
+* widget_warns
+* widget_kicks
+* widget_bans
+* widget_trustscores
+* widget_records
+* widget_players_today
+* widget_weekly_players
+* widget_monthly_players
+* widget_all_players
+
 ## Screenshots
 ### Login Related
 ![Login Page](https://i.gyazo.com/6a400575d5ce1445664b25f201b834aa.jpg)

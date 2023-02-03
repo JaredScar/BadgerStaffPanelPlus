@@ -36,3 +36,12 @@
     background-size: cover;
 }
 
+.page {
+    background-color: rgba(241, 241, 241, 0.85);
+    display: flex;
+    width: 100vw;
+    flex: 1;
+    margin: 20px 20px 90px 20px;
+    border-radius: 15px;
+}
+

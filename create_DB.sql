@@ -76,3 +76,13 @@ CREATE TABLE `notes` (
     `created_at` DATETIME,
     `updated_at` DATETIME
 );
+
+CREATE TABLE `layouts` (
+    `staff_id` INT(128),
+    `view` VARCHAR(128),
+    `widget_type` VARCHAR(128),
+    `col` INT(128),
+    `row` INT(128),
+    `size_x` INT(128),
+    `size_y` INT(128)
+);

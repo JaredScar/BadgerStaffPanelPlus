@@ -1,15 +1,21 @@
-<footer class="text-center text-white fixed-bottom" style="background-color: black">
+<style>
+    .max-height-70 {
+        max-height: 70px;
+    }
+</style>
+<footer class="text-center text-white fixed-bottom" style="background-color: black;">
 
     <!-- Copyright -->
-    <div class="container-fluid">
+    <div class="container-fluid max-height-70">
         <a href="https://zap-hosting.com/badger" target="_blank">
-            <div class="row">
-                <div class="col-4" style="background-color: #57BC54;">
+            <div class="row max-height-70">
+                <div class="col-4 max-height-70" style="background-color: #57BC54;">
                 </div>
-                <div class="col-4 px-0">
-                    <img src="/img/badger-partnership-zap-banner.png" class="img-fluid" />
+                <div class="col-4 px-0 max-height-70 d-flex">
+                    <div class="flex-grow-1" style="background-color: #57BC54"></div>
+                    <img src="/img/badger-partnership-zap-banner.png" style="height: 100%" />
                 </div>
-                <div class="col-4">
+                <div class="col-4 max-height-70">
                 </div>
             </div>
         </a>
