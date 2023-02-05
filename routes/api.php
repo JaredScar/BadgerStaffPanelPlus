@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->post('/players/kick/{player_id}', [PlayerCont
 Route::middleware('auth:sanctum')->post('/players/commend/{player_id}', [PlayerController::class, 'commendPlayer']);
 Route::middleware('auth:sanctum')->post('/players/note/{player_id}', [PlayerController::class, 'notePlayer']);
 
+Route::middleware('auth:sanctum')->post('/staff/create', [StaffController::class, 'createNewStaff']);
 Route::middleware('auth:sanctum')->post('/staff/postLogin', [StaffController::class, 'postLogin']);
 Route::middleware('auth:sanctum')->post('/staff/postLoginDiscord', [StaffController::class, 'postLoginDiscord']);
 

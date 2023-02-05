@@ -15,7 +15,7 @@ class PlayerController extends Controller {
      * GET methods
      */
     public function getPlayers(Request $request): array {
-        return [];
+        return Player::all()->all();
     }
     public function getPlayerById(Request $request, $player_id): array {
         return Player::where('player_id', $player_id)->first()->aggregate;
