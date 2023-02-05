@@ -40,6 +40,22 @@ Route::middleware('auth:sanctum')->get('/profile', function () {
     // Show the logged-in user's profile
 })->name("SHOW_PROFILE");
 
+Route::middleware('auth:sanctum')->get('/verified/records/commends', function () {})->name("COMMENDS");
+Route::middleware('auth:sanctum')->get('/verified/records/warns', function () {})->name("WARNS");
+Route::middleware('auth:sanctum')->get('/verified/records/kicks', function () {})->name("KICKS");
+Route::middleware('auth:sanctum')->get('/verified/records/bans', function () {})->name("BANS");
+Route::middleware('auth:sanctum')->get('/verified/records/trustscores', function () {})->name("TRUSTSCORES");
+Route::middleware('auth:sanctum')->get('/verified/records', function () {})->name("RECORDS");
+
+Route::middleware('auth:sanctum')->get('/verified/players/today', function () {})->name("PLAYERS_TODAY");
+Route::middleware('auth:sanctum')->get('/verified/players/week', function () {})->name("PLAYERS_WEEKLY");
+Route::middleware('auth:sanctum')->get('/verified/players/month', function () {})->name("PLAYERS_MONTHLY");
+Route::middleware('auth:sanctum')->get('/verified/players', function () {})->name("PLAYERS");
+
+Route::middleware('auth:sanctum')->get('/verified/management/settings', function () {})->name("SETTINGS");
+Route::middleware('auth:sanctum')->get('/verified/management/manage', function () {})->name("MANAGE_STAFF");
+Route::middleware('auth:sanctum')->get('/verified/signout', function () {})->name("SIGN_OUT");
+
 Route::get('/verified/dashboard', function () {
     $data = [];
     $data['css_path'] = 'verified/dashboard';

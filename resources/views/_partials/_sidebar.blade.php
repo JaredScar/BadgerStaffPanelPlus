@@ -115,9 +115,9 @@
             </button>
             <div class="collapse" id="orders-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="/verified/players/players_today" class="link-light rounded">Players Today</a></li>
-                    <li><a href="/verified/players/weekly_players" class="link-light rounded">Weekly Players</a></li>
-                    <li><a href="/verified/players/monthly_players" class="link-light rounded">Monthly Players</a></li>
+                    <li><a href="/verified/players/today" class="link-light rounded">Players Today</a></li>
+                    <li><a href="/verified/players/week" class="link-light rounded">Weekly Players</a></li>
+                    <li><a href="/verified/players/month" class="link-light rounded">Monthly Players</a></li>
                     <li><a href="/verified/players" class="link-light rounded">All Players</a></li>
                 </ul>
             </div>
@@ -131,7 +131,7 @@
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     <li><a href="/verified/management/manage_staff" class="link-light rounded">Manage Staff</a></li>
                     <li><a href="/verified/management/settings" class="link-light rounded">Settings</a></li>
-                    <li><a href="/verified/management/signout" class="link-light rounded">Sign out</a></li>
+                    <li><a href="/verified/signout" class="link-light rounded">Sign out</a></li>
                 </ul>
             </div>
         </li>
