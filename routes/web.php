@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\LogoutController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,37 +31,38 @@ Route::get('/forgot_password', function () {
     return view('login/forgot_password', array('data' => $data));
 })->name("FORGOT_PASSWORD");
 
-Route::post('/auth/login', function () {})->name("LOGIN_SUBMIT");
+Route::post('/auth/login', [LoginController::class, 'authenticate'])->name("LOGIN_SUBMIT");
+Route::post('/auth/login/discord', [LoginController::class, 'authenticateDiscord'])->name("LOGIN_DISCORD_SUBMIT");
 Route::post('/auth/forgot_password', function () {})->name("FORGOT_PASSWORD_SUBMIT");
 
 Route::get('/bans', function () {
     // Show the bans for all users to see
 })->name("SHOW_BANS");
 
-Route::middleware('auth:sanctum')->get('/profile', function () {
+Route::middleware('auth:web')->get('/profile', function () {
     // Show the logged-in user's profile
 })->name("SHOW_PROFILE");
 
-Route::middleware('auth:sanctum')->get('/verified/records/commends', function () {})->name("COMMENDS");
-Route::middleware('auth:sanctum')->get('/verified/records/warns', function () {})->name("WARNS");
-Route::middleware('auth:sanctum')->get('/verified/records/kicks', function () {})->name("KICKS");
-Route::middleware('auth:sanctum')->get('/verified/records/bans', function () {})->name("BANS");
-Route::middleware('auth:sanctum')->get('/verified/records/trustscores', function () {})->name("TRUSTSCORES");
-Route::middleware('auth:sanctum')->get('/verified/records', function () {})->name("RECORDS");
+Route::middleware('auth:web')->get('/verified/records/commends', function () {})->name("COMMENDS");
+Route::middleware('auth:web')->get('/verified/records/warns', function () {})->name("WARNS");
+Route::middleware('auth:web')->get('/verified/records/kicks', function () {})->name("KICKS");
+Route::middleware('auth:web')->get('/verified/records/bans', function () {})->name("BANS");
+Route::middleware('auth:web')->get('/verified/records/trustscores', function () {})->name("TRUSTSCORES");
+Route::middleware('auth:web')->get('/verified/records', function () {})->name("RECORDS");
 
-Route::middleware('auth:sanctum')->get('/verified/players/today', function () {})->name("PLAYERS_TODAY");
-Route::middleware('auth:sanctum')->get('/verified/players/week', function () {})->name("PLAYERS_WEEKLY");
-Route::middleware('auth:sanctum')->get('/verified/players/month', function () {})->name("PLAYERS_MONTHLY");
-Route::middleware('auth:sanctum')->get('/verified/players', function () {})->name("PLAYERS");
+Route::middleware('auth:web')->get('/verified/players/today', function () {})->name("PLAYERS_TODAY");
+Route::middleware('auth:web')->get('/verified/players/week', function () {})->name("PLAYERS_WEEKLY");
+Route::middleware('auth:web')->get('/verified/players/month', function () {})->name("PLAYERS_MONTHLY");
+Route::middleware('auth:web')->get('/verified/players', function () {})->name("PLAYERS");
 
-Route::middleware('auth:sanctum')->get('/verified/management/settings', function () {})->name("SETTINGS");
-Route::middleware('auth:sanctum')->get('/verified/management/manage', function () {})->name("MANAGE_STAFF");
-Route::middleware('auth:sanctum')->get('/verified/signout', function () {})->name("SIGN_OUT");
+Route::middleware('auth:web')->get('/verified/management/settings', function () {})->name("SETTINGS");
+Route::middleware('auth:web')->get('/verified/management/manage', function () {})->name("MANAGE_STAFF");
+Route::middleware('auth:web')->get('/verified/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
 
 Route::get('/verified/dashboard', function () {
     $data = [];
     $data['css_path'] = 'verified/dashboard';
-    $data['view_name'] = 'DASHBOARD_PAGE';
+    $data['view_name'] = 'DASHBOARD';
     $data['customize'] = true;
     return view('verified/dashboard', array('data' => $data));
-})->name("DASHBOARD_PAGE");
+})->name("DASHBOARD");
