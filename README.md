@@ -38,6 +38,7 @@ Coming Soon
   * All Players
 * Management
   * Manage Staff
+  * Manage Tokens
   * Settings
   * Sign Out
 

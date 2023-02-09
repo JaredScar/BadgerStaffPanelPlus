@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,11 +45,17 @@ Route::middleware('auth:web')->get('/profile', function () {
 })->name("SHOW_PROFILE");
 
 Route::middleware('auth:web')->get('/verified/records/commends', function () {})->name("COMMENDS");
+Route::middleware('auth:web')->get('/verified/records/commends/player/{pid}', function (Request $req, $playerId) {});
 Route::middleware('auth:web')->get('/verified/records/warns', function () {})->name("WARNS");
+Route::middleware('auth:web')->get('/verified/records/warns/player/{pid}', function (Request $req, $playerId) {});
 Route::middleware('auth:web')->get('/verified/records/kicks', function () {})->name("KICKS");
+Route::middleware('auth:web')->get('/verified/records/kicks/player/{pid}', function (Request $req, $playerId) {});
 Route::middleware('auth:web')->get('/verified/records/bans', function () {})->name("BANS");
+Route::middleware('auth:web')->get('/verified/records/bans/player/{pid}', function (Request $req, $playerId) {});
 Route::middleware('auth:web')->get('/verified/records/trustscores', function () {})->name("TRUSTSCORES");
+Route::middleware('auth:web')->get('/verified/records/trustscores/player/{pid}', function (Request $req, $playerId) {});
 Route::middleware('auth:web')->get('/verified/records', function () {})->name("RECORDS");
+Route::middleware('auth:web')->get('/verified/records/player/{pid}', function (Request $req, $playerId) {});
 
 Route::middleware('auth:web')->get('/verified/players/today', function () {})->name("PLAYERS_TODAY");
 Route::middleware('auth:web')->get('/verified/players/week', function () {})->name("PLAYERS_WEEKLY");

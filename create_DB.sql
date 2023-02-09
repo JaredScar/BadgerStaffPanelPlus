@@ -86,3 +86,11 @@ CREATE TABLE `layouts` (
     `size_x` INT(128),
     `size_y` INT(128)
 );
+
+CREATE TABLE `tokens` (
+    `token_id` INT(255) AUTO_INCREMENT PRIMARY KEY,
+    `staff_id` INT(128),
+    `server_id` INT(128),
+    `token_hash` INT(255) UNIQUE KEY,
+    `expire_date` DATETIME DEFAULT NULL
+);
