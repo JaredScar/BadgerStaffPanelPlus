@@ -32,7 +32,7 @@ Route::get('/forgot_password', function () {
     return view('login/forgot_password', array('data' => $data));
 })->name("FORGOT_PASSWORD");
 
-Route::post('/auth/login', [LoginController::class, 'authenticate'])->name("LOGIN_SUBMIT");
+Route::post('/auth/login', [LoginController::class, 'authenticateWeb'])->name("LOGIN_SUBMIT");
 Route::post('/auth/login/discord', [LoginController::class, 'authenticateDiscord'])->name("LOGIN_DISCORD_SUBMIT");
 Route::post('/auth/forgot_password', function () {})->name("FORGOT_PASSWORD_SUBMIT");
 

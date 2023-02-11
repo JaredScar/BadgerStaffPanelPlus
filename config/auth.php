@@ -41,8 +41,9 @@ return [
             'provider' => 'staff',
         ],
         'api' => [
-            'driver' => 'session',
-            'provider' => 'api_user'
+            'driver' => 'token',
+            'provider' => 'api_user',
+            'hash' => true
         ]
     ],
 

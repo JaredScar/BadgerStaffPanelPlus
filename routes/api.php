@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PlayerController;
@@ -33,6 +34,8 @@ Route::middleware('auth:api')->get('/staff/getBannedPlayerCount/{staff_id}', [St
 /**
  * POST methods
  */
+Route::post('/auth', [LoginController::class, 'authenticateApi']);
+
 Route::middleware('auth:api')->post('/players/register', [PlayerController::class, 'registerPlayer']);
 Route::middleware('auth:api')->post('/players/ban/{player_id}', [PlayerController::class, 'banPlayer']);
 Route::middleware('auth:api')->post('/players/kick/{player_id}', [PlayerController::class, 'kickPlayer']);
