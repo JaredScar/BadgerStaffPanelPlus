@@ -43,8 +43,6 @@ Route::middleware('auth:api')->post('/players/commend/{player_id}', [PlayerContr
 Route::middleware('auth:api')->post('/players/note/{player_id}', [PlayerController::class, 'notePlayer']);
 
 Route::middleware('auth:api')->post('/staff/create', [StaffController::class, 'createNewStaff']);
-Route::middleware('auth:api')->post('/staff/postLogin', [StaffController::class, 'postLogin']);
-Route::middleware('auth:api')->post('/staff/postLoginDiscord', [StaffController::class, 'postLoginDiscord']);
 
 /**
  * PERMISSION ROUTES

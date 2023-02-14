@@ -31,17 +31,5 @@ class StaffController extends Controller {
      * POST methods
      */
     public function createNewStaff(Request $request): bool {}
-    public function postLogin(Request $request): bool {
-        $username = $request->input("username");
-        $password = $request->input("password");
-        $userData = Staff::where('staff_username', $username)->first()->aggregate;
-        $hashedPassword = $userData['staff_password'] ?? null;
-        if (isset($hashedPassword))
-            return password_verify($password, $hashedPassword);
-        return false;
-    }
-    public function postLoginDiscord(Request $request): bool {
-        return false;
-    }
 
 }
