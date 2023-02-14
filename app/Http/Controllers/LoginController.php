@@ -40,7 +40,7 @@ class LoginController extends Controller {
         return ['token' => $token];
     }
 
-    private function discordReq($url, $headers = array(), $data = array(), $post = false) {
+    private function discordReq($url, $headers = array(), $data = array(), $post = false): array {
         $ch = curl_init($url);
         $headers[] = 'Accept: application/json';
         curl_setopt_array($ch, array(
@@ -79,7 +79,8 @@ class LoginController extends Controller {
         $staffMemberSelected = Staff::where('staff_discord', $user['id'])->first()->aggregate;
         if (sizeof($staffMemberSelected) > 0) {
             // It's a valid staff member, we need to log them in
-            // TODO
+            Auth::guard('web')->loginUsingId($staffMemberSelected['staff_id']);
+            return redirect()->intended('DASHBOARD');
         }
         return back()->withErrors([
             'username' => 'The provided credentials do not match our records...'

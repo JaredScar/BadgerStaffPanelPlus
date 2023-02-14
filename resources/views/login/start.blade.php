@@ -3,10 +3,10 @@
     @include('_partials._html_header', $data)
     <body>
         <section class="min-vh-100 pt-5 background-sizing gta-bg@php echo rand(1, 3); @endphp">
-            <div class="container h-100">
-                <div class="row d-flex justify-content-center align-items-center h-100">
-                    <form name="login-form" id="login-form" method="post" action="{{ url('LOGIN_SUBMIT') }}">
-                        @csrf
+            <form name="login-form" id="login-form" method="post" action="{{ url('LOGIN_SUBMIT') }}">
+                @csrf
+                <div class="container h-100">
+                    <div class="row d-flex justify-content-center align-items-center h-100">
                         <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                             <div class="card bg-custom-dark text-white" style="border-radius: 1rem;">
                                 <div class="card-body p-5 text-center">
@@ -30,9 +30,9 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
         </section>
         @include('_partials._html_footer')
     </body>
