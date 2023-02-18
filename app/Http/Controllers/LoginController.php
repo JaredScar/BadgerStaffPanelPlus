@@ -25,6 +25,7 @@ class LoginController extends Controller {
         if (Auth::guard('api')->attempt($credentials)) {
             return [
                 'success' => true,
+                'api_token' => $this->generateToken(),
                 'error' => false
             ];
         }
