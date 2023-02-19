@@ -21,6 +21,7 @@ Route::get('/', function () {
     $data['css_path'] = 'login/start';
     $data['view_name'] = 'START';
     $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
     return view('login/start', array('data' => $data));
 })->name('START');
 
@@ -29,6 +30,7 @@ Route::get('/forgot_password', function () {
     $data['css_path'] = 'login/forgot_password';
     $data['view_name'] = 'FORGOT_PASSWORD';
     $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
     return view('login/forgot_password', array('data' => $data));
 })->name("FORGOT_PASSWORD");
 

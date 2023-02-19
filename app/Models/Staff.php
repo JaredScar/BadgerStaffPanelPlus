@@ -49,6 +49,11 @@ class Staff extends Authenticatable {
         'staff_password'
     ];
 
+    public function getAuthPassword()
+    {
+        return $this->staff_password;
+    }
+
     public function kicks() {
         return $this->hasMany('App\Models\Kick', 'staff_id');
     }

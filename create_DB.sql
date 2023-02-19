@@ -3,7 +3,7 @@ CREATE TABLE `staff` (
     `staff_username` VARCHAR(128),
     `staff_password` VARCHAR(255),
     `staff_email` VARCHAR(255),
-    `staff_discord` INT(128),
+    `staff_discord` BIGINT(128),
     `server_id` INT(128),
     `created_at` DATETIME,
     `updated_at` DATETIME
@@ -28,7 +28,7 @@ INSERT INTO `staff` (
 CREATE TABLE `players` (
     `server_id` INT(128) UNIQUE KEY,
     `player_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
-    `discord_id` INT(128),
+    `discord_id` BIGINT(128),
     `game_license` VARCHAR(128) UNIQUE KEY,
     `steam_id` VARCHAR(32),
     `live` VARCHAR(128),
@@ -107,7 +107,7 @@ CREATE TABLE `tokens` (
     `token_id` INT(255) AUTO_INCREMENT PRIMARY KEY,
     `staff_id` INT(128),
     `server_id` INT(128),
-    `token_hash` INT(255) UNIQUE KEY,
+    `token_hash` VARCHAR(255) UNIQUE KEY,
     `expire_date` DATETIME DEFAULT NULL
 );
 

@@ -1,5 +1,10 @@
 # BadgerStaffPanel+
 
+## Default Login
+*Username:* `badger`
+
+*Password:* `password`
+
 ## Features
 * Warning System
 * Kick System
