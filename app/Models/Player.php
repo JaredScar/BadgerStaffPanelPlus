@@ -23,7 +23,6 @@ class Player extends Model {
     protected $dateFormat = 'U';
     public function store($server_id, $discord_id, $game_license, $steam_id, $live, $xbl, $ip, $last_player_name) {
         $this->server_id = $server_id;
-        $this->player_id = $player_id;
         $this->discord_id = $discord_id;
         $this->game_license = $game_license;
         $this->steam_id = $steam_id;

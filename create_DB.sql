@@ -1,10 +1,11 @@
 CREATE TABLE `staff` (
     `staff_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
-    `staff_username` VARCHAR(128),
+    `staff_username` VARCHAR(128) UNIQUE KEY,
     `staff_password` VARCHAR(255),
-    `staff_email` VARCHAR(255),
+    `staff_email` VARCHAR(255) UNIQUE KEY,
     `staff_discord` BIGINT(128),
     `server_id` INT(128),
+    `api_token` VARCHAR(64),
     `created_at` DATETIME,
     `updated_at` DATETIME
 );
@@ -19,7 +20,7 @@ INSERT INTO `staff` (
                      ) VALUES (
                      1,
                      'badger',
-                     '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
+                     '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', -- This is just "password" lol
                      'thewolfbadger@gmail.com',
                      394446211341615104,
                      1
@@ -102,13 +103,3 @@ CREATE TABLE `layouts` (
     `size_x` INT(128),
     `size_y` INT(128)
 );
-
-CREATE TABLE `tokens` (
-    `token_id` INT(255) AUTO_INCREMENT PRIMARY KEY,
-    `staff_id` INT(128),
-    `server_id` INT(128),
-    `token_hash` VARCHAR(255) UNIQUE KEY,
-    `expire_date` DATETIME DEFAULT NULL
-);
-
-INSERT INTO `tokens` (`staff_id`, `server_id`, `token_hash`) VALUES (1, 1, 'a700bdc6ac5405a3bd39726f7aff2db31b013818bc47ef1feebbef9e047402f0');

@@ -42,7 +42,7 @@ return [
         ],
         'api' => [
             'driver' => 'token',
-            'provider' => 'api_user',
+            'provider' => 'staff',
             'hash' => true
         ]
     ],
@@ -92,10 +92,6 @@ return [
         'note' => [
             'driver' => 'eloquent',
             'model' => App\Models\Note::class,
-        ],
-        'api_user' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\ApiUser::class,
         ],
     ],
 

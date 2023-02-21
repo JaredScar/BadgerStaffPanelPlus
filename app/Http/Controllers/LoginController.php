@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApiUser;
 use App\Models\Staff;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -43,11 +44,12 @@ class LoginController extends Controller {
     }
 
     public function authenticateApi(Request $request): array {
-        $credentials = [$request->bearerToken()];
-        if (Auth::guard('api')->attempt($credentials)) {
+        $credentials = $request->all();
+        if (Auth::guard('web')->attempt(['staff_username' => $credentials['username'], 'password' => $credentials['password']])) {
+            $user = Staff::where('staff_username', $credentials['username'])->first();
             return [
                 'success' => true,
-                'api_token' => $this->generateToken(),
+                'api_token' => $user->createToken("access_token")->plainTextToken,
                 'error' => false
             ];
         }
