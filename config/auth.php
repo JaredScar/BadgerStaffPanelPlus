@@ -39,11 +39,6 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'staff',
-        ],
-        'api' => [
-            'driver' => 'token',
-            'provider' => 'staff',
-            'hash' => true
         ]
     ],
 

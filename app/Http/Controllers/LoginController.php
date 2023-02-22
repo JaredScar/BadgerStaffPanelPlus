@@ -47,9 +47,12 @@ class LoginController extends Controller {
         $credentials = $request->all();
         if (Auth::guard('web')->attempt(['staff_username' => $credentials['username'], 'password' => $credentials['password']])) {
             $user = Staff::where('staff_username', $credentials['username'])->first();
+            $user->tokens()->delete();
+            // TODO Need to add abilities and an expiration date to this token
+            $newToken = $user->createToken("access_token")->plainTextToken;
             return [
                 'success' => true,
-                'api_token' => $user->createToken("access_token")->plainTextToken,
+                'api_token' => $newToken,
                 'error' => false
             ];
         }

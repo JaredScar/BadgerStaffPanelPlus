@@ -5,7 +5,6 @@ CREATE TABLE `staff` (
     `staff_email` VARCHAR(255) UNIQUE KEY,
     `staff_discord` BIGINT(128),
     `server_id` INT(128),
-    `api_token` VARCHAR(64),
     `created_at` DATETIME,
     `updated_at` DATETIME
 );

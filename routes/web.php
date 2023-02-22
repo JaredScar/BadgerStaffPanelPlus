@@ -42,31 +42,31 @@ Route::get('/bans', function () {
     // Show the bans for all users to see
 })->name("SHOW_BANS");
 
-Route::middleware('auth:web')->get('/profile', function () {
+Route::middleware('authWeb:web')->get('/profile', function () {
     // Show the logged-in user's profile
 })->name("SHOW_PROFILE");
 
-Route::middleware('auth:web')->get('/verified/records/commends', function () {})->name("COMMENDS");
-Route::middleware('auth:web')->get('/verified/records/commends/player/{pid}', function (Request $req, $playerId) {});
-Route::middleware('auth:web')->get('/verified/records/warns', function () {})->name("WARNS");
-Route::middleware('auth:web')->get('/verified/records/warns/player/{pid}', function (Request $req, $playerId) {});
-Route::middleware('auth:web')->get('/verified/records/kicks', function () {})->name("KICKS");
-Route::middleware('auth:web')->get('/verified/records/kicks/player/{pid}', function (Request $req, $playerId) {});
-Route::middleware('auth:web')->get('/verified/records/bans', function () {})->name("BANS");
-Route::middleware('auth:web')->get('/verified/records/bans/player/{pid}', function (Request $req, $playerId) {});
-Route::middleware('auth:web')->get('/verified/records/trustscores', function () {})->name("TRUSTSCORES");
-Route::middleware('auth:web')->get('/verified/records/trustscores/player/{pid}', function (Request $req, $playerId) {});
-Route::middleware('auth:web')->get('/verified/records', function () {})->name("RECORDS");
-Route::middleware('auth:web')->get('/verified/records/player/{pid}', function (Request $req, $playerId) {});
+Route::middleware('authWeb:web')->get('/verified/records/commends', function () {})->name("COMMENDS");
+Route::middleware('authWeb:web')->get('/verified/records/commends/player/{pid}', function (Request $req, $playerId) {});
+Route::middleware('authWeb:web')->get('/verified/records/warns', function () {})->name("WARNS");
+Route::middleware('authWeb:web')->get('/verified/records/warns/player/{pid}', function (Request $req, $playerId) {});
+Route::middleware('authWeb:web')->get('/verified/records/kicks', function () {})->name("KICKS");
+Route::middleware('authWeb:web')->get('/verified/records/kicks/player/{pid}', function (Request $req, $playerId) {});
+Route::middleware('authWeb:web')->get('/verified/records/bans', function () {})->name("BANS");
+Route::middleware('authWeb:web')->get('/verified/records/bans/player/{pid}', function (Request $req, $playerId) {});
+Route::middleware('authWeb:web')->get('/verified/records/trustscores', function () {})->name("TRUSTSCORES");
+Route::middleware('authWeb:web')->get('/verified/records/trustscores/player/{pid}', function (Request $req, $playerId) {});
+Route::middleware('authWeb:web')->get('/verified/records', function () {})->name("RECORDS");
+Route::middleware('authWeb:web')->get('/verified/records/player/{pid}', function (Request $req, $playerId) {});
 
-Route::middleware('auth:web')->get('/verified/players/today', function () {})->name("PLAYERS_TODAY");
-Route::middleware('auth:web')->get('/verified/players/week', function () {})->name("PLAYERS_WEEKLY");
-Route::middleware('auth:web')->get('/verified/players/month', function () {})->name("PLAYERS_MONTHLY");
-Route::middleware('auth:web')->get('/verified/players', function () {})->name("PLAYERS");
+Route::middleware('authWeb:web')->get('/verified/players/today', function () {})->name("PLAYERS_TODAY");
+Route::middleware('authWeb:web')->get('/verified/players/week', function () {})->name("PLAYERS_WEEKLY");
+Route::middleware('authWeb:web')->get('/verified/players/month', function () {})->name("PLAYERS_MONTHLY");
+Route::middleware('authWeb:web')->get('/verified/players', function () {})->name("PLAYERS");
 
-Route::middleware('auth:web')->get('/verified/management/settings', function () {})->name("SETTINGS");
-Route::middleware('auth:web')->get('/verified/management/manage', function () {})->name("MANAGE_STAFF");
-Route::middleware('auth:web')->get('/verified/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
+Route::middleware('authWeb:web')->get('/verified/management/settings', function () {})->name("SETTINGS");
+Route::middleware('authWeb:web')->get('/verified/management/manage', function () {})->name("MANAGE_STAFF");
+Route::middleware('authWeb:web')->get('/verified/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
 
 Route::get('/verified/dashboard', function () {
     $data = [];
