@@ -3,16 +3,16 @@
     @include('_partials._html_header', $data)
 
     <body>
-        @if (count($errors) > 0)
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
         <section class="min-vh-100 pt-5 background-sizing gta-bg@php echo rand(1, 3); @endphp">
+            @if (count($errors) > 0)
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <form name="login-form" class="login-form" id="form" method="post" action="{{ route('LOGIN_SUBMIT') }}">
                 @csrf
                 <div class="container h-100">
@@ -35,7 +35,7 @@
                                         <p class="small pb-lg-2"><a class="text-white" href="/forgot_password">Forgot password?</a></p>
 
                                         <button class="btn d-block mx-auto mb-5 btn-outline-light btn-lg px-5 g-recaptcha" data-sitekey="{{env('GOOGLE_CAPTCHA_KEY')}}" data-callback="onSubmit" type="submit"><i class="fa fa-right-to-bracket"></i> Login</button>
-                                        <a href="" class="btn d-block mx-auto mt-5 bg-blurple btn-lg px-5 g-recaptcha" data-sitekey="{{env('GOOGLE_CAPTCHA_KEY')}}" data-callback="onSubmit" type="submit"><i class="fa-brands fa-discord"></i> Login via Discord</a>
+                                        <button href="" class="btn d-block mx-auto mt-5 bg-blurple btn-lg px-5 g-recaptcha" data-sitekey="{{env('GOOGLE_CAPTCHA_KEY')}}" data-callback="onSubmit" type="submit"><i class="fa-brands fa-discord"></i> Login via Discord</button>
                                     </div>
                                 </div>
                             </div>
