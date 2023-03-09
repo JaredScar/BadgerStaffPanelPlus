@@ -1,3 +1,9 @@
+CREATE TABLE `servers` (
+    `server_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
+    `server_name` VARCHAR(255),
+    `server_slug` VARCHAR(128)
+);
+
 CREATE TABLE `staff` (
     `staff_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
     `staff_username` VARCHAR(128) UNIQUE KEY,

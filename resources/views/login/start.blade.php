@@ -25,6 +25,18 @@
                                         <p class="text-white-50 mb-5"></p>
 
                                         <div class="form-outline form-white mb-4">
+                                            <select id="server_id" name="server_id" class="form-control form-control-lg">
+                                                <option disabled selected>Select Your Server</option>
+                                                @php
+                                                $servers = \App\Models\Server::all();
+                                                foreach ($servers as $server) {
+                                                    echo "<option value='" . $server['server_id'] . "'>" . $server['server_slug'] . "</option>";
+                                                }
+                                                @endphp
+                                            </select>
+                                        </div>
+
+                                        <div class="form-outline form-white mb-4">
                                             <input required type="text" id="typeUsernameX" name="username" placeholder="Username" class="form-control form-control-lg" />
                                         </div>
 
