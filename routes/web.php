@@ -40,6 +40,12 @@ Route::post('/auth/forgot_password', function () {})->name("FORGOT_PASSWORD_SUBM
 
 Route::get('/bans', function () {
     // Show the bans for all users to see
+    if (env('PUBLIC_BANS')) {
+        // They get to see the bans list
+    } else {
+        // Take them back to not authorized page
+    }
+    // TODO
 })->name("SHOW_BANS");
 
 Route::middleware('authWeb:web')->get('/profile', function () {

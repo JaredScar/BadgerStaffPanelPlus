@@ -48,7 +48,6 @@ class LoginController extends Controller {
         if (Auth::guard('web')->attempt(['staff_username' => $credentials['username'], 'password' => $credentials['password']])) {
             $user = Staff::where('staff_username', $credentials['username'])->first();
             $user->tokens()->delete();
-            // TODO Need to add abilities and an expiration date to this token
             $newToken = $user->createToken("access_token")->plainTextToken;
             return [
                 'success' => true,
@@ -60,12 +59,6 @@ class LoginController extends Controller {
             'success' => false,
             'error' => 'Valid credentials for hitting the API were not supplied...'
         ];
-    }
-
-    public function generateToken(): array {
-        $token = Str::random(60);
-        $token = hash('sha256', $token);
-        return ['token' => $token];
     }
 
     private function httpReq($url, $headers = array(), $data = array(), $post = false): array {
