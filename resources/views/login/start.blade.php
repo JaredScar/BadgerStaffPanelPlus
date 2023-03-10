@@ -25,10 +25,12 @@
                                         <p class="text-white-50 mb-5"></p>
 
                                         <div class="form-outline form-white mb-4">
-                                            <select id="server_id" name="server_id" class="form-control form-control-lg">
-                                                <option disabled selected>Select Your Server</option>
+                                            <select required id="server_id" name="server_id" class="form-control form-control-lg">
                                                 @php
                                                 $servers = \App\Models\Server::all();
+                                                if (sizeof($servers) > 1)
+                                                    echo '<option value="" disabled selected hidden>Server Selection</option>';
+
                                                 foreach ($servers as $server) {
                                                     echo "<option value='" . $server['server_id'] . "'>" . $server['server_slug'] . "</option>";
                                                 }
