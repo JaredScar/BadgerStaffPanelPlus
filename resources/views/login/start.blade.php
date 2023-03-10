@@ -25,7 +25,7 @@
                                         <p class="text-white-50 mb-5"></p>
 
                                         <div class="form-outline form-white mb-4">
-                                            <select required id="server_id" name="server_id" class="form-control form-control-lg">
+                                            <select required id="server_id" name="server_id" class="form-control form-select form-control-lg">
                                                 @php
                                                 use App\Models\Server as servers;
                                                 $servers = servers::all();

@@ -52,28 +52,150 @@ Route::middleware('authWeb:web')->get('/profile', function () {
     // Show the logged-in user's profile
 })->name("SHOW_PROFILE");
 
-Route::middleware('authWeb:web')->get('/verified/records/commends', function () {})->name("COMMENDS");
-Route::middleware('authWeb:web')->get('/verified/records/commends/player/{pid}', function (Request $req, $playerId) {});
-Route::middleware('authWeb:web')->get('/verified/records/warns', function () {})->name("WARNS");
-Route::middleware('authWeb:web')->get('/verified/records/warns/player/{pid}', function (Request $req, $playerId) {});
-Route::middleware('authWeb:web')->get('/verified/records/kicks', function () {})->name("KICKS");
-Route::middleware('authWeb:web')->get('/verified/records/kicks/player/{pid}', function (Request $req, $playerId) {});
-Route::middleware('authWeb:web')->get('/verified/records/bans', function () {})->name("BANS");
-Route::middleware('authWeb:web')->get('/verified/records/bans/player/{pid}', function (Request $req, $playerId) {});
-Route::middleware('authWeb:web')->get('/verified/records/trustscores', function () {})->name("TRUSTSCORES");
-Route::middleware('authWeb:web')->get('/verified/records/trustscores/player/{pid}', function (Request $req, $playerId) {});
-Route::middleware('authWeb:web')->get('/verified/records', function () {})->name("RECORDS");
-Route::middleware('authWeb:web')->get('/verified/records/player/{pid}', function (Request $req, $playerId) {});
+/**
+ * COMMENDS
+ */
+Route::middleware('authWeb:web')->get('/verified/records/commends', function () {
+    $data = [];
+    $data['css_path'] = 'widgets/commends';
+    $data['view_name'] = 'COMMENDS';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    return view('verified/records/commends', array('data' => $data));
+})->name("COMMENDS");
+Route::middleware('authWeb:web')->get('/verified/records/commends/player/{pid}', function (Request $req, $playerId) {
+    $data = [];
+    $data['css_path'] = 'widgets/commends';
+    $data['view_name'] = 'COMMENDS_SINGLE';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    $data['selected_pid'] = $playerId;
+    return view('verified/records/commends', array('data' => $data));
+})->name('COMMENDS_SINGLE');
 
+/**
+ * WARNS
+ */
+Route::middleware('authWeb:web')->get('/verified/records/warns', function () {
+    $data = [];
+    $data['css_path'] = 'widgets/warns';
+    $data['view_name'] = 'WARNS';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    return view('verified/records/warns', array('data' => $data));
+})->name("WARNS");
+Route::middleware('authWeb:web')->get('/verified/records/warns/player/{pid}', function (Request $req, $playerId) {
+    $data = [];
+    $data['css_path'] = 'widgets/warns';
+    $data['view_name'] = 'WARNS_SINGLE';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    $data['selected_pid'] = $playerId;
+    return view('verified/records/warns', array('data' => $data));
+})->name('WARNS_SINGLE');
+
+/**
+ * KICKS
+ */
+Route::middleware('authWeb:web')->get('/verified/records/kicks', function () {
+    $data = [];
+    $data['css_path'] = 'widgets/kicks';
+    $data['view_name'] = 'KICKS';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    return view('verified/records/kicks', array('data' => $data));
+})->name("KICKS");
+Route::middleware('authWeb:web')->get('/verified/records/kicks/player/{pid}', function (Request $req, $playerId) {
+    $data = [];
+    $data['css_path'] = 'widgets/kicks';
+    $data['view_name'] = 'KICKS_SINGLE';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    $data['selected_pid'] = $playerId;
+    return view('verified/records/kicks', array('data' => $data));
+})->name("KICKS_SINGLE");
+
+/**
+ * BANS
+ */
+Route::middleware('authWeb:web')->get('/verified/records/bans', function () {
+    $data = [];
+    $data['css_path'] = 'widgets/bans';
+    $data['view_name'] = 'BANS';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    return view('verified/records/bans', array('data' => $data));
+})->name("BANS");
+Route::middleware('authWeb:web')->get('/verified/records/bans/player/{pid}', function (Request $req, $playerId) {
+    $data = [];
+    $data['css_path'] = 'widgets/bans';
+    $data['view_name'] = 'BANS_SINGLE';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    $data['selected_pid'] = $playerId;
+    return view('verified/records/bans', array('data' => $data));
+})->name("BANS_SINGLE");
+
+/**
+ * TRUSTSCORES
+ */
+Route::middleware('authWeb:web')->get('/verified/records/trustscores', function () {
+    $data = [];
+    $data['css_path'] = 'widgets/trustscores';
+    $data['view_name'] = 'TRUSTSCORES';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    return view('verified/records/trustscores', array('data' => $data));
+})->name("TRUSTSCORES");
+Route::middleware('authWeb:web')->get('/verified/records/trustscores/player/{pid}', function (Request $req, $playerId) {
+    $data = [];
+    $data['css_path'] = 'widgets/trustscores';
+    $data['view_name'] = 'TRUSTSCORES_SINGLE';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    $data['selected_pid'] = $playerId;
+    return view('verified/records/trustscores', array('data' => $data));
+})->name("TRUSTSCORES_SINGLE");
+
+/**
+ * RECORDS
+ */
+Route::middleware('authWeb:web')->get('/verified/records', function () {
+    $data = [];
+    $data['css_path'] = 'widgets/records';
+    $data['view_name'] = 'RECORDS';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    return view('verified/records', array('data' => $data));
+})->name("RECORDS");
+Route::middleware('authWeb:web')->get('/verified/records/player/{pid}', function (Request $req, $playerId) {
+    $data = [];
+    $data['css_path'] = 'widgets/records';
+    $data['view_name'] = 'RECORDS_SINGLE';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    $data['selected_pid'] = $playerId;
+    return view('verified/records', array('data' => $data));
+})->name("RECORDS_SINGLE");
+
+/**
+ * PLAYERS
+ */
 Route::middleware('authWeb:web')->get('/verified/players/today', function () {})->name("PLAYERS_TODAY");
 Route::middleware('authWeb:web')->get('/verified/players/week', function () {})->name("PLAYERS_WEEKLY");
 Route::middleware('authWeb:web')->get('/verified/players/month', function () {})->name("PLAYERS_MONTHLY");
 Route::middleware('authWeb:web')->get('/verified/players', function () {})->name("PLAYERS");
 
+/**
+ * MANAGEMENT
+ */
 Route::middleware('authWeb:web')->get('/verified/management/settings', function () {})->name("SETTINGS");
 Route::middleware('authWeb:web')->get('/verified/management/manage', function () {})->name("MANAGE_STAFF");
 Route::middleware('authWeb:web')->get('/verified/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
 
+/**
+ * DASHBOARD
+ */
 Route::get('/verified/dashboard', function () {
     $data = [];
     $data['css_path'] = 'verified/dashboard';
