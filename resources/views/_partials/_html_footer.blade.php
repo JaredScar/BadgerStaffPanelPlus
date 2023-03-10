@@ -33,13 +33,17 @@
 @if($data['captcha'])
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
-        function onSubmit(token) {
-            var form = document.getElementById('form');
-            if (form.checkValidity()) {
-                form.submit();
-            } else {
-                form.reportValidity();
+        let actuallySubmit = false;
+        $('#form').submit(function (event) {
+            if (!actuallySubmit) {
+                event.preventDefault();
+                grecaptcha.reset();
+                grecaptcha.execute();
             }
+        });
+        function onSubmit() {
+            actuallySubmit = true;
+            $('#form').submit();
         }
     </script>
 @endif

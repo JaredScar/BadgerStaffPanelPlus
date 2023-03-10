@@ -46,7 +46,9 @@
 
                                         <p class="small pb-lg-2"><a class="text-white" href="/forgot_password">Forgot password?</a></p>
 
-                                        <button class="btn d-block mx-auto mb-5 btn-outline-light btn-lg px-5 g-recaptcha" data-sitekey="{{env('GOOGLE_CAPTCHA_KEY')}}" data-callback="onSubmit" type="submit"><i class="fa fa-right-to-bracket"></i> Login</button>
+                                        <div class="g-recaptcha" data-sitekey="{{env('GOOGLE_CAPTCHA_KEY')}}" data-size="invisible" data-callback="onSubmit"></div>
+
+                                        <button class="btn d-block mx-auto mb-5 btn-outline-light btn-lg px-5" type="submit"><i class="fa fa-right-to-bracket"></i> Login</button>
                                         <button href="" class="btn d-block mx-auto mt-5 bg-blurple btn-lg px-5 g-recaptcha" data-sitekey="{{env('GOOGLE_CAPTCHA_KEY')}}" data-callback="onSubmit" type="submit"><i class="fa-brands fa-discord"></i> Login via Discord</button>
                                     </div>
                                 </div>
