@@ -36,6 +36,7 @@
         let actuallySubmit = false;
         $('#form').submit(function (event) {
             if (!actuallySubmit) {
+                $('button[type=submit]').prop('disabled', true);
                 event.preventDefault();
                 grecaptcha.reset();
                 grecaptcha.execute();

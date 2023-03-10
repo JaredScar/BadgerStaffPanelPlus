@@ -27,7 +27,8 @@
                                         <div class="form-outline form-white mb-4">
                                             <select required id="server_id" name="server_id" class="form-control form-control-lg">
                                                 @php
-                                                $servers = \App\Models\Server::all();
+                                                use App\Models\Server as servers;
+                                                $servers = servers::all();
                                                 if (sizeof($servers) > 1)
                                                     echo '<option value="" disabled selected hidden>Server Selection</option>';
 
