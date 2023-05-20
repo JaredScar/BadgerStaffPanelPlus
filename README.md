@@ -1,5 +1,5 @@
 # BadgerStaffPanel+
-
+![BadgerStaffPanel+](https://i.gyazo.com/fc8c1b844657e0aae8d9a890ad9cffda.png)
 ## Default Login
 *Username:* `badger`
 
