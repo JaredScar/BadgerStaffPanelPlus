@@ -23,11 +23,11 @@ INSERT INTO `staff` (
                      `staff_discord`,
                      `server_id`
                      ) VALUES (
-                     1,
-                     'badger',
+                     1, -- Staff ID
+                     'badger', -- Username
                      '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', -- This is just "password" lol
-                     'thewolfbadger@gmail.com',
-                     394446211341615104,
+                     'thewolfbadger@gmail.com', -- Email
+                     394446211341615104, -- Discord ID
                      1
                      );
 

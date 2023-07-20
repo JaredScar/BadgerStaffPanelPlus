@@ -36,7 +36,7 @@ class LoginController extends Controller {
         }
         if (Auth::guard('web')->attempt(['staff_username' => $credentials['username'], 'password' => $credentials['password']])) {
             // Authentication passed, redirect:
-            return redirect()->intended('DASHBOARD');
+            return redirect()->intended(route('DASHBOARD'));
         }
         return back()->withErrors([
             'staff_username' => 'The provided credentials do not match our records...'

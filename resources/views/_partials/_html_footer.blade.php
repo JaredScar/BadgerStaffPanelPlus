@@ -30,21 +30,23 @@
 <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
-@if($data['captcha'])
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script>
-        let actuallySubmit = false;
-        $('#form').submit(function (event) {
-            if (!actuallySubmit) {
-                $('button[type=submit]').prop('disabled', true);
-                event.preventDefault();
-                grecaptcha.reset();
-                grecaptcha.execute();
+@isset($data['captcha'])
+    @if($data['captcha'])
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <script>
+            let actuallySubmit = false;
+            $('#form').submit(function (event) {
+                if (!actuallySubmit) {
+                    $('button[type=submit]').prop('disabled', true);
+                    event.preventDefault();
+                    grecaptcha.reset();
+                    grecaptcha.execute();
+                }
+            });
+            function onSubmit() {
+                actuallySubmit = true;
+                $('#form').submit();
             }
-        });
-        function onSubmit() {
-            actuallySubmit = true;
-            $('#form').submit();
-        }
-    </script>
-@endif
+        </script>
+    @endif
+@endisset

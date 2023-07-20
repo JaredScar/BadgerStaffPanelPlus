@@ -181,9 +181,30 @@ Route::middleware('authWeb:web')->get('/verified/records/player/{pid}', function
 /**
  * PLAYERS
  */
-Route::middleware('authWeb:web')->get('/verified/players/today', function () {})->name("PLAYERS_TODAY");
-Route::middleware('authWeb:web')->get('/verified/players/week', function () {})->name("PLAYERS_WEEKLY");
-Route::middleware('authWeb:web')->get('/verified/players/month', function () {})->name("PLAYERS_MONTHLY");
+Route::middleware('authWeb:web')->get('/verified/players/today', function () {
+    $data = [];
+    $data['css_path'] = 'players';
+    $data['view_name'] = 'PLAYERS_TODAY';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    return view('verified/players/today', array('data' => $data));
+})->name("PLAYERS_TODAY");
+Route::middleware('authWeb:web')->get('/verified/players/week', function () {
+    $data = [];
+    $data['css_path'] = 'players';
+    $data['view_name'] = 'PLAYERS_WEEKLY';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    return view('verified/players/weekly', array('data' => $data));
+})->name("PLAYERS_WEEKLY");
+Route::middleware('authWeb:web')->get('/verified/players/month', function () {
+    $data = [];
+    $data['css_path'] = 'players';
+    $data['view_name'] = 'PLAYERS_MONTHLY';
+    $data['customize'] = false;
+    $data['captcha'] = env('USE_CAPTCHA', false);
+    return view('verified/players/monthly', array('data' => $data));
+})->name("PLAYERS_MONTHLY");
 Route::middleware('authWeb:web')->get('/verified/players', function () {})->name("PLAYERS");
 
 /**
