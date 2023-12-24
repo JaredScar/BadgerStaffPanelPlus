@@ -13,7 +13,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                <!-- TODO Get the data from PHP and put it here -->
+                @foreach ($data["data"] as $kick)
+                    <tr>
+                        <td>{{ $kick->player_id }}</td>
+                        <td>{{ $kick->getPlayer->last_player_name }}</td>
+                        <td>{{ $kick->getPlayer->discord_id }}</td>
+                        <td>{{ $kick->reason }}</td>
+                        <td>{{ $kick->created_at }}</td>
+                        <td>{{ $kick->getStaff->staff_username }}</td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>

@@ -21,4 +21,21 @@ class Server extends Model {
         $this->server_name = $server_name;
         $this->server_slug = $server_slug;
     }
+
+    /**
+     * Get the server name by server ID.
+     *
+     * @param int $serverId
+     * @return string|null
+     */
+    public static function getServerNameById($serverId) {
+        $server = self::where('server_id', $serverId)->first();
+
+        // Check if the server exists
+        if ($server) {
+            return $server->server_name;
+        }
+
+        return null; // Server not found
+    }
 }

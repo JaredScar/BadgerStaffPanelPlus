@@ -83,7 +83,7 @@
 </style>
 <div class="flex-shrink-0 p-3 bg-custom-dark-80a main-sidebar d-inline-block" style="width: 240px;">
     <a href="/" class="d-flex align-items-center pb-3 mb-3 link-light text-decoration-none border-bottom">
-        <span class="fs-5 fw-semibold">BadgerStaffPanel+</span>
+        <span class="fs-5 fw-semibold">{{ \Illuminate\Support\Facades\Session::get("server_name") }}</span>
     </a>
     <ul class="list-unstyled ps-0">
         <div class="d-block pb-2 link-light text-decoration-none sidebar-btn no-color-hover">

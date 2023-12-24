@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApiUser;
+use App\Models\Server;
 use App\Models\Staff;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -36,6 +37,9 @@ class LoginController extends Controller {
         }
         if (Auth::guard('web')->attempt(['staff_username' => $credentials['username'], 'password' => $credentials['password']])) {
             // Authentication passed, redirect:
+            $serverId = $request->get("server_id", 0);
+            Session::put("server_id", $serverId);
+            Session::put("server_name", Server::getServerNameById($serverId));
             return redirect()->intended(route('DASHBOARD'));
         }
         return back()->withErrors([

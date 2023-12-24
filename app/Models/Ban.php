@@ -25,10 +25,10 @@ class Ban extends Model {
         $this->server_id = $server_id;
     }
 
-    public function getStaffMember() {
-        return $this->belongsTo(Staff::class, 'staff_id');
+    public function getStaff() {
+        return $this->hasOne(Staff::class, 'staff_id');
     }
     public function getPlayer() {
-        return $this->belongsTo(Player::class, 'player_id');
+        return $this->hasOne(Player::class, 'player_id');
     }
 }

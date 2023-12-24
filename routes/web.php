@@ -2,6 +2,11 @@
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Models\Ban;
+use App\Models\Commend;
+use App\Models\Kick;
+use Illuminate\Console\View\Components\Warn;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +20,9 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+/**
+ * @mixin Builder
+ */
 Route::get('/', function () {
     $data = [];
     $data['css_path'] = 'login/start';
@@ -60,7 +67,8 @@ Route::middleware('authWeb:web')->get('/verified/records/commends', function () 
     $data['css_path'] = 'widgets/commends';
     $data['view_name'] = 'COMMENDS';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
+    $commendData = Commend::with('getPlayer')->with('getStaff')->get();
+    $data['data'] = $commendData;
     return view('verified/records/commends', array('data' => $data));
 })->name("COMMENDS");
 Route::middleware('authWeb:web')->get('/verified/records/commends/player/{pid}', function (Request $req, $playerId) {
@@ -68,8 +76,9 @@ Route::middleware('authWeb:web')->get('/verified/records/commends/player/{pid}',
     $data['css_path'] = 'widgets/commends';
     $data['view_name'] = 'COMMENDS_SINGLE';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     $data['selected_pid'] = $playerId;
+    $commendData = Commend::with('getPlayer')->with('getStaff')->where('player_id', $playerId)->get();
+    $data['data'] = $commendData;
     return view('verified/records/commends', array('data' => $data));
 })->name('COMMENDS_SINGLE');
 
@@ -81,7 +90,8 @@ Route::middleware('authWeb:web')->get('/verified/records/warns', function () {
     $data['css_path'] = 'widgets/warns';
     $data['view_name'] = 'WARNS';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
+    $warnData = Warn::with('getPlayer')->with('getStaff')->get();
+    $data['data'] = $warnData;
     return view('verified/records/warns', array('data' => $data));
 })->name("WARNS");
 Route::middleware('authWeb:web')->get('/verified/records/warns/player/{pid}', function (Request $req, $playerId) {
@@ -89,8 +99,9 @@ Route::middleware('authWeb:web')->get('/verified/records/warns/player/{pid}', fu
     $data['css_path'] = 'widgets/warns';
     $data['view_name'] = 'WARNS_SINGLE';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     $data['selected_pid'] = $playerId;
+    $warnData = Warn::with('getPlayer')->with('getStaff')->where('player_id', $playerId)->get();
+    $data['data'] = $warnData;
     return view('verified/records/warns', array('data' => $data));
 })->name('WARNS_SINGLE');
 
@@ -102,7 +113,8 @@ Route::middleware('authWeb:web')->get('/verified/records/kicks', function () {
     $data['css_path'] = 'widgets/kicks';
     $data['view_name'] = 'KICKS';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
+    $kickData = Kick::with('getPlayer')->with('getStaff')->get();
+    $data['data'] = $kickData;
     return view('verified/records/kicks', array('data' => $data));
 })->name("KICKS");
 Route::middleware('authWeb:web')->get('/verified/records/kicks/player/{pid}', function (Request $req, $playerId) {
@@ -110,8 +122,9 @@ Route::middleware('authWeb:web')->get('/verified/records/kicks/player/{pid}', fu
     $data['css_path'] = 'widgets/kicks';
     $data['view_name'] = 'KICKS_SINGLE';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     $data['selected_pid'] = $playerId;
+    $kickData = Kick::with('getPlayer')->with('getStaff')->where('player_id', $playerId)->get();
+    $data['data'] = $kickData;
     return view('verified/records/kicks', array('data' => $data));
 })->name("KICKS_SINGLE");
 
@@ -123,7 +136,8 @@ Route::middleware('authWeb:web')->get('/verified/records/bans', function () {
     $data['css_path'] = 'widgets/bans';
     $data['view_name'] = 'BANS';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
+    $banData = Ban::with('getPlayer')->with('getStaff')->get();
+    $data['data'] = $banData;
     return view('verified/records/bans', array('data' => $data));
 })->name("BANS");
 Route::middleware('authWeb:web')->get('/verified/records/bans/player/{pid}', function (Request $req, $playerId) {
@@ -131,8 +145,9 @@ Route::middleware('authWeb:web')->get('/verified/records/bans/player/{pid}', fun
     $data['css_path'] = 'widgets/bans';
     $data['view_name'] = 'BANS_SINGLE';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     $data['selected_pid'] = $playerId;
+    $banData = Ban::with('getPlayer')->with('getStaff')->where('player_id', $playerId)->get();
+    $data['data'] = $banData;
     return view('verified/records/bans', array('data' => $data));
 })->name("BANS_SINGLE");
 
@@ -144,7 +159,6 @@ Route::middleware('authWeb:web')->get('/verified/records/trustscores', function 
     $data['css_path'] = 'widgets/trustscores';
     $data['view_name'] = 'TRUSTSCORES';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     return view('verified/records/trustscores', array('data' => $data));
 })->name("TRUSTSCORES");
 Route::middleware('authWeb:web')->get('/verified/records/trustscores/player/{pid}', function (Request $req, $playerId) {
@@ -152,7 +166,6 @@ Route::middleware('authWeb:web')->get('/verified/records/trustscores/player/{pid
     $data['css_path'] = 'widgets/trustscores';
     $data['view_name'] = 'TRUSTSCORES_SINGLE';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     $data['selected_pid'] = $playerId;
     return view('verified/records/trustscores', array('data' => $data));
 })->name("TRUSTSCORES_SINGLE");
@@ -165,7 +178,6 @@ Route::middleware('authWeb:web')->get('/verified/records', function () {
     $data['css_path'] = 'widgets/records';
     $data['view_name'] = 'RECORDS';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     return view('verified/records', array('data' => $data));
 })->name("RECORDS");
 Route::middleware('authWeb:web')->get('/verified/records/player/{pid}', function (Request $req, $playerId) {
@@ -173,7 +185,6 @@ Route::middleware('authWeb:web')->get('/verified/records/player/{pid}', function
     $data['css_path'] = 'widgets/records';
     $data['view_name'] = 'RECORDS_SINGLE';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     $data['selected_pid'] = $playerId;
     return view('verified/records', array('data' => $data));
 })->name("RECORDS_SINGLE");
@@ -186,7 +197,6 @@ Route::middleware('authWeb:web')->get('/verified/players/today', function () {
     $data['css_path'] = 'players';
     $data['view_name'] = 'PLAYERS_TODAY';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     return view('verified/players/today', array('data' => $data));
 })->name("PLAYERS_TODAY");
 Route::middleware('authWeb:web')->get('/verified/players/week', function () {
@@ -194,7 +204,6 @@ Route::middleware('authWeb:web')->get('/verified/players/week', function () {
     $data['css_path'] = 'players';
     $data['view_name'] = 'PLAYERS_WEEKLY';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     return view('verified/players/weekly', array('data' => $data));
 })->name("PLAYERS_WEEKLY");
 Route::middleware('authWeb:web')->get('/verified/players/month', function () {
@@ -202,7 +211,6 @@ Route::middleware('authWeb:web')->get('/verified/players/month', function () {
     $data['css_path'] = 'players';
     $data['view_name'] = 'PLAYERS_MONTHLY';
     $data['customize'] = false;
-    $data['captcha'] = env('USE_CAPTCHA', false);
     return view('verified/players/monthly', array('data' => $data));
 })->name("PLAYERS_MONTHLY");
 Route::middleware('authWeb:web')->get('/verified/players', function () {})->name("PLAYERS");
@@ -217,7 +225,7 @@ Route::middleware('authWeb:web')->get('/verified/signout', [LogoutController::cl
 /**
  * DASHBOARD
  */
-Route::get('/verified/dashboard', function () {
+Route::middleware('authWeb:web')->get('/verified/dashboard', function () {
     $data = [];
     $data['css_path'] = 'verified/dashboard';
     $data['view_name'] = 'DASHBOARD';

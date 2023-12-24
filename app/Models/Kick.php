@@ -22,10 +22,30 @@ class Kick extends Model {
         $this->staff_id = $staff_id;
         $this->server_id = $server_id;
     }
-    public function getStaffMember() {
-        return $this->belongsTo(Staff::class, 'staff_id');
+
+    /**
+     * Get all kick instances.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getAllKicks() {
+        return self::all();
+    }
+
+    /**
+     * Get a specific kick instance by ID.
+     *
+     * @param int $kickId
+     * @return \App\Models\Kick|null
+     */
+    public static function getKickById($kickId) {
+        return self::find($kickId);
+    }
+
+    public function getStaff() {
+        return $this->hasOne(Staff::class, 'staff_id');
     }
     public function getPlayer() {
-        return $this->belongsTo(Player::class, 'player_id');
+        return $this->hasOne(Player::class, 'player_id');
     }
 }

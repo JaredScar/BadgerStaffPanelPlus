@@ -8,7 +8,13 @@
             @include('_partials._sidebar')
         </div>
         <div class="col col-auto page d-flex">
-            <div class="gridster flex-grow-1">
+            <div class="gridster flex-grow-1 row">
+                <div class="col col-12 text-end">
+                    <button class="btn btn-success"> <!-- TODO This button will pop up a modal to add a widget -->
+                        <!-- This button should only be active in customize mode maybe?? -->
+                        <span class="fa fa-plus-circle"> Add</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
