@@ -76,6 +76,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Kick::class,
         ],
+        'layout' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Layout::class,
+        ],
         'ban' => [
             'driver' => 'eloquent',
             'model' => App\Models\Ban::class,

@@ -1,3 +1,11 @@
+<?php
+use App\Models\Kick;
+if (isset($data['selected_pid']))
+    $kickData = Kick::with('getPlayer')->with('getStaff')->where('player_id', $data['selected_pid'])->get();
+else
+    $kickData = Kick::with('getPlayer')->with('getStaff')->get();
+$data['data'] = $kickData;
+?>
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-12">

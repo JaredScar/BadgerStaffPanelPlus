@@ -1,3 +1,11 @@
+<?php
+use App\Models\Note;
+if (isset($data['selected_pid']))
+    $tabData = Note::with('getPlayer')->with('getStaff')->where('player_id', $data['selected_pid'])->get();
+else
+    $tabData = Note::with('getPlayer')->with('getStaff')->get();
+$data['data'] = $tabData;
+?>
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-12">

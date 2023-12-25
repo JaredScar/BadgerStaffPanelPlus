@@ -90,7 +90,7 @@
             <span class="sidebar-link"><i class="fa-solid fa-pen-ruler"></i> Customize <span class="float-end toggle-btn"><input id="customize_val" type="checkbox" data-toggle="toggle" data-size="xs" /></span></span>
         </div>
         <li class="mb-1">
-            <a href="/verified/dashboard" class="btn sidebar-btn align-items-center rounded">
+            <a href="/web/verified/dashboard" class="btn sidebar-btn align-items-center rounded">
                 <span class="sidebar-link"><i class="fa-brands fa-fort-awesome"></i> Dashboard</span>
             </a>
         </li>
@@ -100,12 +100,12 @@
             </button>
             <div class="collapse" id="dashboard-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="/verified/records/commends" class="link-light rounded">Commends</a></li>
-                    <li><a href="/verified/records/warns" class="link-light rounded">Warns</a></li>
-                    <li><a href="/verified/records/kicks" class="link-light rounded">Kicks</a></li>
-                    <li><a href="/verified/records/bans" class="link-light rounded">Bans</a></li>
-                    <li><a href="/verified/records/trustscores" class="link-light rounded">TrustScores</a></li>
-                    <li><a href="/verified/records" class="link-light rounded">All Records</a></li>
+                    <li><a href="/web/verified/records/commends" class="link-light rounded">Commends</a></li>
+                    <li><a href="/web/verified/records/warns" class="link-light rounded">Warns</a></li>
+                    <li><a href="/web/verified/records/kicks" class="link-light rounded">Kicks</a></li>
+                    <li><a href="/web/verified/records/bans" class="link-light rounded">Bans</a></li>
+                    <li><a href="/web/verified/records/trustscores" class="link-light rounded">TrustScores</a></li>
+                    <li><a href="/web/verified/records" class="link-light rounded">All Records</a></li>
                 </ul>
             </div>
         </li>
@@ -115,10 +115,10 @@
             </button>
             <div class="collapse" id="orders-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="/verified/players/today" class="link-light rounded">Players Today</a></li>
-                    <li><a href="/verified/players/week" class="link-light rounded">Weekly Players</a></li>
-                    <li><a href="/verified/players/month" class="link-light rounded">Monthly Players</a></li>
-                    <li><a href="/verified/players" class="link-light rounded">All Players</a></li>
+                    <li><a href="/web/verified/players/today" class="link-light rounded">Players Today</a></li>
+                    <li><a href="/web/verified/players/week" class="link-light rounded">Weekly Players</a></li>
+                    <li><a href="/web/verified/players/month" class="link-light rounded">Monthly Players</a></li>
+                    <li><a href="/web/verified/players" class="link-light rounded">All Players</a></li>
                 </ul>
             </div>
         </li>
@@ -129,10 +129,10 @@
             </button>
             <div class="collapse" id="account-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="/verified/management/staff" class="link-light rounded">Manage Staff</a></li>
-                    <li><a href="/verified/management/tokens" class="link-light rounded">Manage Tokens</a></li>
-                    <li><a href="/verified/management/settings" class="link-light rounded">Settings</a></li>
-                    <li><a href="/verified/signout" class="link-light rounded">Sign out</a></li>
+                    <li><a href="/web/verified/management/staff" class="link-light rounded">Manage Staff</a></li>
+                    <li><a href="/web/verified/management/tokens" class="link-light rounded">Manage Tokens</a></li>
+                    <li><a href="/web/verified/management/settings" class="link-light rounded">Settings</a></li>
+                    <li><a href="/web/verified/signout" class="link-light rounded">Sign out</a></li>
                 </ul>
             </div>
         </li>

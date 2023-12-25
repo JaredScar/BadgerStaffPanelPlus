@@ -8,12 +8,37 @@
             @include('_partials._sidebar')
         </div>
         <div class="col col-auto page d-flex">
-            <div class="gridster flex-grow-1 row">
-                <div class="col col-12 text-end">
+            <div class="row">
+                <div class="col col-12 text-end h-auto">
                     <button class="btn btn-success"> <!-- TODO This button will pop up a modal to add a widget -->
                         <!-- This button should only be active in customize mode maybe?? -->
                         <span class="fa fa-plus-circle"> Add</span>
                     </button>
+                </div>
+            </div>
+            <div class="gridster flex-grow-1 row">
+                <div class="col col-12">
+                    <ul>
+                        @foreach($data['widgetData'] as $widget)
+                            <li data-row="{{$widget['row']}}" data-col="{{$widget['col']}}"
+                                data-sizex="{{$widget['size_x']}}" data-sizey="{{$widget['size_y']}}">
+                                <div class="container-fluid h-100 px-0">
+                                    <div class="d-flex flex-column h-100">
+                                        <div class="row bg-zap mx-0 widget-header">
+                                            <div class="col-12 text-white">
+                                                Widget
+                                            </div>
+                                        </div>
+                                        <div class="row mx-0 bg-white flex-grow-1">
+                                            <div class="col-12 text-dark justify-content-center align-middle d-flex align-items-center">
+                                                @include("_widgets." . $widget['widget_type'])
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
         </div>
