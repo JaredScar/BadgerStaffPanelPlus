@@ -72,6 +72,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\PlayerData::class,
         ],
+        'warn' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Warn::class,
+        ],
         'kick' => [
             'driver' => 'eloquent',
             'model' => App\Models\Kick::class,

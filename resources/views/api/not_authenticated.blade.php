@@ -19,7 +19,7 @@
         <p class="lead">
             You cannot access this endpoint without being properly authenticated.
         </p>
-        <a href="/" class="btn btn-primary">Go Home</a>
+        <a href="/web" class="btn btn-primary">Go Home</a>
     </div>
 </div>
 </body>

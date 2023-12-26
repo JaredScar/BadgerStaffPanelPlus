@@ -57,6 +57,16 @@ CREATE TABLE `player_data` (
     `updated_at` DATETIME
 );
 
+CREATE TABLE `warns` (
+    `id` INT(128) AUTO_INCREMENT PRIMARY KEY,
+    `player_id` INT(128),
+    `reason` VARCHAR(255),
+    `staff_id` INT(128),
+    `server_id` INT(128),
+    `created_at` DATETIME,
+    `updated_at` DATETIME
+);
+
 CREATE TABLE `kicks` (
     `id` INT(128) AUTO_INCREMENT PRIMARY KEY,
     `player_id` INT(128),

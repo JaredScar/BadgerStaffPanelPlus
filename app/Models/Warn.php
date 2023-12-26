@@ -8,7 +8,7 @@ use Illuminate\Database\Query\Builder;
 /**
  * @mixin Builder
  */
-class Commend extends Model {
+class Warn extends Model {
     /**
      * The storage format of the model's date columns.
      *
@@ -22,6 +22,26 @@ class Commend extends Model {
         $this->staff_id = $staff_id;
         $this->server_id = $server_id;
     }
+
+    /**
+     * Get all warn instances.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getAllWarns() {
+        return self::all();
+    }
+
+    /**
+     * Get a specific warn instance by ID.
+     *
+     * @param int $warnId
+     * @return \App\Models\Kick|null
+     */
+    public static function getWarnById($warnId) {
+        return self::find($warnId);
+    }
+
     public function getStaff() {
         return $this->hasOne(Staff::class, 'staff_id');
     }
