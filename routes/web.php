@@ -213,5 +213,5 @@ Route::middleware('authWeb:web')->get('/verified/dashboard', function () {
     $data['customize'] = true;
     $layoutData = Layout::where("staff_id", Auth::user()->staff_id)->get();
     $data['widgetData'] = $layoutData;
-    return view('verified/dashboard', array('data' => $data));
+    return view('verified/dashboard', array('data' => $data), );
 })->name("DASHBOARD");

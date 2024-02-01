@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 @include('_partials._html_header')
@@ -26,7 +27,7 @@
                                     <div class="d-flex flex-column h-100">
                                         <div class="row bg-zap mx-0 widget-header">
                                             <div class="col-12 text-white">
-                                                Widget
+                                                {{ config('widget.WIDGET_NAMES_FROM_TYPE')[$widget['widget_type']] }}
                                             </div>
                                         </div>
                                         <div class="row mx-0 bg-white flex-grow-1">
@@ -62,6 +63,7 @@
                 wait_for_mouseup: true
             }
         }).data('gridster');
+        gridster.disable();
     });
 </script>
 </body>
