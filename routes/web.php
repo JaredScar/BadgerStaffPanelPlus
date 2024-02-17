@@ -154,20 +154,20 @@ Route::middleware('authWeb:web')->get('/verified/records/trustscores/player/{pid
 /**
  * RECORDS
  */
-Route::middleware('authWeb:web')->get('/verified/records', function () {
+Route::middleware('authWeb:web')->get('/records', function () {
     $data = [];
     $data['css_path'] = 'widgets/records';
     $data['view_name'] = 'RECORDS';
     $data['customize'] = false;
-    return view('verified/records', array('data' => $data));
+    return view('/records', array('data' => $data));
 })->name("RECORDS");
-Route::middleware('authWeb:web')->get('/verified/records/player/{pid}', function (Request $req, $playerId) {
+Route::middleware('authWeb:web')->get('/records/player/{pid}', function (Request $req, $playerId) {
     $data = [];
     $data['css_path'] = 'widgets/records';
     $data['view_name'] = 'RECORDS_SINGLE';
     $data['customize'] = false;
     $data['selected_pid'] = $playerId;
-    return view('verified/records', array('data' => $data));
+    return view('/records', array('data' => $data));
 })->name("RECORDS_SINGLE");
 
 /**
@@ -185,7 +185,7 @@ Route::middleware('authWeb:web')->get('/verified/players/week', function () {
     $data['css_path'] = 'players';
     $data['view_name'] = 'PLAYERS_WEEKLY';
     $data['customize'] = false;
-    return view('verified/players/weekly', array('data' => $data));
+    return view('/players/weekly', array('data' => $data));
 })->name("PLAYERS_WEEKLY");
 Route::middleware('authWeb:web')->get('/verified/players/month', function () {
     $data = [];
@@ -194,24 +194,37 @@ Route::middleware('authWeb:web')->get('/verified/players/month', function () {
     $data['customize'] = false;
     return view('verified/players/monthly', array('data' => $data));
 })->name("PLAYERS_MONTHLY");
-Route::middleware('authWeb:web')->get('/verified/players', function () {})->name("PLAYERS");
+Route::middleware('authWeb:web')->get('/players', function () {})->name("PLAYERS");
 
 /**
  * MANAGEMENT
  */
-Route::middleware('authWeb:web')->get('/verified/management/settings', function () {})->name("SETTINGS");
-Route::middleware('authWeb:web')->get('/verified/management/manage', function () {})->name("MANAGE_STAFF");
-Route::middleware('authWeb:web')->get('/verified/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
+Route::middleware('authWeb:web')->get('/management/settings', function () {})->name("SETTINGS");
+Route::middleware('authWeb:web')->get('/management/manage', function () {})->name("MANAGE_STAFF");
+Route::middleware('authWeb:web')->get('/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
 
 /**
  * DASHBOARD
  */
 Route::middleware('authWeb:web')->get('/verified/dashboard', function () {
     $data = [];
-    $data['css_path'] = 'verified/dashboard';
+    $data['css_path'] = 'dashboard';
     $data['view_name'] = 'DASHBOARD';
     $data['customize'] = true;
     $layoutData = Layout::where("staff_id", Auth::user()->staff_id)->get();
     $data['widgetData'] = $layoutData;
     return view('verified/dashboard', array('data' => $data), );
 })->name("DASHBOARD");
+
+/** 
+ * INSTALLER
+ */
+Route::middleware('authWeb:web')->get('/installer', function() {
+    $data = [];
+    $data['css_path'] = 'installer';
+    $data['view_name'] = 'INSTALLER';
+    $data['customize'] = false;
+    $data["env_file"] = 'installation.env';
+    return view('install/installer', array('data' => $data));
+})->name("INSTALLER");
+?>
