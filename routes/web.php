@@ -216,11 +216,17 @@ Route::middleware('authWeb:web')->get('/verified/dashboard', function () {
     $data['widgetData'] = $layoutData;
     return view('verified/dashboard', array('data' => $data), );
 })->name("DASHBOARD");
-
+Route::get('/tos', function() {
+    $TOSFile = public_path('/tos/tos.txt');
+    if (file_exists($TOSFile)) {
+        return response()->file($TOSFile);
+    } else {
+        return response()->json(['error' => 'file not found'], 404);
+    }
+});
 /** 
  * INSTALLER
  */
-//Route::get('/install', [InstallController::class, 'showPage'])->name('install.welcome');
 Route::get('/install/{page?}', [InstallController::class, 'showPage'])->name('install');
 Route::post('/install/next', [InstallController::class, 'moveToNextPage'])->name('moveToNextPage');
 ?>

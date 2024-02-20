@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Sessions;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\File;
 
 class InstallController extends Controller {
 
@@ -56,6 +57,10 @@ class InstallController extends Controller {
     }
     public function showPage($page = 'welcome') {
         //$mysqlV = mysql_get_server_info(); removed support for this might revisit another time.
+        $TOS = public_path('/tos/tos.txt');
+        if (file_exists($TOS)) {
+            $tosContent = File::get($TOS);
+        }
         $laravelV = app()->version();
         $phpV = phpversion();
         $data = [];
@@ -80,8 +85,7 @@ class InstallController extends Controller {
                 $this->executeWelcomeFunctions();
                 return view('install.welcome', compact('laravelV', 'phpV', 'data'));
             case 'agreement':
-                $this->executeAgreementFunctions();
-                return view('install.agreement', compact('data'));
+                return view('install.agreement', compact('data', 'tosContent'));
             case 'config':
                 $this->executeConfigFunctions();
                 return view('install.config', compact('data'));
@@ -105,12 +109,9 @@ class InstallController extends Controller {
                 return view('install.welcome', compact('laravelV', 'phpV', 'data'));
         }
     }
-        
-
-    private function executeAgreementFunctions() {
-    }
 
     private function executeConfigFunctions() {
+
     }
 
     private function executeDatabaseFunctions() {
