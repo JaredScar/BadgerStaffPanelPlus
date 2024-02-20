@@ -130,18 +130,21 @@
                   <hr>
                 </div>
                 <div class="col-12">
-                  <div class="row align-items-end justify-content-end">
+                <div class="row align-items-end justify-content-end">
                     <div class="col-2">
-                      <button class="btn btn-lg btn-outline-secondary" type="button" action="">Previous</button>
+                        <button class="btn btn-lg btn-outline-secondary" type="button" action="">Previous</button>
                     </div>
                     <div class="col"></div>
                     <div class="col-2">
-                      <button class="btn btn-lg btn-outline-primary" type="button" id="continueBtn" disabled>
-                        <span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
-                        <span id="continueBtnText" role="status">Wait...</span>
-                      </button>
+                        <form method="post" action="{{ route('moveToNextPage') }}" id="continue2agreement">
+                            @csrf
+                            <input type="hidden" name="currentPage" value="welcome">
+                            <button type="submit" name="nextButton" class="btn btn-lg btn-outline-primary" type="button" id="continueBtn" disabled>
+                                <span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+                                <span id="continueBtnText" role="status">Wait...</span>
+                            </button>
+                        </form>
                     </div>
-                  </div>
                 </div>
               </div>
         </div>
@@ -247,12 +250,15 @@
           } else {
             var continueExt = true;
           }
-
-          if (continueExt == true && continueLaravel == true && continuePhp == true) {
-            let Btn = document.getElementById('continueBtn');
-            let btnText = document.getElementById('continueBtnText');
+          let Btn = document.getElementById('continueBtn');
+          let btnText = document.getElementById('continueBtnText');
+          if (continueExt == true && continueLaravel == true && continuePhp == true) {  
             Btn.disabled = false;
-            Btn.innerText = 'Continue'
+            Btn.className = 'btn btn-lg btn-primary'
+            Btn.innerText = 'Continue';
+          } else {
+            Btn.className = 'btn btn-lg btn-outline-danger';
+            Btn.innerText = 'Install Failed';
           }
           //if (checkMySQLVersion(mysql) == true) {
             //mysqldiv.innerHTML = `<i class="bi bi-check2-square"></i> ${mysql} - Compatable version found.`;

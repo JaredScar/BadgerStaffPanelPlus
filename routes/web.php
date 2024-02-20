@@ -220,7 +220,7 @@ Route::middleware('authWeb:web')->get('/verified/dashboard', function () {
 /** 
  * INSTALLER
  */
-Route::get('/install/{page}', [InstallController::class, 'showPage'])->name('showPage');
+//Route::get('/install', [InstallController::class, 'showPage'])->name('install.welcome');
+Route::get('/install/{page?}', [InstallController::class, 'showPage'])->name('install');
 Route::post('/install/next', [InstallController::class, 'moveToNextPage'])->name('moveToNextPage');
-Route::get('/install', [InstallController::class, 'determineVersion'])->name("installer");
 ?>
