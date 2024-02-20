@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\InstallController;
 use App\Http\Controllers\LogoutController;
 use App\Models\Layout;
 use Illuminate\Database\Query\Builder;
@@ -219,12 +220,7 @@ Route::middleware('authWeb:web')->get('/verified/dashboard', function () {
 /** 
  * INSTALLER
  */
-Route::middleware('authWeb:web')->get('/installer', function() {
-    $data = [];
-    $data['css_path'] = 'installer';
-    $data['view_name'] = 'INSTALLER';
-    $data['customize'] = false;
-    $data["env_file"] = 'installation.env';
-    return view('install/installer', array('data' => $data));
-})->name("INSTALLER");
+Route::get('/install/{page}', [InstallController::class, 'showPage'])->name('showPage');
+Route::post('/install/next', [InstallController::class, 'moveToNextPage'])->name('moveToNextPage');
+Route::get('/install', [InstallController::class, 'determineVersion'])->name("installer");
 ?>
