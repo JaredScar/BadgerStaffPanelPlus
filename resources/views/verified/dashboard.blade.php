@@ -11,7 +11,7 @@
         <div class="col col-auto page d-flex">
             <div class="row">
                 <div class="col col-12 text-end h-auto">
-                    <button class="btn btn-success"> <!-- TODO This button will pop up a modal to add a widget -->
+                    <button class="btn btn-success"> <!-- TODO Open modal to add a widget via selection? -->
                         <!-- This button should only be active in customize mode maybe?? -->
                         <span class="fa fa-plus-circle"> Add</span>
                     </button>
