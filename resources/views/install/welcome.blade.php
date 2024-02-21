@@ -12,7 +12,7 @@
                         </div>
                     </div>
                     <hr>
-                    <ul class="nav nav-pills flex-column"> 
+                    <ul class="nav nav-pills flex-column">
                       <li class="nav-item"><a href="#" class="nav-link active" aria-current="page"><i class="bi bi-square me-2"></i> Welcome</a></li>
                       <li><a href="#" class="nav-link text-white"><i class="bi bi-square me-2"></i> Agreements</a></li>
                       <li><a href="#" class="nav-link text-white"><i class="bi bi-square me-2"></i> Configuration</a></li>
@@ -23,7 +23,7 @@
                       <li><a href="#" class="nav-link text-white"><i class="bi bi-square me-2"></i> Complete</a></li>
                     </ul>
                     <hr>
-                    <div class="dropdown d-flex align-items-end"> 
+                    <div class="dropdown d-flex align-items-end">
                       <button class="btn d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="/img/profiles/no-pfp.png" alt="profilepicture" width="32" height="32" class="rounded-circle me-2">
                         <strong>{{ Auth::user()->staff_username; }}</strong>
@@ -35,14 +35,14 @@
                   </div>
                 </div>
             </div>
-          <div class="col-sm m-5 align-items-start"> 
+          <div class="col-sm m-5 align-items-start">
               <div class="row gy-4">
                 <div class="col-12">
                     <h4>Welcome to BadgerStaffPanelPlus</h4>
                     <div>
-                        Greetings from the developers of your new FiveM player management system. This comprehensive system has a plethora of features and planned features that will make managing your FiveM server a breeze. 
-                        This panel aims to make managing your servers players as easy as possible. To encourage an open forum of feature requests, creating trust and improving on this software we have decided to make this 
-                        panel open sourced on our GitHub. We have a vast list of features currently available to you, and plan to expand on those features and intoduce more in the future. We thank you for your support. 
+                        Greetings from the developers of your new FiveM player management system. This comprehensive system has a plethora of features and planned features that will make managing your FiveM server a breeze.
+                        This panel aims to make managing your servers players as easy as possible. To encourage an open forum of feature requests, creating trust and improving on this software we have decided to make this
+                        panel open sourced on our GitHub. We have a vast list of features currently available to you, and plan to expand on those features and intoduce more in the future. We thank you for your support.
 
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                     <h4>You are about to install this web panel</h4>
                     <div>
                         These installation pages have been created to make installing and configuring this website easy and straight forward. On the next pages some options may be pre-configured with recommended options, these
-                        options may be changed however it may produce unwanted results. This web panel is intended to be used with the FiveM Server Resource BadgerStaffPanelPlus, and depends on this being installed and running 
+                        options may be changed however it may produce unwanted results. This web panel is intended to be used with the FiveM Server Resource BadgerStaffPanelPlus, and depends on this being installed and running
                         on the FiveM server before attempting installation. For best performance we recommend running this web panel on the same server as the web panel.
                     </div>
                 </div>
@@ -115,7 +115,7 @@
                 <div class="col-12">
                     <h4>Helpful Resources</h4>
                     <div>
-                        Should you run into any problems installing this Web Panel for managing your BadgerStaffPanelPlus, you may utilize the following resources provided to seek assistance or report bugs. 
+                        Should you run into any problems installing this Web Panel for managing your BadgerStaffPanelPlus, you may utilize the following resources provided to seek assistance or report bugs.
                         <div class="row">
                           <div class="col-md">
                             <div class="list-group">
@@ -162,7 +162,7 @@
             let version = laravel;
             let v = laravel.split('.');
             if (v[0] == '10') {
-              if (v[1] >= '40') {
+              if (v[1] >= '0') {
                 return true;
               } else { return false;}
             } else {
@@ -195,7 +195,7 @@
                 if (extensions[ext] == false) {
 
                   console.log(ext);
-                  
+
                   extstatsArray.push(ext.slice(4));
                   let failedDiv = document.getElementById(ext).className = 'text-danger';
                   var failedExtensions = extstatsArray.join(', ');
@@ -252,7 +252,7 @@
           }
           let Btn = document.getElementById('continueBtn');
           let btnText = document.getElementById('continueBtnText');
-          if (continueExt == true && continueLaravel == true && continuePhp == true) {  
+          if (continueExt == true && continueLaravel == true && continuePhp == true) {
             Btn.disabled = false;
             Btn.className = 'btn btn-lg btn-primary'
             Btn.innerText = 'Continue';
