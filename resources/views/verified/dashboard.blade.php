@@ -48,13 +48,22 @@
 </div>
 <script>
     $(function () { //DOM Ready
-        GridStack.init(
+        const grid = GridStack.init(
             {
                 float: true,
                 alwaysShowResizeHandle: 'mobile',
-                cellHeight: 50
+                cellHeight: 50,
+                disableDrag: true,
+                disableResize: true
             }
         );
+        let customize = false;
+        $('#customize_val').on('change', () => {
+            grid.enableMove(!customize);
+            grid.enableResize(!customize);
+            customize = !customize;
+            // TODO We need to save when the customize is turned off...
+        });
     });
 </script>
 </body>
