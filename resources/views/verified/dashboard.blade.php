@@ -50,6 +50,9 @@
     $(function () { //DOM Ready
         GridStack.init(
             {
+                float: true,
+                alwaysShowResizeHandle: 'mobile',
+                cellHeight: 50
             }
         );
     });
