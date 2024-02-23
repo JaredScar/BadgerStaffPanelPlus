@@ -57,10 +57,6 @@ class InstallController extends Controller {
     }
     public function showPage($page = 'welcome') {
         //$mysqlV = mysql_get_server_info(); removed support for this might revisit another time.
-        $TOS = public_path('/tos/tos.txt');
-        if (file_exists($TOS)) {
-            $tosContent = File::get($TOS);
-        }
         $laravelV = app()->version();
         $phpV = phpversion();
         $data = [];
@@ -80,6 +76,17 @@ class InstallController extends Controller {
         $data['css_path'] = 'installer';
         $data['view_name'] = 'install';
         $data['customize'] = false;
+        $TOS = public_path('/tos/tos.txt');
+        $thatenv = public_path('install/init/example.env');
+        //$tosContent = "";
+        if (file_exists($TOS)) {
+            $tosContent = File::get($TOS);
+        }
+        if (file_exists($thatenv)) {
+            $envContent = File::get($thatenv);
+        } else {
+            $envContentArray = [];
+        }
         switch ($page) {
             case 'welcome':
                 $this->executeWelcomeFunctions();
@@ -88,7 +95,7 @@ class InstallController extends Controller {
                 return view('install.agreement', compact('data', 'tosContent'));
             case 'config':
                 $this->executeConfigFunctions();
-                return view('install.config', compact('data'));
+                return view('install.config', compact('data', 'envContent', 'thatenv'));
             case 'database':
                 $this->executeDatabaseFunctions();
                 return view('install.database', compact('data'));

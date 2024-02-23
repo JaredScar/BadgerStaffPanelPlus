@@ -23,15 +23,6 @@
                       <li><a href="#" class="nav-link text-white"><i class="bi bi-square me-2"></i> Complete</a></li>
                     </ul>
                     <hr>
-                    <div class="dropdown d-flex align-items-end">
-                      <button class="btn d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="/img/profiles/no-pfp.png" alt="profilepicture" width="32" height="32" class="rounded-circle me-2">
-                        <strong>{{ Auth::user()->staff_username; }}</strong>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                        <li><a class="dropdown-item" href="#">Cancel Install</a></li>
-                      </ul>
-                    </div>
                   </div>
                 </div>
             </div>
