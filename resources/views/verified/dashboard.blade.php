@@ -9,20 +9,12 @@
             @include('_partials._sidebar')
         </div>
         <div class="col col-auto page d-flex">
-            <div class="row">
-                <div class="col col-12 text-end h-auto">
-                    <button class="btn btn-success"> <!-- TODO Open modal to add a widget via selection? -->
-                        <!-- This button should only be active in customize mode maybe?? -->
-                        <span class="fa fa-plus-circle"> Add</span>
-                    </button>
-                </div>
-            </div>
             <div class="row flex-grow-1">
                 <div class="col col-12">
                     <div class="grid-stack">
                         @foreach($data['widgetData'] as $widget)
                             <div class="grid-stack-item" gs-y="{{$widget['row']}}" gs-x="{{$widget['col']}}"
-                                gs-width="{{$widget['size_x']}}" gs-height="{{$widget['size_y']}}">
+                                gs-width="{{$widget['size_x']}}" gs-height="{{$widget['size_y']}}" data-widgetType="{{$widget['widget_type']}}">
                                 <div class="container-fluid h-100 px-0 grid-stack-item-content">
                                     <div class="d-flex flex-column h-100">
                                         <div class="row bg-zap mx-0 widget-header">
@@ -54,7 +46,10 @@
                 alwaysShowResizeHandle: 'mobile',
                 cellHeight: 50,
                 disableDrag: true,
-                disableResize: true
+                disableResize: true,
+                margin: 0,
+                removable: true,
+                removeTimeout: 3000
             }
         );
         let customize = false;
@@ -63,6 +58,17 @@
             grid.enableResize(!customize);
             customize = !customize;
             // TODO We need to save when the customize is turned off...
+            for (let gridItem of grid.getGridItems()) {
+                const widgetType = grid?.dataset?.widgettype;
+                const gridStackNode = grid?.gridstackNode;
+                if (widgetType && gridStackNode) {
+                    // Valid widget type... We need to save
+                    const h = gridStackNode.h;
+                    const w = gridStackNode.w;
+                    const x = gridStackNode.x;
+                    const y = gridStackNode.y;
+                }
+            }
         });
     });
 </script>
