@@ -26,15 +26,6 @@
                       <li class="nav-item"><a href="{{ url()->current()}}" class="nav-link text-white"><i class="bi bi-square me-2"></i> Complete</a></li>
                     </ul>
                     <hr>
-                    <div class="dropdown d-flex align-items-end"> 
-                      <button class="btn d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="/img/profiles/no-pfp.png" alt="profilepicture" width="32" height="32" class="rounded-circle me-2">
-                        <strong>{{ Auth::user()->staff_username; }}</strong>
-                      </button>
-                      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                        <li><a class="dropdown-item" href="#">Cancel Install</a></li>
-                      </ul>
-                    </div>
                   </div>
                 </div>
             </div>
@@ -55,6 +46,7 @@
                     <label for="tosagreementagree" class="form-check-label">
                     I agree to the above mentioned EULA and Terms of Service agreement
                     </label>
+                    <div id="TOSUn"class="text-danger" hidden>You must agree to the EULA and Terms of Service agreement..</div>
                   </div>
                 <div class="col-12">
                   <hr>
@@ -70,7 +62,7 @@
                     <div class="col-2">
                         <form method="post" action="{{ route('moveToNextPage') }}" id="continue2agreement">
                             @csrf
-                            <input type="hidden" name="currentPage" value="welcome">
+                            <input type="hidden" name="currentPage" value="agreement">
                             <button type="submit" name="nextButton" class="btn btn-lg btn-outline-primary" id="continueBtn" disabled>
                                 <span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
                                 <span id="continueBtnText" role="status">Wait...</span>
@@ -78,10 +70,27 @@
                         </form>
                     </div>
                 </div>
-                </div>
+                </div> 
               </div>
         </div>
         <script>
+          let agreementDiv = document.getElementById('tosagreementagree');
+          let continueBtn = document.getElementById('continueBtn');
+          let continueBtnText = document.getElementById('continueBtnText');
+          let tosun = document.getElementById('TOSUn');
+          var staticThis = false;
+          setInterval(()=> {
+            if (agreementDiv.checked) {
+              staticThis = true;
+              continueBtn.innerHTML = 'Continue';
+              continueBtn.disabled = false;
+              TOSUn.hidden = true;
+            } else if(staticThis == true && !agreementDiv.checked) {
+              continueBtn.innerHTML = '<span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span><span id="continueBtnText" role="status">Wait...</span>';
+              continueBtn.disabled = true;
+              TOSUn.hidden = false;
+            }
+          }, 1*1000)
         </script>
     </body>
 </html>
