@@ -229,4 +229,5 @@ Route::get('/tos', function() {
  */
 Route::get('/install/{page?}', [InstallController::class, 'showPage'])->name('install');
 Route::post('/install/next', [InstallController::class, 'moveToNextPage'])->name('moveToNextPage');
+Route::post('/install/create-env', [InstallController::class, 'createEnvFunction']);
 ?>

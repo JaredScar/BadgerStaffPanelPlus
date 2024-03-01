@@ -3,6 +3,9 @@
     @php
       $currentPage
     @endphp
+    <head>
+      <meta name="csrf-token" content="{{ csrf_token()}}">
+    </head>
     <body class="bg-dark text-light container-fluid" data-bs-theme="dark">
         <div class="row">
             <div class="col-sm-3">
@@ -31,6 +34,7 @@
             </div>
             <div class="col-sm m-5 align-items-start">
               <form id="env_creation_tool" class="row gy-2 needs-validation">
+                @csrf
                 <div class="col-12">
                     <h4>Configure your install</h4>
                     <div>
@@ -268,8 +272,8 @@
                     trouble however it is not garenteed we will have a ready-to-use fix for you.
                 </div>
                 <div class="col-6 advanced-user" hidden>
-                  <label for="bc_crypt" class="form-label">BC Crypt</label>
-                  <input type="text" class="form-control" id="bc_crypt" aria-describedby="bccrypthelp">
+                  <label for="bcrypt_rounds" class="form-label">BCrypt Rounds</label>
+                  <input type="text" class="form-control" id="bcrypt_rounds" aria-describedby="bccrypthelp">
                   <div class="form-text" id="bcrypthelp">Recommended value: <u>15</u></div>
                 </div>
                 <div class="col-6 advanced-user" hidden>
@@ -278,8 +282,8 @@
                   <div class="form-text" id="broadcastdriverhelp">Recommended value: <u>log</u></div>
                 </div>
                 <div class="col-6 advanced-user" hidden>
-                  <label for="cachedriver" class="form-label">Cache Driver</label>
-                  <input type="text" class="form-control" id="cachedriver" aria-describedby="cachedriverhelp">
+                  <label for="cache_driver" class="form-label">Cache Driver</label>
+                  <input type="text" class="form-control" id="cache_driver" aria-describedby="cachedriverhelp">
                   <div class="form-text" id="cachedriverhelp">Recommended value: <u>file</u></div>
                 </div>
                 <div class="col-6 advanced-user" hidden>
@@ -362,21 +366,25 @@
                   <label for="log_level" class="form-label">Log Level</label>
                   <input type="text" class="form-control" id="log_level">
                 </div>
-              </form>
-                <div class="col-12">
-                    <h4>Helpful Resources</h4>
+                <div class="col-12 my-3">
+                    <h4>Creating the ENV</h4>
                     <div>
-                        Should you run into any problems installing this Web Panel for managing your BadgerStaffPanelPlus, you may utilize the following resources provided to seek assistance or report bugs.
-                        <div class="row">
-                          <div class="col-md">
-                            <div class="list-group">
-                              <a href="#" class="list-group-item">GitHub <i class="bi bi-dash"></i> For bug reporting and information including documentation</a>
-                              <a href="#" class="list-group-item">Support Discord <i class="bi bi-dash"></i> For support involving installs, reinstalls, news and information, and status.</a>
-                            </div>
-                          </div>
+                        Looks like you have reached the end of the page, we just need to do one last thing before we continue to the next step. 
+                        That last thing is going to be to actually create your ENV file. As long as all the prep work has been successfully 
+                        completed this step should be clockwork. The installer is going to evaluate the input you provided and show you anything 
+                        you may of missed. If you have nothing to fix it will unlock that sparkling continue button, if you do it will show you
+                         what isn't satisfactory to the installer so you can fix it then try again.
+                    </div>
+
+                    <div class="col-12 my-3">
+                      <div class="row justify-content-center align-items-center">
+                        <div class="col">
+                          <button id="envSubmitButton" class="btn btn-lg btn-success" type="button" action="submit">Submit</button>
                         </div>
+                      </div>
                     </div>
                 </div>
+              </form>
                 <div class="col-12">
                   <hr>
                 </div>
@@ -409,6 +417,7 @@
           let use_captcha = document.getElementById('use_captcha');
           let google_captcha_key = document.getElementById('google_captcha_key');
           let google_captcha_secret = document.getElementById('google_captcha_secret');
+          let captcha_vendor = document.getElementById('captcha_vendor');
             // other variables
           let serverProtocolBtn = document.getElementById('serverProtocolBtn');
           let appurlwarning = document.getElementById('app_url_warning');
@@ -514,6 +523,7 @@
           app_url.value = serverAddress ?? null;
           master_api_key.value = finalEnvContent.masterapikey ?? null;
           use_captcha.value = finalEnvContent.usecaptcha ?? false;
+          captcha_vendor.value = finalEnvContent.captchavendor ?? 'google'
           google_captcha_key.value = finalEnvContent.googlecaptchakey ?? null;
           google_captcha_secret.value = finalEnvContent.googlecaptchasecret ?? null;
           master_admin_discord_id.value = finalEnvContent.masteradmindiscordid ?? null;
@@ -539,9 +549,9 @@
 
           // options not normally modifiable unless they check disclaimer they know //
           // what they are doing //
-          bc_crypt.value = finalEnvContent.bccrypt ?? 15;
+          bcrypt_rounds.value = finalEnvContent.bccrypt ?? 15; 
           broadcast_driver.value = finalEnvContent.broadcastdriver ?? 'log';
-          cachedriver.value = finalEnvContent.cachedriver ?? 'file';
+          cache_driver.value = finalEnvContent.cachedriver ?? 'file';
           filesystem_disk.value = finalEnvContent.filesystemdisk ?? 'local';
           queue_connection.value = finalEnvContent.queueconnection ?? 'sync';
           session_driver.value = finalEnvContent.sessiondriver ?? 'file';
@@ -594,19 +604,19 @@
               })
             }
           }
-
           // final check before creating .env THIS is also .env referer //
-          function checkEverythingIsSane() {
-            const formSelector = document.getElementById('env_creation_tool');
-            formSelector.addEventListener('submit', (event) => {
+            const formSelector = document.getElementById('envSubmitButton');
+            formSelector.addEventListener('click', (event) => {
+              let appurl20 = `${window.location.protocol}//` + document.getElementById('app_url').value;
               const data = {
                 app_name: app_name.value,
                 app_env: app_env.value,
                 app_key: app_key.value,
                 app_debug: app_debug.value,
-                app_url: app_url.value,
+                app_url: appurl20,
                 master_api_key: master_api_key.value,
                 use_captcha: use_captcha.value,
+                captcha_vendor: captcha_vendor.value,
                 google_captcha_key: google_captcha_key.value,
                 google_captcha_secret: google_captcha_secret.value,
                 use_discord: use_discord.value,
@@ -635,31 +645,45 @@
                 redis_host: redis_host.value,
                 redis_password: redis_password.value,
                 redis_port: redis_port.value,
+                mail_mailer: mail_mailer.value,
+                mail_host: mail_host.value,
+                mail_username: mail_username.value,
+                mail_port: mail_port.value,
+                mail_password: mail_password.value,
+                mail_from_address: mail_from_address.value,
+                mail_from_name: mail_from_name.value,
+                aws_access_key_id: aws_access_key_id.value,
+                aws_secret_access_key: aws_secret_access_key.value,
+                aws_default_region: aws_default_region.value,
+                aws_bucket: aws_bucket.value,
+                aws_use_path_style_endpoint: aws_use_path_style_endpoint.value
               }
               event.preventDefault();
-              fetch('create-env.php', {
+              fetch('/web/install/create-env', {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
+                  'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                body: JSON.stringify(data);
+                body: JSON.stringify(data)
               }).then(response => response.json()).then(jsonData => {
                 if (jsonData.status === 'success') {
+                  console.log(jsonData);
                   // all is good now unlock continue button.
                 } else {
-                  // something returned an error.
+                  console.log(jsonData);
                 }
               })
-          }
-          document.getElementById('use_captcha').addEventListener('change', captchaOptInStatusChanged);
-          document.getElementById('use_discord').addEventListener('change', discordOptInStatusChanged);
-          let advancedUserCheckbox = document.getElementById('advanced_user');
-          function advancedUserToggle() {
-            let advancedUserClass = document.querySelectorAll('.advanced-user');
-            advancedUserClass.forEach(function (element) {
-              element.hidden = !advancedUserCheckbox.checked;
-            });
-          }
+          });
+        document.getElementById('use_captcha').addEventListener('change', captchaOptInStatusChanged);
+        document.getElementById('use_discord').addEventListener('change', discordOptInStatusChanged);
+        let advancedUserCheckbox = document.getElementById('advanced_user');
+        function advancedUserToggle() {
+          let advancedUserClass = document.querySelectorAll('.advanced-user');
+          advancedUserClass.forEach(function (element) {
+            element.hidden = !advancedUserCheckbox.checked;
+          });
+        }
         </script>
     </body>
 </html>

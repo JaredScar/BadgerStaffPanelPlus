@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Sessions;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\File;
+use mysqli;
 
 class InstallController extends Controller {
 
@@ -134,6 +135,369 @@ class InstallController extends Controller {
     }
 
     private function executeCompleteFunctions() {
+    }
+
+    public function createEnvFunction(Request $request) {
+        function concatErrors(array $arrays): array {
+            $combinedArray = [];
+        
+            foreach ($arrays as $index => $array) {
+                foreach ($array as $key => $value) {
+                    $combinedArray[$key] = $value;
+                }
+            }
+            if (count($combinedArray) == 0) {
+                $combinedArray = ['success' => 'true'];
+                return $combinedArray;
+            } else {
+                return $combinedArray;    
+            }
+            
+        }
+        
+        function databaseTestFunction($db_connection, $db_host, $db_username, $db_password, $db_database, $db_port) {
+            
+            if (isset($db_connection)) {
+                $database_schema = [];
+        
+                if ($db_connection == 'mysql' || $db_connection == 'mariadb') {
+                    if (isset($db_host) && isset($db_port)) {
+                        if (isset($db_username) && isset($db_password)) {
+                            // atlast we test the DB connection cuz everything else is set.
+                            $conn = new mysqli($db_host, $db_username, $db_password, "", $db_port);
+                            if ($conn->connect_error) {
+                                return 'database_login_failure';
+                            } else {
+                                $conn->close();
+                                return 'connection_successful';
+                            }
+                        } else {
+                            return 'database_user_password_null';
+                        }
+                    } else {
+                        return 'database_host_port_null';
+                    }
+                } else {
+                    return 'unsupported_database_server';
+                }
+            }
+        }
+        function validateThenGenerate($app_name, $app_env, $app_key, $app_debug, $app_url, $master_api_key, $use_captcha, $captcha_vendor, $google_captcha_key, $google_captcha_secret, $use_discord, $discord_use_case, $discord_redirect_uri, $discord_redirect_auth, $master_admin_discord_id, $master_admin_role_id, $log_channel, $log_deprecation_channel, $log_level, $db_connection, $db_host, $db_username, $db_password, $db_port, $db_database, $broadcast_driver, $cache_driver, $filesystem_disk, $queue_connection, $session_driver, $session_lifetime, $memcached_host, $redis_host, $redis_password, $redis_port, $mail_mailer, $mail_host, $mail_username, $mail_port, $mail_password, $mail_from_address, $mail_from_name, $aws_access_key_id, $aws_secret_access_key, $aws_default_region, $aws_bucket, $aws_use_path_style_endpoint, $bcrypt_rounds) 
+        {
+            $errors = [];
+            //app_name
+            if(!ctype_alpha($app_name)) {
+                $errors[] = array('app_name' => array('status' => 'error', 'message' => 'Invalid Application Name. Please revise your selection to include characters A-Z, 0-9', 'errorid' => '1'));
+            }
+        
+            //app_env
+            if (strlen($app_env) < 2 || strlen($app_env) == 0) {
+                $errors[] = array('app_env' => array('status' => 'error', 'message' => 'Invalid Application Enviornment. Please revise your selection to include more than 2 characters.', 'errorid' => '2'));
+            }
+        
+            //app_debug
+            if ($app_debug !== 'true' && $app_debug !== 'false') {
+                $errors[] = array('app_debug' => array('status' => 'error', 'message' => 'Invalid Debug value, this must be true or false. Please revise your selection to being either enabled or disabled (true or false).'));
+            }
+        
+            //app_key
+            if (strlen($app_key) < 1) {
+                $errors[] = array('app_key' => array('status' => 'error', 'message' => 'Invalid Application Key. It is highly recommended this to be left its default value.'));
+            }
+        
+            //app_url
+            if (strlen($app_url) < 1) {
+                $errors[] = array('app_url' => array('status' => 'error', 'message' => 'Invalid Application URL. Your URL cannot be 0 characters. Please revise your selection.', 'current_value' => $app_url));
+            } else if (str_contains($app_url, ".") == false) {
+                $errors[] = array('app_url' => array('status' => 'error', 'message' => 'Invalid Application URL. You are missing a . in your URL. FQDNs require URLs to have a name and a suffix such as .com .net .org ect.'));
+            } else if (str_contains($app_url, "http") == false) {
+                $errors[] = array('app_url' => array('status' => 'error', 'message' => 'Invalid Application URL. You are missing the protocol in your URL. For example if an insecure server your URL might have an http:// or for a secure url they might include a https://', 'current_value' => $app_url));
+            }
+        
+            //master_api_key
+            if (strlen($master_api_key) < 1) {
+                $errors[] = array('master_api_key' => array('status' => 'error', 'message' => 'Invalid Master API Key. You must have one generated either from using the default installation ENV of using another method. This cannot be blank.'));
+            }
+        
+            //use_captcha
+            if ($use_captcha !== 'true' && $use_captcha !== 'false') {
+                $errors[] = array('use_captcha' => array('status' => 'error', 'message' => 'Invalid Use Captcha Value. You must either choose to not use a captcha or to use a captcha.'));
+            }
+        
+            //captcha_vendor
+            if ($captcha_vendor !== 'google') {
+                $errors[] = array('captcha_vendor' => array('status' => 'error', 'message' => 'Invalid Captcha Vendor. At this time this application will only support Google Recaptcha.'));
+            }
+        
+            //google_captcha_key & google_captcha_secret
+            if ($captcha_vendor == "google" && $use_captcha == 'true') {
+                //google_captcha_key
+                if (strlen($google_captcha_key) < 1) {
+                    $errors[] = array('google_captcha_key' => array('status' => 'error', 'message' => 'Invalid Google Captcha Key. If you need assistance in generating a google captcha key please <a href="#">click here</a>.'));
+                }
+                //google_captcha_secret
+                if (strlen($google_captcha_secret) < 1) {
+                    $errors[] = array('google_captcha_secret' => array('status' => 'error', 'message' => 'Invalid Google Captcha Secret. If you need assistance in generating a google captcha secret please <a href="#">click here</a>.'));
+                }
+            }
+        
+            //use_discord 
+            if ($use_discord !== 'true' && $use_discord !== 'false') {
+                $errors[] = array('use_discord' => array('status' => 'error', 'message' => 'Invalid Use Discord. You can either choose to enable or not enable it. You cannot specify otherwise.'));
+            }
+        
+            //discord_use_case
+            if ($use_discord == 'true' && $discord_use_case !=='full' && $discord_use_case !=='logging' && $discord_use_case !=='auth_only') {
+                $errors[] = array('discord_use_case' => array('status' => 'error', 'message' => 'Invalid Discord Use Case. To learn more about the options and what to choose, please refer to our <a href="#">documentation</a>.'));
+            }
+        
+            //discord_redirect_uri
+            if ($use_discord == 'true') {
+                if ($discord_use_case == 'full' || $discord_use_case == 'logging' || $discord_use_case == "auth_only") {
+                    if (strlen($discord_redirect_uri) < 1) {
+                        $errors[] = array('discord_redirect_uri' => array('status' => 'error', 'message' => 'Invalid Discord Redirect URI. To learn more about the options and what to choose, please refer to our <a href="#">documentation</a>.'));
+                    }
+                }
+            }
+        
+            //discord_redirect_auth
+            if ($use_discord == 'true') {
+                if ($discord_use_case == 'full' || $discord_use_case == 'logging' || $discord_use_case == "auth_only") {
+                    if (strlen($discord_redirect_auth) < 1) {
+                        $errors[] = array('discord_redirect_auth' => array('status' => 'error', 'message' => 'Invalid Discord Redirect Auth. To learn more about the options and what to choose, please refer to our <a href="#">documentation</a>.'));
+                    }
+                }
+            }
+        
+            //master_admin_discord_id
+            if ($use_discord == 'true') {
+                if (strlen($discord_use_case) > 0) {
+                    if (strlen($master_admin_discord_id) < 18 || strlen($master_admin_discord_id) > 18) {
+                        $errors[] = array('master_admin_discord_id' => array('status' => 'error', 'message' => 'The Master Admin Discord ID should be set to a value not less than or exceeding 13 numerical digits. There is no need to include any brackets, @ symbols or signs.'));
+                    } else if (is_numeric($master_admin_role_id)) {
+                        $errors[] = array('master_admin_discord_id_2' => array('status' => 'error', 'message' => 'The Master Admin Discord ID should be entirely numeric in value, letters and specicial characters are forbidden.'));
+                    }
+                }
+            }
+        
+            //master_admin_role_id
+            if ($use_discord == 'true') {
+                if (strlen($discord_use_case) > 0) {
+                    if (strlen($master_admin_role_id) < 18 || strlen($master_admin_role_id) > 18) {
+                        $errors[] = array('master_admin_role_id' => array('status' => 'error', 'message' => 'The Master Admin Role ID should be set to a value not less than or exceeding 13 numerical digits. There is no need to include any brackets, & symbols or signs.'));
+                    } else if (is_numeric($master_admin_role_id)) {
+                        $errors[] = array('master_admin_role_id_2' => array('status' => 'error', 'message' => 'The Master Admin Role ID should be entirely numeric in value, letters and specicial characters are forbidden.'));
+                    }
+                }
+            }
+        
+            //log_channel
+            if (strlen($log_channel) < 1) {
+                $errors[] = array('log_channel' => array('status' => 'error', 'message' => 'The Field Log Channel has a value less than 1. Please set this value before continuing.'));
+            }
+        
+            //log_deprecation_channel
+            if (strlen($log_deprecation_channel) < 1) {
+                $errors[] = array('log_deprecation_channel' => array('status' => 'error', 'message' => 'The Field Log Deprecations Channel has a value of less than 1. Please set this value before continuing.'));
+            }
+            
+            //log_level
+            if (strlen($log_level) < 1) {
+                $errors[] = array('log_level' => array('status' => 'error', 'message' => 'The Field Log Level has a value of less than 1. Please set this value before continuing.'));
+            }
+        
+            //db_connection
+            if (strlen($db_connection) < 1) {
+                $errors[] = array('db_connection' => array('status' => 'error', 'message' => 'You must specify the Database Driver for this installation. A Database is required to store information required for this panels functionality.'));
+            } 
+        
+            //db_host
+            if (strlen($db_host) < 1) {
+                $errors[] = array('db_host' => array('status' => 'error', 'message' => 'You must have a database host that you can connect to. If this database server is hosted on the same machine, most often times "localhost" will work.'));
+            }
+        
+            //db_database
+            if (strlen($db_database) < 1) {
+                $errors[] = array('db_database' => array('status' => 'error', 'message' => 'You must specify a database to connect to for hosting information important for the panels functionality. It is okay if the database is non existant yet as it will be created later.'));
+            }
+        
+            //db_username
+            if (strlen($db_username) < 1) {
+                $errors[] = array('db_username' => array('status' => 'error', 'message' => 'You must specify a username and password for logging into the database server and by extension the database.'));
+            }
+        
+            //db_password
+            if (strlen($db_password) < 1) {
+                $errors[] = array('db_password' => array('status' => 'error', 'message' => 'You must specify a valid password for the database user to login to the database on your database server.'));
+            }
+        
+            //db_port
+            if (strlen($db_port) < 1 || strlen($db_port) > 5) {
+                $errors[] = array('db_port' => array('status' => 'error', 'message' => 'You must specify a valid port to use for communicating to and from the Database Server. Typically the default port used is 3306.'));
+            }
+        
+            // Database Test Credentials Function
+            if ($db_connection !== null && $db_host !== null && $db_username !== null && $db_password !== null && $db_port !== null) {
+                $database_test = databaseTestFunction($db_connection, $db_host, $db_username, $db_password, $db_database, $db_port);
+        
+                if ($database_test == "database_login_failure") {
+                  //report connection broken
+                    $errors[] = array('database_login_failure' => array('status' => 'error', 'message' => 'Connection to the database server using the parameters you supplied did not work. Details are below:\n' . $database_test . '\n Correct these errors to continue installation.'));
+                } else if ($database_test == "connection_successful") {
+                  //report connection works
+                  //no action for now.
+                } else if ($database_test == "unsupported_database_server") {
+                    $errors[] = array('unsupported_database_server' => array('status' => 'error', 'message' => 'We currently do not support the database server you have chosen.'));
+                }
+            }
+        
+            //bcrypt_rounds
+            if (strlen($bcrypt_rounds) < 1) {
+                $errors[] = array('brypt_rounds' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //broadcast_driver
+            if (strlen($broadcast_driver) < 1) {
+                $errors[] = array('broadcast_driver' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //cache_driver
+            if (strlen($cache_driver) < 1) {
+                $errors[] = array('cache_driver' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //filesystem_disk
+            if (strlen($filesystem_disk) < 1) {
+                $errors[] = array('filesystem_disk' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //queue_connection
+            if (strlen($queue_connection) < 1) {
+                $errors[]= array('queue_connection' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //session_driver
+            if (strlen($session_driver) < 1) {
+                $errors[] = array('session_driver' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //session_lifetime
+            if (strlen($session_lifetime) < 1) {
+                $errors[] = array('session_lifetime' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //memcached_host
+            if (strlen($memcached_host) < 1) {
+                $errors[] = array('memcached_host' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //redis_host
+            if (strlen($redis_host) < 1) {
+                $errors[] = array('redis_host' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //redis_password
+            if (strlen($redis_password) < 1) {
+                $errors[] = array('redis_password' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //redis_port
+            if (strlen($redis_port) < 1) {
+                $errors[] = array('redis_port' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //mail_mailer
+            if (strlen($mail_mailer) < 1) {
+                $errors[] = array('mail_mailer' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //mail_host
+            if (strlen($mail_host) < 1) {
+                $errors[] = array('mail_host' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //mail_username
+            if (strlen($mail_username) < 1) {
+                $errors[] = array('mail_username' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //mail_port
+            if (strlen($mail_port) < 1) {
+                $errors[] = array('mail_port' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //mail_from_address
+            if (strlen($mail_from_address) < 1) {
+                $errors[] = array('mail_from_address' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //mail_from_name
+            if (strlen($mail_from_name) < 1) {
+                $errors[] = array('mail_from_name' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //aws_access_key_id
+            if (strlen($aws_access_key_id) < 1) {
+                //$errors[] = array('aws_access_key_id' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //aws_secret_access_key
+            if (strlen($aws_secret_access_key) < 1) {
+                //$errors[] = array('aws_secret_access_key' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //aws_default_region
+            if (strlen($aws_default_region) < 1) {
+                //$errors[] = array('aws_default_region' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //aws_bucket
+            if (strlen($aws_bucket) < 1) {
+                //$errors[] = array('aws_bucket' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            } 
+            //aws_use_path_style_endpoint
+            if (strlen($aws_use_path_style_endpoint) < 1) {
+                //$errors[] = array('aws_use_path_style_endpoint' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
+            }
+
+            // disabled amazon web services for now (why do we even support this???)
+            return $errors;
+        }
+        
+        // Define all post stuffs.
+        $app_name = $request->input('app_name');
+        $app_env = $request->input('app_env');
+        $app_key = $request->input('app_key');
+        $app_debug = $request->input('app_debug');
+        $app_url = $request->input('app_url');
+        $master_api_key = $request->input('master_api_key');
+        $use_captcha = $request->input('use_captcha');
+        $captcha_vendor = $request->input('captcha_vendor');
+        $google_captcha_key = $request->input('goole_captcha_key');
+        $google_captcha_secret = $request->input('google_captcha_secret');
+        $use_discord = $request->input('use_discord');
+        $discord_use_case = $request->input('discord_use_case');
+        $discord_redirect_uri = $request->input('discord_redirect_uri');
+        $discord_redirect_auth = $request->input('discord_redirect_auth');
+        $master_admin_discord_id = $request->input('master_admin_discord_id');
+        $master_admin_role_id = $request->input('master_admin_role_id');
+        $log_channel = $request->input('log_channel');
+        $log_deprecation_channel = $request->input('log_deprecation_channel');
+        $log_level = $request->input('log_level');
+        $db_connection = $request->input('db_connection');
+        $db_host = $request->input('db_host');
+        $db_username = $request->input('db_username');
+        $db_password = $request->input('db_password');
+        $db_database = $request->input('db_database');
+        $db_port = $request->input('db_port');
+        $broadcast_driver = $request->input('broadcast_driver');
+        $filesystem_disk = $request->input('filesystem_disk');
+        $queue_connection = $request->input('queue_connection');
+        $session_driver = $request->input('session_driver');
+        $session_lifetime = $request->input('session_lifetime');
+        $memcached_host = $request->input('memcached_host');
+        $redis_host = $request->input('redis_host');
+        $redis_password = $request->input('redis_password');
+        $redis_port = $request->input('redis_port');
+        $mail_mailer = $request->input('mail_mailer');
+        $mail_host = $request->input('mail_host');
+        $mail_username = $request->input('mail_username');
+        $mail_port = $request->input('mail_port');
+        $mail_password = $request->input('mail_password');
+        $mail_from_address = $request->input('mail_from_address');
+        $mail_from_name = $request->input('mail_from_name');
+        $aws_access_key_id = $request->input('aws_access_key_id');
+        $aws_secret_access_key = $request->input('aws_secret_access_key');
+        $aws_default_region = $request->input('aws_default_region');
+        $aws_bucket = $request->input('aws_bucket');
+        $aws_use_path_style_endpoint = $request->input('aws_use_path_style_endpoint');
+        $cache_driver = $request->input('cache_driver');
+        $bcrypt_rounds = $request->input('bcrypt_rounds');
+
+        $response = validateThenGenerate($app_name, $app_env, $app_key, $app_debug, $app_url, $master_api_key, $use_captcha, $captcha_vendor, $google_captcha_key, $google_captcha_secret, $use_discord, $discord_use_case, $discord_redirect_uri, $discord_redirect_auth, $master_admin_discord_id, $master_admin_role_id, $log_channel, $log_deprecation_channel, $log_level, $db_connection, $db_host, $db_username, $db_password, $db_port, $db_database, $broadcast_driver, $cache_driver, $filesystem_disk, $queue_connection, $session_driver, $session_lifetime, $memcached_host, $redis_host, $redis_password, $redis_port, $mail_mailer, $mail_host, $mail_username, $mail_port, $mail_password, $mail_from_address, $mail_from_name, $aws_access_key_id, $aws_secret_access_key, $aws_default_region, $aws_bucket, $aws_use_path_style_endpoint, $bcrypt_rounds);
+
+        $responseErrors = concatErrors($response);
+        return response()->json($responseErrors);
     }
     private function installationComplete(): bool {
         $installerFile = 'installerController.php';
