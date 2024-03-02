@@ -147,7 +147,7 @@ class InstallController extends Controller {
                 }
             }
             if (count($combinedArray) == 0) {
-                $combinedArray = ['success' => 'true'];
+                $combinedArray = ['fields' => 'success', 'db_test' => 'success'];
                 return $combinedArray;
             } else {
                 return $combinedArray;    
@@ -156,20 +156,25 @@ class InstallController extends Controller {
         }
         
         function databaseTestFunction($db_connection, $db_host, $db_username, $db_password, $db_database, $db_port) {
-            
             if (isset($db_connection)) {
                 $database_schema = [];
         
                 if ($db_connection == 'mysql' || $db_connection == 'mariadb') {
                     if (isset($db_host) && isset($db_port)) {
                         if (isset($db_username) && isset($db_password)) {
-                            // atlast we test the DB connection cuz everything else is set.
-                            $conn = new mysqli($db_host, $db_username, $db_password, "", $db_port);
-                            if ($conn->connect_error) {
-                                return 'database_login_failure';
-                            } else {
-                                $conn->close();
-                                return 'connection_successful';
+                            set_exception_handler(function ($e) {});
+                            set_error_handler(function ($e) {});
+                            try {
+                                // atlast we test the DB connection cuz everything else is set.
+                                $conn = new mysqli($db_host, $db_username, $db_password, "", $db_port);
+                                if ($conn->connect_error) {
+                                    return 'error_connecting';
+                                } else {
+                                    $conn->close();
+                                    return 'connection_successful';
+                                }
+                            } catch (Exception $e) {
+                                return 'test_failed' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
                             }
                         } else {
                             return 'database_user_password_null';
@@ -182,11 +187,12 @@ class InstallController extends Controller {
                 }
             }
         }
-        function validateThenGenerate($app_name, $app_env, $app_key, $app_debug, $app_url, $master_api_key, $use_captcha, $captcha_vendor, $google_captcha_key, $google_captcha_secret, $use_discord, $discord_use_case, $discord_redirect_uri, $discord_redirect_auth, $master_admin_discord_id, $master_admin_role_id, $log_channel, $log_deprecation_channel, $log_level, $db_connection, $db_host, $db_username, $db_password, $db_port, $db_database, $broadcast_driver, $cache_driver, $filesystem_disk, $queue_connection, $session_driver, $session_lifetime, $memcached_host, $redis_host, $redis_password, $redis_port, $mail_mailer, $mail_host, $mail_username, $mail_port, $mail_password, $mail_from_address, $mail_from_name, $aws_access_key_id, $aws_secret_access_key, $aws_default_region, $aws_bucket, $aws_use_path_style_endpoint, $bcrypt_rounds) 
+        function validateThenGenerate($app_name, $app_env, $app_key, $app_debug, $app_url, $master_api_key, $use_captcha, $captcha_vendor, $google_captcha_key, $google_captcha_secret, $use_discord, $discord_use_case, $discord_redirect_uri, $discord_redirect_auth, $master_admin_discord_id, $master_admin_role_id, $log_channel, $log_deprecation_channel, $log_level, $db_connection, $db_host, $db_username, $db_password, $db_port, $db_database, $broadcast_driver, $cache_driver, $filesystem_disk, $queue_connection, $session_driver, $session_lifetime, $memcached_host, $mail_mailer, $mail_host, $mail_username, $mail_port, $mail_password, $mail_from_address, $mail_from_name, $bcrypt_rounds) 
         {
             $errors = [];
+            $db_return = [];
             //app_name
-            if(!ctype_alpha($app_name)) {
+            if(!preg_match('/^[a-zA-Z0-9_\.+]+$/', $app_name)) {
                 $errors[] = array('app_name' => array('status' => 'error', 'message' => 'Invalid Application Name. Please revise your selection to include characters A-Z, 0-9', 'errorid' => '1'));
             }
         
@@ -338,16 +344,21 @@ class InstallController extends Controller {
         
             // Database Test Credentials Function
             if ($db_connection !== null && $db_host !== null && $db_username !== null && $db_password !== null && $db_port !== null) {
-                $database_test = databaseTestFunction($db_connection, $db_host, $db_username, $db_password, $db_database, $db_port);
-        
-                if ($database_test == "database_login_failure") {
-                  //report connection broken
-                    $errors[] = array('database_login_failure' => array('status' => 'error', 'message' => 'Connection to the database server using the parameters you supplied did not work. Details are below:\n' . $database_test . '\n Correct these errors to continue installation.'));
-                } else if ($database_test == "connection_successful") {
-                  //report connection works
-                  //no action for now.
-                } else if ($database_test == "unsupported_database_server") {
-                    $errors[] = array('unsupported_database_server' => array('status' => 'error', 'message' => 'We currently do not support the database server you have chosen.'));
+                try {
+                    $database_test = databaseTestFunction($db_connection, $db_host, $db_username, $db_password, $db_database, $db_port);
+                    
+                    if ($database_test == "database_login_failure") {
+                      //report connection broken
+                        $errors[] = array('db_test' => array('status' => 'error', 'message' => 'Connection to the database server using the parameters you supplied did not work. Details are below:\n' . $database_test . '\n Correct these errors to continue installation.'));
+                    } else if ($database_test == "connection_successful") {
+                      //report connection works
+                      //no action for now.
+                      $dbReturn[] = array('db_test' => array('status' => 'success'));
+                    } else if ($database_test == "unsupported_database_server") {
+                        $errors[] = array('db_test' => array('status' => 'error', 'message' => 'We currently do not support the database server you have chosen.'));
+                    }
+                } catch (Exception $e) {
+                    $errors[] = array('db_test' => array('status' => 'error', 'message' => 'db_connection_failed'));
                 }
             }
         
@@ -383,18 +394,6 @@ class InstallController extends Controller {
             if (strlen($memcached_host) < 1) {
                 $errors[] = array('memcached_host' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
             } 
-            //redis_host
-            if (strlen($redis_host) < 1) {
-                $errors[] = array('redis_host' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
-            } 
-            //redis_password
-            if (strlen($redis_password) < 1) {
-                $errors[] = array('redis_password' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
-            } 
-            //redis_port
-            if (strlen($redis_port) < 1) {
-                $errors[] = array('redis_port' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
-            } 
             //mail_mailer
             if (strlen($mail_mailer) < 1) {
                 $errors[] = array('mail_mailer' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
@@ -419,26 +418,6 @@ class InstallController extends Controller {
             if (strlen($mail_from_name) < 1) {
                 $errors[] = array('mail_from_name' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
             } 
-            //aws_access_key_id
-            if (strlen($aws_access_key_id) < 1) {
-                //$errors[] = array('aws_access_key_id' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
-            } 
-            //aws_secret_access_key
-            if (strlen($aws_secret_access_key) < 1) {
-                //$errors[] = array('aws_secret_access_key' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
-            } 
-            //aws_default_region
-            if (strlen($aws_default_region) < 1) {
-                //$errors[] = array('aws_default_region' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
-            } 
-            //aws_bucket
-            if (strlen($aws_bucket) < 1) {
-                //$errors[] = array('aws_bucket' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
-            } 
-            //aws_use_path_style_endpoint
-            if (strlen($aws_use_path_style_endpoint) < 1) {
-                //$errors[] = array('aws_use_path_style_endpoint' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
-            }
 
             // disabled amazon web services for now (why do we even support this???)
             return $errors;
@@ -476,9 +455,6 @@ class InstallController extends Controller {
         $session_driver = $request->input('session_driver');
         $session_lifetime = $request->input('session_lifetime');
         $memcached_host = $request->input('memcached_host');
-        $redis_host = $request->input('redis_host');
-        $redis_password = $request->input('redis_password');
-        $redis_port = $request->input('redis_port');
         $mail_mailer = $request->input('mail_mailer');
         $mail_host = $request->input('mail_host');
         $mail_username = $request->input('mail_username');
@@ -486,18 +462,70 @@ class InstallController extends Controller {
         $mail_password = $request->input('mail_password');
         $mail_from_address = $request->input('mail_from_address');
         $mail_from_name = $request->input('mail_from_name');
-        $aws_access_key_id = $request->input('aws_access_key_id');
-        $aws_secret_access_key = $request->input('aws_secret_access_key');
-        $aws_default_region = $request->input('aws_default_region');
-        $aws_bucket = $request->input('aws_bucket');
-        $aws_use_path_style_endpoint = $request->input('aws_use_path_style_endpoint');
         $cache_driver = $request->input('cache_driver');
         $bcrypt_rounds = $request->input('bcrypt_rounds');
-
-        $response = validateThenGenerate($app_name, $app_env, $app_key, $app_debug, $app_url, $master_api_key, $use_captcha, $captcha_vendor, $google_captcha_key, $google_captcha_secret, $use_discord, $discord_use_case, $discord_redirect_uri, $discord_redirect_auth, $master_admin_discord_id, $master_admin_role_id, $log_channel, $log_deprecation_channel, $log_level, $db_connection, $db_host, $db_username, $db_password, $db_port, $db_database, $broadcast_driver, $cache_driver, $filesystem_disk, $queue_connection, $session_driver, $session_lifetime, $memcached_host, $redis_host, $redis_password, $redis_port, $mail_mailer, $mail_host, $mail_username, $mail_port, $mail_password, $mail_from_address, $mail_from_name, $aws_access_key_id, $aws_secret_access_key, $aws_default_region, $aws_bucket, $aws_use_path_style_endpoint, $bcrypt_rounds);
-
+        $response = validateThenGenerate($app_name, $app_env, $app_key, $app_debug, $app_url, $master_api_key, $use_captcha, $captcha_vendor, $google_captcha_key, $google_captcha_secret, $use_discord, $discord_use_case, $discord_redirect_uri, $discord_redirect_auth, $master_admin_discord_id, $master_admin_role_id, $log_channel, $log_deprecation_channel, $log_level, $db_connection, $db_host, $db_username, $db_password, $db_port, $db_database, $broadcast_driver, $cache_driver, $filesystem_disk, $queue_connection, $session_driver, $session_lifetime, $memcached_host, $mail_mailer, $mail_host, $mail_username, $mail_port, $mail_password, $mail_from_address, $mail_from_name, $bcrypt_rounds);
+        $configData = [
+            'app_name' => $request->input('app_name'),
+            'app_env' => $request->input('app_env'),
+            'app_key' => $request->input('app_key'),
+            'app_debug' => $request->input('app_debug'),
+            'app_url' => $request->input('app_url'),
+            'master_api_key' => $request->input('master_api_key'),
+            'use_captcha' => $request->input('use_captcha'),
+            'captcha_vendor' => $request->input('captcha_vendor'),
+            'google_captcha_key' => $request->input('google_captcha_key'),
+            'google_captcha_secret' => $request->input('google_captcha_secret'),
+            'use_discord' => $request->input('use_discord'),
+            'discord_use_case' => $request->input('discord_use_case'),
+            'discord_redirect_uri' => $request->input('discord_redirect_uri'),
+            'discord_redirect_auth' => $request->input('discord_redirect_auth'),
+            'master_admin_discord_id' => $request->input('master_admin_discord_id'),
+            'master_admin_role_id' => $request->input('master_admin_role_id'),
+            'log_channel' => $request->input('log_channel'),
+            'log_deprecation_channel' => $request->input('log_deprecation_channel'),
+            'log_level' => $request->input('log_level'),
+            'db_connection' => $request->input('db_connection'),
+            'db_host' => $request->input('db_host'),
+            'db_username' => $request->input('db_username'),
+            'db_password' => $request->input('db_password'),
+            'db_database' => $request->input('db_database'),
+            'db_port' => $request->input('db_port'),
+            'broadcast_driver' => $request->input('broadcast_driver'),
+            'filesystem_disk' => $request->input('filesystem_disk'),
+            'queue_connection' => $request->input('queue_connection'),
+            'session_driver' => $request->input('session_driver'),
+            'session_lifetime' => $request->input('session_lifetime'),
+            'memcached_host' => $request->input('memcached_host'),
+            'mail_mailer' => $request->input('mail_mailer'),
+            'mail_host' => $request->input('mail_host'),
+            'mail_username' => $request->input('mail_username'),
+            'mail_port' => $request->input('mail_port'),
+            'mail_password' => $request->input('mail_password'),
+            'mail_from_address' => $request->input('mail_from_address'),
+            'mail_from_name' => $request->input('mail_from_name'),
+            'cache_driver' => $request->input('cache_driver'),
+            'bcrypt_rounds' => $request->input('bcrypt_rounds'),
+        ];
         $responseErrors = concatErrors($response);
-        return response()->json($responseErrors);
+        if (isset($responseErrors['fields']['status']) && $responseErrors['fields']['status'] === 'success') {
+            if (isset($responseErrors['db_test']['status']) && $responseErrors['db_test']['status'] === 'success') {
+                //createEnvFileFunction();
+                return response()->json($reponseErrors);
+            } else {
+                return response()->json($responseErrors);
+            }
+        } else {
+            return response()->json($responseErrors);
+        }
+    }
+    private function createEnvFileFunction(array $configData) {
+        $envContent = '';
+        foreach ($configData as $key => $value) {
+            $escapedValue = addslashes($value);
+            $envContent .= "$key=\"$escapedValue\"\n";
+        }
+        file_put_contents('../../.env', $envContent);
     }
     private function installationComplete(): bool {
         $installerFile = 'installerController.php';
