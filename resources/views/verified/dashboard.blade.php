@@ -39,6 +39,7 @@
     @include('_partials._html_footer')
 </div>
 <script>
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     $(function () { //DOM Ready
         const grid = GridStack.init(
             {
@@ -57,17 +58,38 @@
             grid.enableMove(!customize);
             grid.enableResize(!customize);
             customize = !customize;
-            // TODO We need to save when the customize is turned off...
-            for (let gridItem of grid.getGridItems()) {
-                const widgetType = grid?.dataset?.widgettype;
-                const gridStackNode = grid?.gridstackNode;
-                if (widgetType && gridStackNode) {
-                    // Valid widget type... We need to save
-                    const h = gridStackNode.h;
-                    const w = gridStackNode.w;
-                    const x = gridStackNode.x;
-                    const y = gridStackNode.y;
+            if (!customize) {
+                const widgetDatas = [];
+                for (let gridItem of grid.getGridItems()) {
+                    const gridStackNode = gridItem?.gridstackNode;
+                    const gridEl = gridStackNode?.el;
+                    const widgetType = gridEl?.dataset?.widgettype;
+                    if (widgetType && gridStackNode) {
+                        // Valid widget type... We need to save
+                        const h = gridStackNode.h;
+                        const w = gridStackNode.w;
+                        const x = gridStackNode.x;
+                        const y = gridStackNode.y;
+                        const widgetData = {
+                            widgetType: widgetType,
+                            x: x,
+                            y: y,
+                            h: h,
+                            w: w
+                        };
+                        widgetDatas.push(widgetData);
+                    }
                 }
+                const opts = {
+                    method: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify(widgetDatas)
+                };
+                fetch('dashboard/save', opts).then((resp) => {
+                    console.log("Response from saving =>", resp);
+                });
             }
         });
     });
