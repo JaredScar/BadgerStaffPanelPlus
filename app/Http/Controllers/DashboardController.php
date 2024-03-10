@@ -13,6 +13,7 @@ class DashboardController extends Controller {
         $staffId = Session::get("staff_id");
 
         $updated = date('Y-m-d H:i:s', time());
+        $existingWidgetIds = [];
         foreach ($widgetDataList as $wData) {
             // Extract the data from the JSON payload
             $widgetType = $wData['widgetType'] ?? null;
@@ -35,6 +36,8 @@ class DashboardController extends Controller {
             $conditions = [
                 'widget_id' => $widgetId
             ];
+            $existingWidgetIds[] = $widgetId;
+
             // Check if the record already exists
             if (!Layout::where($conditions)->exists()) {
                 // If the record doesn't exist, set the created_at timestamp
@@ -43,7 +46,11 @@ class DashboardController extends Controller {
             Layout::updateOrInsert($conditions, $data);
         }
         // Need to get widgets for staff that do not exist anymore and delete them...
-        // TODO
+        if (sizeof($existingWidgetIds))
+            Layout::whereNotIn('widget_id', $existingWidgetIds)
+                ->where('staff_id', $staffId)->delete();
+        else
+            Layout::where('staff_id', $staffId)->delete();
         return response()->json(['message' => 'Data saved successfully for staff id: ' . $staffId, 'updated_at' => $updated], 200);
     }
 }
