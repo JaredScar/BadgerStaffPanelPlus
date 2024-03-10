@@ -14,7 +14,10 @@
                     <div class="grid-stack">
                         @foreach($data['widgetData'] as $widget)
                             <div class="grid-stack-item" gs-y="{{$widget['row']}}" gs-x="{{$widget['col']}}"
-                                gs-w="{{$widget['size_x']}}" gs-h="{{$widget['size_y']}}" data-widgetType="{{$widget['widget_type']}}">
+                                 gs-w="{{$widget['size_x']}}" gs-h="{{$widget['size_y']}}"
+                                 data-widgetType="{{$widget['widget_type']}}"
+                                 data-widgetId="{{$widget['widget_id']}}"
+                            >
                                 <div class="container-fluid h-100 px-0 grid-stack-item-content">
                                     <div class="d-flex flex-column h-100">
                                         <div class="row bg-zap mx-0 widget-header">
@@ -64,6 +67,7 @@
                     const gridStackNode = gridItem?.gridstackNode;
                     const gridEl = gridStackNode?.el;
                     const widgetType = gridEl?.dataset?.widgettype;
+                    const widgetId = gridEl?.dataset?.widgetid;
                     if (widgetType && gridStackNode) {
                         // Valid widget type... We need to save
                         const h = gridStackNode.h;
@@ -72,6 +76,7 @@
                         const y = gridStackNode.y;
                         const widgetData = {
                             widgetType: widgetType,
+                            widgetId: widgetId,
                             x: x,
                             y: y,
                             h: h,

@@ -12,24 +12,38 @@ class DashboardController extends Controller {
         $widgetDataList = $request->json()->all();
         $staffId = Session::get("staff_id");
 
-        // TODO We eventually want this to actually update the layout tiles...
-        // Deleting them and resetting them is not the best way to do this...
-
-        Layout::where('staff_id', $staffId)->where('view', 'dashboard')->delete();
         $updated = date('Y-m-d H:i:s', time());
         foreach ($widgetDataList as $wData) {
             // Extract the data from the JSON payload
             $widgetType = $wData['widgetType'] ?? null;
+            $widgetId = $wData['widgetId'] ?? null;
             $col = $wData['x'] ?? null;
             $row = $wData['y'] ?? null;
             $sizeX = $wData['w'] ?? null;
             $sizeY = $wData['h'] ?? null;
-            $layout = new Layout();
-            $layout->store($staffId, 'dashboard', $widgetType, $col, $row, $sizeX, $sizeY);
-            $layout->setUpdatedAt($updated);
-            $layout->setCreatedAt($updated);
-            $layout->save();
+            // Define the data to be updated or inserted
+            $data = [
+                'updated_at' => $updated,
+                'widget_type' => $widgetType,
+                'col' => $col,
+                'row' => $row,
+                'size_x' => $sizeX,
+                'size_y' => $sizeY
+            ];
+
+            // Specify the conditions to search for existing records
+            $conditions = [
+                'widget_id' => $widgetId
+            ];
+            // Check if the record already exists
+            if (!Layout::where($conditions)->exists()) {
+                // If the record doesn't exist, set the created_at timestamp
+                $data['created_at'] = $updated;
+            }
+            Layout::updateOrInsert($conditions, $data);
         }
+        // Need to get widgets for staff that do not exist anymore and delete them...
+        // TODO
         return response()->json(['message' => 'Data saved successfully for staff id: ' . $staffId, 'updated_at' => $updated], 200);
     }
 }
