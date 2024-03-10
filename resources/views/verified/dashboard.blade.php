@@ -14,7 +14,7 @@
                     <div class="grid-stack">
                         @foreach($data['widgetData'] as $widget)
                             <div class="grid-stack-item" gs-y="{{$widget['row']}}" gs-x="{{$widget['col']}}"
-                                gs-width="{{$widget['size_x']}}" gs-height="{{$widget['size_y']}}" data-widgetType="{{$widget['widget_type']}}">
+                                gs-w="{{$widget['size_x']}}" gs-h="{{$widget['size_y']}}" data-widgetType="{{$widget['widget_type']}}">
                                 <div class="container-fluid h-100 px-0 grid-stack-item-content">
                                     <div class="d-flex flex-column h-100">
                                         <div class="row bg-zap mx-0 widget-header">
