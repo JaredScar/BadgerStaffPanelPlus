@@ -38,9 +38,15 @@ class LoginController extends Controller {
         if (Auth::guard('web')->attempt(['staff_username' => $credentials['username'], 'password' => $credentials['password']])) {
             // Authentication passed, redirect:
             $serverId = $request->get("server_id", 0);
+            if($serverId)
             Session::put("server_id", $serverId);
             Session::put("server_name", Server::getServerNameById($serverId));
-            return redirect()->intended(route('DASHBOARD'));
+            $installerController = 'InstallerController.php';
+            if (file_exists($installerController)) {
+                return redirect()->intended(route('INSTALLER'));
+            } else {
+                return redirect()->intended(route('DASHBOARD'));
+            }
         }
         return back()->withErrors([
             'staff_username' => 'The provided credentials do not match our records...'
@@ -128,10 +134,15 @@ class LoginController extends Controller {
         if (sizeof($staffMemberSelected) > 0) {
             // It's a valid staff member, we need to log them in
             Auth::guard('web')->loginUsingId($staffMemberSelected['staff_id']);
-            return redirect()->intended('DASHBOARD');
+            $installerController = './InstallerController.php';
+            if (file_exists($installerController)) {
+                return redirect()->intended(route('INSTALLER'));
+            } else {
+                return redirect()->intended(route('DASHBOARD'));
+            }
         }
         return back()->withErrors([
-            'username' => 'The provided credentials do not match our records...'
+            'username' => 'The provided credentials via Discord do not match our records...'
         ]);
     }
 }
