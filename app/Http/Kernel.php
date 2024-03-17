@@ -53,6 +53,7 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
+        'dbcreate' => \App\Http\Middleware\DBCreate::class,
         'authWeb' => \App\Http\Middleware\WebAuthenticate::class,
         'authApi' => \App\Http\Middleware\ApiAuthenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,

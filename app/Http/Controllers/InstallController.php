@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Sessions;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\File;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+
 use mysqli;
 
 class InstallController extends Controller {
@@ -114,7 +116,7 @@ class InstallController extends Controller {
                 return view('install.completed', compact('data'));
             default:
                 $this->executeWelcomeFunctions();
-                return view('install.welcome', compact('laravelV', 'phpV', 'data'));
+                return view('install.welcome', compact('laravelV', 'phpV', 'data')); 
         }
     }
 
@@ -136,7 +138,88 @@ class InstallController extends Controller {
 
     private function executeCompleteFunctions() {
     }
+    public function createDBFunction(Request $request) {
+        $response = new StreamedResponse(function () {
+            while (true) {
+                $steps = [
+                    'initLogin',
+                    'loginDatabaseServer',
+                    'initCreation',
+                ];
 
+                foreach ($steps as $step) {
+                    $message = call_user_func([$this, $step]);
+                    echo "data: " . json_encode($message) . "\n\n";
+                    ob_flush();
+                    flush();
+                    usleep(200000); // Delay for 200 milliseconds (optional)
+                }
+            }
+        });
+
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('Cache-Control', 'no-cache');
+        $response->headers->set('X-Accel-Buffering', 'no');
+
+        return $response;
+    }
+    private function initLogin() {
+        sleep(2);
+        return [
+            'status' => 'success',
+            'percent' => '5',
+            'function' => 'initLogin',
+            'tasktitle' => 'Logging Into Database',
+            'taskdescription' => 'Just Logging you in for this database operation',
+            'taskicon' => 'check-circle',
+            'outputfunction' => 'Login Attempt',
+            'outputaction' => 'Attempting to log into the database server with the login provided in the ENV file.',
+            'prodesc' => 'Logging into the database server..',
+        ];
+    }
+    private function loginDatabaseServer() {
+        sleep(2);
+        return [
+            'status' => 'warning',
+            'percent' => '5',
+            'function' => 'loginDatabaseServer',
+            'tasktitle' => 'Logging Into Database',
+            'taskdescription' => 'Just Logging you in for this database operation',
+            'taskicon' => 'check-circle',
+            'outputfunction' => 'Login Attempt',
+            'outputaction' => 'Attempting to log into the database server with the login provided in the ENV file.',
+            'prodesc' => 'Logging into the database server..',
+        ];
+    }
+    private function initCreation() {
+        sleep(2);
+        return [
+            'status' => 'error',
+            'percent' => '25',
+            'function' => 'initCreation',
+            'tasktitle' => 'Logging Into Database',
+            'taskdescription' => 'Just Logging you in for this database operation',
+            'taskicon' => 'check-circle',
+            'outputfunction' => 'Login Attempt',
+            'outputaction' => 'Attempting to log into the database server with the login provided in the ENV file.',
+            'prodesc' => 'Logging into the database server..',
+        ];
+    }
+    private function databaseCreationIfNull() {
+        sleep(2);
+    }
+    private function initTables() {
+        sleep(2);
+    }
+    private function createTables() {
+        sleep(2);
+    }
+    private function insertData() {
+        sleep(2);
+    }
+    private function verifyComplete() {
+        sleep(2);
+    }
     public function createEnvFunction(Request $request) {
         function concatErrors(array $arrays): array {
             $combinedArray = [];
@@ -162,8 +245,6 @@ class InstallController extends Controller {
                 if ($db_connection == 'mysql' || $db_connection == 'mariadb') {
                     if (isset($db_host) && isset($db_port)) {
                         if (isset($db_username) && isset($db_password)) {
-                            set_exception_handler(function ($e) {});
-                            set_error_handler(function ($e) {});
                             try {
                                 // atlast we test the DB connection cuz everything else is set.
                                 $conn = new mysqli($db_host, $db_username, $db_password, "", $db_port);
@@ -278,9 +359,12 @@ class InstallController extends Controller {
             //master_admin_discord_id
             if ($use_discord == 'true') {
                 if (strlen($discord_use_case) > 0) {
-                    if (strlen($master_admin_discord_id) < 18 || strlen($master_admin_discord_id) > 18) {
+
+                    if (strlen($master_admin_discord_id) == 18) {
+                    } else {
                         $errors[] = array('master_admin_discord_id' => array('status' => 'error', 'message' => 'The Master Admin Discord ID should be set to a value not less than or exceeding 13 numerical digits. There is no need to include any brackets, @ symbols or signs.'));
-                    } else if (is_numeric($master_admin_role_id)) {
+                    }
+                    if (!is_numeric($master_admin_discord_id)) {
                         $errors[] = array('master_admin_discord_id_2' => array('status' => 'error', 'message' => 'The Master Admin Discord ID should be entirely numeric in value, letters and specicial characters are forbidden.'));
                     }
                 }
@@ -289,9 +373,11 @@ class InstallController extends Controller {
             //master_admin_role_id
             if ($use_discord == 'true') {
                 if (strlen($discord_use_case) > 0) {
-                    if (strlen($master_admin_role_id) < 18 || strlen($master_admin_role_id) > 18) {
+                    if (strlen($master_admin_role_id) == 18) {
+                    } else {
                         $errors[] = array('master_admin_role_id' => array('status' => 'error', 'message' => 'The Master Admin Role ID should be set to a value not less than or exceeding 13 numerical digits. There is no need to include any brackets, & symbols or signs.'));
-                    } else if (is_numeric($master_admin_role_id)) {
+                    }
+                    if (!is_numeric($master_admin_role_id)) {
                         $errors[] = array('master_admin_role_id_2' => array('status' => 'error', 'message' => 'The Master Admin Role ID should be entirely numeric in value, letters and specicial characters are forbidden.'));
                     }
                 }
@@ -401,7 +487,7 @@ class InstallController extends Controller {
             //mail_host
             if (strlen($mail_host) < 1) {
                 $errors[] = array('mail_host' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
-            } 
+            }
             //mail_username
             if (strlen($mail_username) < 1) {
                 $errors[] = array('mail_username' => array('status' => 'error', 'message' => 'This value cannot be left blank'));
@@ -432,7 +518,7 @@ class InstallController extends Controller {
         $master_api_key = $request->input('master_api_key');
         $use_captcha = $request->input('use_captcha');
         $captcha_vendor = $request->input('captcha_vendor');
-        $google_captcha_key = $request->input('goole_captcha_key');
+        $google_captcha_key = $request->input('google_captcha_key');
         $google_captcha_secret = $request->input('google_captcha_secret');
         $use_discord = $request->input('use_discord');
         $discord_use_case = $request->input('discord_use_case');
@@ -511,7 +597,7 @@ class InstallController extends Controller {
         if (isset($responseErrors['fields']['status']) && $responseErrors['fields']['status'] === 'success') {
             if (isset($responseErrors['db_test']['status']) && $responseErrors['db_test']['status'] === 'success') {
                 //createEnvFileFunction();
-                return response()->json($reponseErrors);
+                return response()->json($responseErrors);
             } else {
                 return response()->json($responseErrors);
             }
@@ -525,12 +611,18 @@ class InstallController extends Controller {
             $escapedValue = addslashes($value);
             $envContent .= "$key=\"$escapedValue\"\n";
         }
-        file_put_contents('../../.env', $envContent);
+        $attempt2save = file_put_contents(base_path('.env'), $envContent);
+        if ($attempt2save !== false) {
+            echo 'File Written ' . realpath(base_path('.env'));
+            return view('install.database', compact('data'));
+        } else {
+            echo 'Error Writting';
+        }
     }
     private function installationComplete(): bool {
         $installerFile = 'installerController.php';
         
         redirect()->intended('DASHBOARD');
-        unlink($installerFile);
+        unlink($installerFile); 
     }
 }

@@ -142,22 +142,22 @@
                 </div>
                 <div class="col-12 my-3">
                   <h4>Discord Settings</h4>
-                  We currently support login and authentication using Discord's API. This means you will be the ability to click to discord, authorize this webserver to use info like your Discord ID, 
+                  We currently require login and authentication using Discord's API. This means you will be the ability to click to discord, authorize this webserver to use info like your Discord ID, 
                   Email and Guild Info. Once authorized discord would redirect you back to the dashboard. If you use Discord Integrated Groups you can simply remove the roles giving them permission 
                   and they will no longer have permission to the website. 
 
-                  You must invite the discord bot to your server for this to work.
+                  <u>You must invite the discord bot to your server for this to work.</u>
                 </div>
                 <div class="col-6">
                   <label for="use_discord" class="form-label">Use Discord</label>
-                  <select name="use_discord" id="use_discord" class="form-select">
+                  <select name="use_discord" id="use_discord" class="form-select" disabled>
                     <option value="" disabled>Select one..</option>
-                    <option value="true">Enabled</option>
-                    <option value="false" selected>Disabled</option>
+                    <option value="true" selected>Enabled</option>
                   </select>
+                  <div class="form-text text-secondary m-1"><i class="bi bi-info-circle"></i> Discord use is required at this time.</div>
                   <div id="use_discord-error" class="error-classes text-danger m-1" hidden><i class="bi bi-exclamation-circle"></i></div>
                 </div>
-                <div class="col-6 discord-user" hidden>
+                <div class="col-6 discord-user">
                   <label for="discord_use_case" class="form-label">Discord Use Case</label>
                   <select name="discord_use_case" id="discord_use_case" class="form-select">
                     <option value="" disabled>Select one..</option>
@@ -166,25 +166,17 @@
                   </select>
                   <div id="discord_use_case-error" class="error-classes text-danger m-1" hidden><i class="bi bi-exclamation-circle"></i></div>
                 </div>
-                <div class="col-6 discord-user" hidden>
+                <div class="col-6 discord-user">
                   <label for="discord_redirect_uri" class="form-label">Discord Redirect URI</label>
                   <input type="text" name="discord_redirect_uri" id="discord_redirect_uri" class="form-control" onblur="checkDiscordURL(this);">
                   <div id="discord_redirect_uri_danger" class="text-danger" hidden><i class="bi bi-exclamation-circle"></i> You did not specify a proper URL</div>
                   <div id="discord_redirect_uri_warning" class="text-warning" hidden><i class="bi bi-exclamation-circle"></i> Your redirect URL should be using the same protocol as your application URL, otherwise you may get unexpected results.</div>
                   <div id="discord_redirect_uri-error" class="error-classes text-danger m-1" hidden><i class="bi bi-exclamation-circle"></i></div>
                 </div>
-                <div class="col-6 discord-user" hidden>
+                <div class="col-6 discord-user">
                   <label for="discord_redirect_auth" class="form-label">Discord Redirect Auth</label>
-                  <input type="text" name="discord_redirect_auth" id="discord_redirect_auth" class="form-control" onblur="checkDiscordStuffs(this);">
+                  <input type="text" name="discord_redirect_auth" id="discord_redirect_auth" class="form-control">
                   <div id="discord_redirect_auth-error" class="error-classes text-danger m-1" hidden><i class="bi bi-exclamation-circle"></i></div>
-                </div>
-                <div class="col-6 discord-user" hidden>
-                  <!-- not used atm -->
-                </div>
-                <div class="col-12">
-                  <h5>Administrative Users' Discord ID and Role</h5>
-                    This is set into the .env as a hard coded backup, you will have the ability to add/remove groups that can do various degrees of actions on another page. This hard coded backup is going to serve as a last line of defence for managing
-                    your communities staff and users when locked out in every other way.
                 </div>
                 <div class="col-6">
                   <label for="master_admin_discord_id" class="form-label">Master Administrative Discord ID</label>
@@ -198,6 +190,7 @@
                 </div>
                 <div class="col-12 my-3">
                   <h4>Database</h4>
+                  In order to save modified settings on this installation we require the use of a database server to make changes to. Below you can see 
                 </div>
                 <div class="col-6">
                   <label for="db_connection" class="form-label">Database Driver</label>
@@ -369,7 +362,8 @@
                     <div class="col-12 my-3">
                       <div class="row justify-content-center align-items-center">
                         <div class="col">
-                          <button id="envSubmitButton" class="btn btn-lg btn-success" type="button" action="submit">Submit</button>
+                          <button id="envSubmitButton" class="btn btn-lg btn-success" type="button" action="submit" aria-described-by="submittedHelp">Submit</button>
+                          <div class="form-text" id="submittedHelp"></div>
                         </div>
                       </div>
                     </div>
@@ -387,7 +381,7 @@
                     <div class="col-2">
                         <form method="post" action="{{ route('moveToNextPage') }}" id="continue2agreement">
                             @csrf
-                            <input type="hidden" name="currentPage" value="welcome">
+                            <input type="hidden" name="currentPage" value="config">
                             <button type="submit" name="nextButton" class="btn btn-lg btn-outline-primary" type="button" id="continueBtn" disabled>
                                 <span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
                                 <span id="continueBtnText" role="status">Wait...</span>
@@ -412,18 +406,29 @@
           </div>
           <div id="successToast" class="toast bg-success" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="30000">
             <div class="toast-header">
-              <strong class="me-auto">Successfully Created</strong>
+              <strong class="me-auto">ENV Created</strong>
               <small class="text-body-secondary"><i class="bi bi-motherboard"></i> System</small>
               <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-              We were able to successfully create your ENV file. We are now unlocking the continue button.
+              We have successfully create the ENV file for this installation, in just a moment your continue button will appear below.
 
             </div>
           </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <script>
+          function resposneHandler(response) {
+            if (response.headers.get('Content-Type') && response.headers.get('Content-Type').includes('application/json')) {
+              return response.json();
+            } else {
+              return response.text();
+            }
+          }
+          function evalDatabaseAndReturn(data) {
+            const credentialsError = /mysqli_sql_exception: Access denied for user '[a-zA-Z0-9]+'@'localhost' \(using password: YES\)/;
+            return credentialsError.test(data);
+          }
           var envContentVal = `{!! $envContent !!}`; 
           let app_name = document.getElementById('app_name');
           let app_env = document.getElementById('app_env');
@@ -511,6 +516,13 @@
           // check protocol //
           let serverProtocol = window.location.protocol;
           let serverAddress = window.location.host;
+          let serverPath = window.location.pathname;
+          let thislocation = window.location.pathname
+          function makeRedirectURI(thislocation) {
+            let newPath = thislocation.split('/').filter(segm => segm !== '')[0];
+            return thislocation = '/' + newPath;
+          }
+          let redirectURIDefault = window.location.protocol + "//" + window.location.host + window.location.pathname
           if (serverProtocol == "https:") {
             if(serverProtocolBtn.classList.contains('bg-danger')) {
               serverProtocolBtn.classList.remove('bg-danger');
@@ -541,17 +553,17 @@
           google_captcha_secret.value = finalEnvContent.googlecaptchasecret ?? null;
           master_admin_discord_id.value = finalEnvContent.masteradmindiscordid ?? null;
           master_admin_role_id.value = finalEnvContent.masteradminroleid ?? null;
-          use_discord.value = finalEnvContent.usediscord ?? 'false';
+          use_discord.value = finalEnvContent.usediscord ?? 'true';
           discord_use_case.value = finalEnvContent.discordusecase ?? 'full';
-          discord_redirect_uri.value = finalEnvContent.discordredirecturi ?? null;
-          discord_redirect_auth.value = finalEnvContent.discordredirectauth ?? null;
+          discord_redirect_uri.value = serverProtocol + "//" + serverAddress + makeRedirectURI(thislocation) + "/auth/login/discord";
+          discord_redirect_auth.value = finalEnvContent.discordredirectauth ?? "allow";
 
           // Database values //
           db_connection.value = finalEnvContent.dbconnection ?? 'mysql';
           db_host.value = finalEnvContent.dbhost ?? null;
           db_port.value = finalEnvContent.dbport ?? '3306';
           db_database.value = finalEnvContent.dbdatabase ?? 'badgers';
-          db_username.value = finalEnvContent.dbusername ?? null;
+          db_username.value = finalEnvContent.dbusername ?? 'badgers_user';
           db_password.value = finalEnvContent.dbpassword ?? null;
 
           // other variables yawn //
@@ -575,11 +587,11 @@
           mail_mailer.value = finalEnvContent.mailmailer ?? 'smtp';
           mail_host.value = finalEnvContent.mailhost ?? 'mailhog';
           mail_port.value = finalEnvContent.mailport ?? '1025';
-          mail_username.value = finalEnvContent.mailusername ?? null;
+          mail_username.value = finalEnvContent.mailusername ?? '';
           mail_password.value = finalEnvContent.mailpassword ?? null;
           mail_encryption.value = finalEnvContent.mailencryption ?? null;
           mail_from_address.value = finalEnvContent.mailfromaddress ?? 'hi@mydomain.com';
-          mail_from_name.value = finalEnvContent.mailfromname ?? null;
+          mail_from_name.value = finalEnvContent.mailfromname ?? finalEnvContent.appname;
           use_captcha.value = 'false'; //fix odd behavior captcha not following my orders.
 
           console.log(finalEnvContent);
@@ -599,21 +611,6 @@
             }
           }
 
-          // check if user opts into using discord //
-          function discordOptInStatusChanged() {
-            const currentOption = use_discord.value;
-            let discorduserstuffs = document.querySelectorAll('.discord-user');
-            if (currentOption == 'true') {
-              console.log('true');
-              discorduserstuffs.forEach(function (element) {
-                element.hidden = false;
-              })
-            } else if (currentOption == 'false') {
-              discorduserstuffs.forEach(function (element) {
-                element.hidden = true;
-              })
-            }
-          }
           // final check before creating .env THIS is also .env referer //
             const formSelector = document.getElementById('envSubmitButton');
             formSelector.addEventListener('click', (event) => {
@@ -668,34 +665,53 @@
                   'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: JSON.stringify(data)
-              }).then(response => {
-                if (response.headers.get('Content-Type').includes('application/json')) { 
-                return response.json(); } else { return response.text }})
-                .then(data => {
+              }).then(response => { return responseHandler(response); }).then(data => {
+                    var oldError = document.querySelectorAll('.error-list');
+                    oldError.forEach(function(element) {
+                      while (element.firstChild) {
+                        element.removeChild(element.firstChild);
+                      }
+                    });
                     if (typeof data === 'object') {
-                      let jsonData = data;
-                      console.log(jsonData);
+                      console.log(data);
                       document.getElementById('error-showcase').hidden = true;
+                      let submitBtn = document.getElementById('envSubmitButton');
+                      let continueBtn = document.getElementById('continueBtn');
+                      let submittedHelp = document.getElementById('submittedHelp');
+                      let listerrors = document.querySelectorAll('.error-list');
+                      // reset previously correct errors
                       let count = 0;
-                      if (jsonData.status === 'success') {
-                        console.log(jsonData);
+                      if (data.fields == 'success' && data.db_test == 'success') {
                         // all is good now unlock continue button.
                         let successToast = document.getElementById('successToast');
-                        var toast = new bootstrap.Toast(errorToast);
+                        var toast = new bootstrap.Toast(successToast);
+                        submittedHelp.className = 'form-text text-secondary'
+                        submittedHelp.innerHTML = '<i class="bi bi-info-circle"></i> Your ENV file has been created, please continue to the next step.'
+                        submitBtn.className = 'btn btn-lg btn-outline-secondary';
+                        submitBtn.innerText = 'ENV file created';
+                        submitBtn.disabled = true;
+                        continueBtn.innerText = 'Continue';
+                        continueBtn.className = 'btn btn-lg btn-primary';
+                        continueBtn.disabled = false;
+                        toast.show();
                       } else {
-                        let listerrors = document.querySelectorAll('.error-list');
                         let errorToast = document.getElementById('errorToast');
                         var toast = new bootstrap.Toast(errorToast);
                         console.log(bootstrap);
+                        submitBtn.className = 'btn btn-lg btn-outline-warning';
+                        submitBtn.innerText = 'Try Again';
+                        submittedHelp.className = 'form-text text-warning';
+                        submittedHelp.innerHTML = '<i class="bi bi-exclamation-circle"></i> You have a few errors to correct, please correct them to continue.'
+                        console.log(data);
                         toast.show();
                         window.scrollTo({ top:0, behavior: 'smooth'});
-                        for (const key in jsonData) {
+                        for (const key in data) {
                           count++;
-                          const params = jsonData[key];
+                          const params = data[key];
                           const element = document.getElementById(key + '-error');
                           listerrors.forEach(function(element) { element.innerHTML += '<li>' + key + '</li>'; });
                           if (element) {
-                            element.hidden = true; //reset previously fixed errors and display new ones.
+                            element.hidden = true; //reset previously fixed errors and display new ones. (old) doesn't break functionality keep so I keep it.
                           }
                           if (params.status === 'error') {
                             if (element) {
@@ -711,14 +727,15 @@
                         element.innerText = count;
                       });
                     } else {
-                      let text = data;
-                      console.log(text);
+                      const potentialDBError = evalDatabaseAndReturn(data);
+                      if (potentialDBError) {
+                        console.log("it works yay!")
+                      }
                     }
                   
               });
           });
         document.getElementById('use_captcha').addEventListener('change', captchaOptInStatusChanged);
-        document.getElementById('use_discord').addEventListener('change', discordOptInStatusChanged);
         let advancedUserCheckbox = document.getElementById('advanced_user');
         function advancedUserToggle() {
           let advancedUserClass = document.querySelectorAll('.advanced-user');
