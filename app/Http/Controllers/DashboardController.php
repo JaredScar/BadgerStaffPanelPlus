@@ -58,4 +58,7 @@ class DashboardController extends Controller {
         }
         return response()->json(['message' => 'Data saved successfully for staff id: ' . $staffId, 'updated_at' => $updated], 200);
     }
+
+    public function add_widget() {}
+    public function remove_widget() {}
 }

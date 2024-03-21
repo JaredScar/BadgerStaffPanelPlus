@@ -13,6 +13,10 @@ body {
 .bg-custom-dark-80a {
     background-color: rgba(52, 52, 52, 0.8);
 }
+.bg-custom-dark-full {
+    background-color: rgba(52, 52, 52, 1);
+}
+
 .background-sizing {
     background-position: center center !important;
     background-repeat: no-repeat !important;
@@ -54,5 +58,14 @@ body {
 .widget-header {
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
+}
+
+#add_widget_screen {
+    z-index: 1;
+    border-radius: 15px;
+}
+
+#add_widget_screen .card {
+    background-color: #F1F1F1;
 }
 

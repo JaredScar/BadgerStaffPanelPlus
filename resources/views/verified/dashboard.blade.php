@@ -10,6 +10,7 @@
                 @include('_partials._sidebar')
             </div>
             <div class="col col-auto page d-flex">
+                @include('_partials._add_widget')
                 <div class="row flex-grow-1">
                     <div class="col col-12">
                         <div class="grid-stack">
@@ -43,8 +44,8 @@
         @include('_partials._html_footer')
     </div>
     <script>
-        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         $(function () { //DOM Ready
+            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const grid = GridStack.init(
                 {
                     float: true,
@@ -52,9 +53,7 @@
                     cellHeight: 50,
                     disableDrag: true,
                     disableResize: true,
-                    margin: 0,
-                    removable: true,
-                    removeTimeout: 3000
+                    margin: 0
                 }
             );
             let customize = false;
