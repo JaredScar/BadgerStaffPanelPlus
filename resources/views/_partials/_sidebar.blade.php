@@ -129,8 +129,8 @@
             </button>
             <div class="collapse" id="account-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="/web/verified/management/staff" class="link-light rounded">Manage Staff</a></li>
-                    <li><a href="/web/verified/management/tokens" class="link-light rounded">Manage Tokens</a></li>
+                    <li><a href="/web/verified/management/manage#staff" class="link-light rounded">Manage Staff</a></li>
+                    <li><a href="/web/verified/management/manage#tokens" class="link-light rounded">Manage Tokens</a></li>
                     <li><a href="/web/verified/management/settings" class="link-light rounded">Settings</a></li>
                     <li><a href="/web/verified/signout" class="link-light rounded">Sign out</a></li>
                 </ul>

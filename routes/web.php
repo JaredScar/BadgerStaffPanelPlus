@@ -201,7 +201,13 @@ Route::middleware('authWeb:web')->get('/verified/players', function () {})->name
  * MANAGEMENT
  */
 Route::middleware('authWeb:web')->get('/verified/management/settings', function () {})->name("SETTINGS");
-Route::middleware('authWeb:web')->get('/verified/management/manage', function () {})->name("MANAGE_STAFF");
+Route::middleware('authWeb:web')->get('/verified/management/manage', function () {
+    $data = [];
+    $data['css_path'] = 'verified/management';
+    $data['view_name'] = 'MANAGEMENT';
+    $data['customize'] = false;
+    return view('verified/management/manage', array('data' => $data));
+})->name("MANAGEMENT");
 Route::middleware('authWeb:web')->get('/verified/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
 
 /**
