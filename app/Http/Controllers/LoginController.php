@@ -38,6 +38,7 @@ class LoginController extends Controller {
         if (Auth::guard('web')->attempt(['staff_username' => $credentials['username'], 'password' => $credentials['password']])) {
             // Authentication passed, redirect:
             $serverId = $request->get("server_id", 0);
+            Session::put('staff_id', Staff::getIdByUsername($credentials['username']));
             Session::put("server_id", $serverId);
             Session::put("server_name", Server::getServerNameById($serverId));
             return redirect()->intended(route('DASHBOARD'));

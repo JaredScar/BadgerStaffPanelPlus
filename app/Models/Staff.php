@@ -48,6 +48,17 @@ class Staff extends Authenticatable {
         return $this->staff_password;
     }
 
+    public static function getIdByUsername($username) {
+        $staff = self::where('staff_username', $username)->first();
+
+        // Check if the staff exists
+        if ($staff) {
+            return $staff->staff_id;
+        }
+
+        return null; // Staff not found
+    }
+
     public function kicks() {
         return $this->hasMany('App\Models\Kick', 'staff_id');
     }

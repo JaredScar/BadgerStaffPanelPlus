@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Models\Layout;
@@ -215,3 +216,12 @@ Route::middleware('authWeb:web')->get('/verified/dashboard', function () {
     $data['widgetData'] = $layoutData;
     return view('verified/dashboard', array('data' => $data), );
 })->name("DASHBOARD");
+
+/**
+ * PUT methods
+ */
+Route::middleware('authWeb:web')->put('/verified/dashboard/save', [DashboardController::class, 'save']);
+/**
+ * POST methods
+ */
+Route::middleware('authWeb:web')->post('/verified/dashboard/add_widget', [DashboardController::class, 'add_widget']);
