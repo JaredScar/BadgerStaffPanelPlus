@@ -16,7 +16,7 @@
                     <div class="col col-12">
                         <div class="grid-stack">
                             @foreach($data['widgetData'] as $widget)
-                                <div class="grid-stack-item" gs-y="{{$widget['row']}}" gs-x="{{$widget['col']}}"
+                                <div class="grid-stack-item" id="widget_{{$widget['widget_id']}}" gs-y="{{$widget['row']}}" gs-x="{{$widget['col']}}"
                                      gs-w="{{$widget['size_x']}}" gs-h="{{$widget['size_y']}}"
                                      data-widgetType="{{$widget['widget_type']}}"
                                      data-widgetId="{{$widget['widget_id']}}"
@@ -28,10 +28,7 @@
                                                     {{ config('widget.WIDGET_NAMES_FROM_TYPE')[$widget['widget_type']] }}
                                                 </div>
                                                 <div class="col-2 text-danger widget-actions text-end d-none">
-                                                    <form action="dashboard/remove_widget" method="post">
-                                                        <input type="hidden" name="widget_id" value="{{$widget['widget_id']}}" />
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </form>
+                                                    <i onclick="deleteWidget('#widget_{{$widget['widget_id']}}');" class="fa-solid fa-trash"></i>
                                                 </div>
                                             </div>
                                             <div class="row mx-0 bg-white flex-grow-1">
@@ -51,6 +48,9 @@
         @include('_partials._html_footer')
     </div>
     <script>
+        function deleteWidget(widget_id) {
+            $(widget_id).remove();
+        }
         $(function () { //DOM Ready
             var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             const grid = GridStack.init(

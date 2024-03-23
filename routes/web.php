@@ -225,4 +225,3 @@ Route::middleware('authWeb:web')->put('/verified/dashboard/save', [DashboardCont
  * POST methods
  */
 Route::middleware('authWeb:web')->post('/verified/dashboard/add_widget', [DashboardController::class, 'add_widget']);
-Route::middleware('authWeb:web')->post('/verified/dashboard/remove_widget', [DashboardController::class, 'remove_widget']);
