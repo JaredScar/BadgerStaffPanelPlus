@@ -98,5 +98,9 @@ class DashboardController extends Controller {
         $layout->store($staff_id, $view, $widget_type, $col, $row, $size_x, $size_y);
         $layout->save();
     }
-    public function remove_widget() {}
+    public function remove_widget(Request $request) {
+        $datum = $request->all();
+        $widget_id = $datum['widget_id'];
+        Layout::where('widget_id', $widget_id)->delete();
+    }
 }

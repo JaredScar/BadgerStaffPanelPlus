@@ -69,3 +69,10 @@ body {
     background-color: #F1F1F1;
 }
 
+.z-2 {
+    z-index: 2;
+}
+
+.opacity-75 {
+    opacity: .75;
+}
