@@ -12,8 +12,8 @@
                             <p class="card-text">A widget that contains all the information about bans within the server.</p>
                             <div class="mt-auto d-flex justify-content-center">
                                 <form method="POST" action="dashboard/add_widget">
-                                    <input type="hidden" name="X-CSRF-TOKEN" value="{{csrf_token()}}" />
-                                    <button class="btn btn-success" name="widget_bans" type="submit">Add Widget</button>
+                                    @csrf
+                                    <button class="btn btn-success" name="widget_type" value="widget_bans" type="submit">Add Widget</button>
                                 </form>
                             </div>
                         </div>
@@ -30,8 +30,8 @@
                             <p class="card-text">A widget that contains all the information about commends within the server.</p>
                             <div class="mt-auto d-flex justify-content-center">
                                 <form method="POST" action="dashboard/add_widget">
-                                    <input type="hidden" name="X-CSRF-TOKEN" value="{{csrf_token()}}" />
-                                    <button class="btn btn-success" name="widget_commends" type="submit">Add Widget</button>
+                                    @csrf
+                                    <button class="btn btn-success" name="widget_type" value="widget_commends" type="submit">Add Widget</button>
                                 </form>
                             </div>
                         </div>
@@ -48,8 +48,8 @@
                             <p class="card-text">A widget that contains all the information about kicks within the server.</p>
                             <div class="mt-auto d-flex justify-content-center">
                                 <form method="POST" action="dashboard/add_widget">
-                                    <input type="hidden" name="X-CSRF-TOKEN" value="{{csrf_token()}}" />
-                                    <button class="btn btn-success" name="widget_kicks" type="submit">Add Widget</button>
+                                    @csrf
+                                    <button class="btn btn-success" name="widget_type" value="widget_kicks" type="submit">Add Widget</button>
                                 </form>
                             </div>
                         </div>
@@ -66,8 +66,8 @@
                             <p class="card-text">A widget that contains all the information about warns within the server.</p>
                             <div class="mt-auto d-flex justify-content-center">
                                 <form method="POST" action="dashboard/add_widget">
-                                    <input type="hidden" name="X-CSRF-TOKEN" value="{{csrf_token()}}" />
-                                    <button class="btn btn-success" name="widget_warns" type="submit">Add Widget</button>
+                                    @csrf
+                                    <button class="btn btn-success" name="widget_type" value="widget_warns" type="submit">Add Widget</button>
                                 </form>
                             </div>
                         </div>
@@ -84,8 +84,8 @@
                             <p class="card-text">A widget that contains all the information about notes within the server.</p>
                             <div class="mt-auto d-flex justify-content-center">
                                 <form method="POST" action="dashboard/add_widget">
-                                    <input type="hidden" name="X-CSRF-TOKEN" value="{{csrf_token()}}" />
-                                    <button class="btn btn-success" name="widget_notes" type="submit">Add Widget</button>
+                                    @csrf
+                                    <button class="btn btn-success" name="widget_type" value="widget_notes" type="submit">Add Widget</button>
                                 </form>
                             </div>
                         </div>
@@ -102,8 +102,8 @@
                             <p class="card-text">A widget that contains all the information about records within the server.</p>
                             <div class="mt-auto d-flex justify-content-center">
                                 <form method="POST" action="dashboard/add_widget">
-                                    <input type="hidden" name="X-CSRF-TOKEN" value="{{csrf_token()}}" />
-                                    <button class="btn btn-success" name="widget_records" type="submit">Add Widget</button>
+                                    @csrf
+                                    <button class="btn btn-success" name="widget_type" value="widget_records" type="submit">Add Widget</button>
                                 </form>
                             </div>
                         </div>
@@ -120,8 +120,8 @@
                             <p class="card-text">A widget that contains all the information about trustscores within the server.</p>
                             <div class="mt-auto d-flex justify-content-center">
                                 <form method="POST" action="dashboard/add_widget">
-                                    <input type="hidden" name="X-CSRF-TOKEN" value="{{csrf_token()}}" />
-                                    <button class="btn btn-success" name="widget_trustscores" type="submit">Add Widget</button>
+                                    @csrf
+                                    <button class="btn btn-success" name="widget_type" value="widget_trustscores" type="submit">Add Widget</button>
                                 </form>
                             </div>
                         </div>

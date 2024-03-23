@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Layout;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller {
@@ -59,6 +60,43 @@ class DashboardController extends Controller {
         return response()->json(['message' => 'Data saved successfully for staff id: ' . $staffId, 'updated_at' => $updated], 200);
     }
 
-    public function add_widget() {}
+    public function add_widget(Request $request) {
+        $datas = $request->all();
+        $wt = $datas['widget_type'];
+        $staffId = Session::get("staff_id");
+        $layout = new Layout();
+        $col = 1;
+        $row = 1;
+        $size_x = 12;
+        $size_y = 3;
+        $staff_id = $staffId;
+        $view = 'dashboard';
+        $widget_type = 'records.widget_bans';
+        switch ($wt) {
+            case "widget_bans":
+                $widget_type = 'records.widget_bans';
+                break;
+            case "widget_kicks":
+                $widget_type = 'records.widget_kicks';
+                break;
+            case "widget_notes":
+                $widget_type = 'records.widget_notes';
+                break;
+            case "widget_warns":
+                $widget_type = 'records.widget_warns';
+                break;
+            case "widget_commends":
+                $widget_type = 'records.widget_commends';
+                break;
+            case "widget_trustscores":
+                $widget_type = 'records.widget_trustscores';
+                break;
+            case "widget_records":
+                $widget_type = 'records.widget_records';
+                break;
+        }
+        $layout->store($staff_id, $view, $widget_type, $col, $row, $size_x, $size_y);
+        $layout->save();
+    }
     public function remove_widget() {}
 }
