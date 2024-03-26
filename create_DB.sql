@@ -1,7 +1,9 @@
 CREATE TABLE `servers` (
     `server_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
     `server_name` VARCHAR(255),
-    `server_slug` VARCHAR(128)
+    `server_slug` VARCHAR(128),
+    `created_at` DATETIME,
+    `updated_at` DATETIME
 );
 
 CREATE TABLE `staff` (
@@ -11,6 +13,18 @@ CREATE TABLE `staff` (
     `staff_email` VARCHAR(255) UNIQUE KEY,
     `staff_discord` BIGINT(128),
     `server_id` INT(128),
+    `created_at` DATETIME,
+    `updated_at` DATETIME
+);
+
+CREATE TABLE `tokens` (
+    `token_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
+    `staff_id` INT(128),
+    `token` VARCHAR(255),
+    `active` BIT(1),
+    `deactivated_by` INT(128) DEFAULT NULL,
+    `expires` DATETIME DEFAULT NULL,
+    `expired` BIT(1) DEFAULT 0,
     `created_at` DATETIME,
     `updated_at` DATETIME
 );
@@ -116,5 +130,7 @@ CREATE TABLE `layouts` (
     `col` INT(128),
     `row` INT(128),
     `size_x` INT(128),
-    `size_y` INT(128)
+    `size_y` INT(128),
+    `created_at` DATETIME,
+    `updated_at` DATETIME
 );

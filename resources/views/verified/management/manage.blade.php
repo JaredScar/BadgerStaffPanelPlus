@@ -8,7 +8,12 @@
                 <div class="col col-auto px-0">
                     @include('_partials._sidebar')
                 </div>
-                <div class="col col-auto page d-flex position-relative">
+                <div class="col col-12 d-flex full-page-header">Management</div>
+                <div class="col col-auto full-page d-flex">
+                    <div class="row flex-grow-1">
+                        <div class="col col-12">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -45,6 +45,20 @@ body {
     background-size: cover;
 }
 
+.full-page-header {
+    display: flex;
+    width: 100vw;
+    flex: 1;
+    color: white;
+    background-color: #57BC54;
+}
+
+.full-page {
+    display: flex;
+    width: 100vw;
+    flex: 1;
+}
+
 .page {
     background-color: rgba(241, 241, 241, 0.85);
     display: flex;
@@ -53,26 +67,26 @@ body {
     margin: 20px 20px 90px 20px;
     padding: 10px;
     border-radius: 15px;
-}
 
-.widget-header {
-    border-top-right-radius: 5px;
-    border-top-left-radius: 5px;
-}
+    .widget-header {
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+    }
 
-#add_widget_screen {
-    z-index: 1;
-    border-radius: 15px;
-}
+    #add_widget_screen {
+        z-index: 1;
+        border-radius: 15px;
+    }
 
-#add_widget_screen .card {
-    background-color: #F1F1F1;
-}
+    #add_widget_screen .card {
+        background-color: #F1F1F1;
+    }
 
-.z-2 {
-    z-index: 2;
-}
+    .z-2 {
+        z-index: 2;
+    }
 
-.opacity-75 {
-    opacity: .75;
+    .opacity-75 {
+        opacity: .75;
+    }
 }

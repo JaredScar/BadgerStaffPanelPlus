@@ -86,9 +86,11 @@
         <span class="fs-5 fw-semibold">{{ \Illuminate\Support\Facades\Session::get("server_name") }}</span>
     </a>
     <ul class="list-unstyled ps-0">
-        <div class="d-block pb-2 link-light text-decoration-none sidebar-btn no-color-hover">
-            <span class="sidebar-link"><i class="fa-solid fa-pen-ruler"></i> Customize <span class="float-end toggle-btn"><input id="customize_val" type="checkbox" data-toggle="toggle" data-size="xs" /></span></span>
-        </div>
+        @if ($data['customize'])
+            <div class="d-block pb-2 link-light text-decoration-none sidebar-btn no-color-hover">
+                <span class="sidebar-link"><i class="fa-solid fa-pen-ruler"></i> Customize <span class="float-end toggle-btn"><input id="customize_val" type="checkbox" data-toggle="toggle" data-size="xs" /></span></span>
+            </div>
+        @endif
         <li class="mb-1">
             <a href="/web/verified/dashboard" class="btn sidebar-btn align-items-center rounded">
                 <span class="sidebar-link"><i class="fa-brands fa-fort-awesome"></i> Dashboard</span>
