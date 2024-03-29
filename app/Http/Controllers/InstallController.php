@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 
 use mysqli;
 
@@ -138,60 +139,664 @@ class InstallController extends Controller {
 
     private function executeCompleteFunctions() {
     }
-    public function createDBFunction(Request $request) {
-        $response = new StreamedResponse(function () {
-            while (true) {
-                $steps = [
-                    'initLogin',
-                    'loginDatabaseServer',
-                    'initCreation',
-                ];
-
-                foreach ($steps as $step) {
-                    $message = call_user_func([$this, $step]);
-                    echo "data: " . json_encode($message) . "\n\n";
-                    ob_flush();
-                    flush();
-                    usleep(200000); // Delay for 200 milliseconds (optional)
+    public function DBInstaller($function) {
+        function mysqlExecutioner($queryy, $type) {
+            $dbHost = getenv('DB_HOST');
+            $dbUsername = getenv('DB_USERNAME');
+            $dbPassword = getenv('DB_PASSWORD');
+            $dbName = getenv('DB_DATABASE');
+            $dbPort = getenv('DB_PORT');
+            if ($type == 0) {
+                try {
+                    // atlast we test the DB connection cuz everything else is set.
+                    $conn = new mysqli($dbHost, $dbUsername, $dbPassword, '', $dbPort);
+                    if ($conn->connect_error) {
+                        throw new Exception("Connection failed: " . $conn->connect_error);
+                    } else {
+                        $result = $conn->query($queryy);
+                        
+                        if ($result == false) {
+                            throw new Exception("Error executing MySQL query: " . $conn->error);
+                        }
+                    
+                        // Fetching result
+                        if ($result == true) {
+                            if ($result->num_rows === 0) {
+                                $collectiveResult = "success";
+                            } else {
+                                $collectiveResult = array();
+                                while ($row = $result->fetch_assoc()) {
+                                    $collectiveResult[] = $row;
+                                }
+                            }
+                        }
+                        // Closing connection
+                        $conn->close();
+                    
+                        return $collectiveResult;
+                    
+                    }
+                } catch (Exception $e) {
+                    return $e->getMessage();
+                }
+            } else if ($type == 1) {
+                try {
+                    // atlast we test the DB connection cuz everything else is set.
+                    $dbName = getenv('DB_DATABASE');
+                    $conn = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName, $dbPort);
+                    if ($conn->connect_error) {
+                        throw new Exception("Connection failed: " . $conn->connect_error);
+                    } else {
+                        $result = $conn->query($queryy);
+                        if ($result == false) {
+                            throw new Exception("Error executing MySQL query: " . $conn->error);
+                        } else {
+                            return $result;
+                        }
+                        // Closing connection
+                        $conn->close();
+                    
+                    }
+                } catch (Exception $e) {
+                    return $e->getMessage();
                 }
             }
-        });
-
-        $response->headers->set('Content-Type', 'text/event-stream');
-        $response->headers->set('Cache-Control', 'no-cache');
-        $response->headers->set('X-Accel-Buffering', 'no');
-
-        return $response;
+        }
+        if ($function == 'login') {
+            $query = 'create database ' . getenv('DB_DATABASE');
+            $result = mysqlExecutioner($query, 0);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '5',
+                    'function' => 'createDB',
+                    'tasktitle' => 'Logging Into Database',
+                    'taskdescription' => 'Just Logging you in for this database operation',
+                    'taskicon' => 'check-circle',
+                    'outputfunction' => 'Login Attempt',
+                    'outputaction' => 'Attempting to log into the database server with the login provided in the ENV file.',
+                    'prodesc' => 'Logging into the database server..',
+                    'result' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-staff') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS staff (
+                staff_id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                staff_username VARCHAR(128) NOT NULL,
+                staff_password VARCHAR(255) NOT NULL,
+                staff_email VARCHAR(255),
+                staff_discord BIGINT(128),
+                server_id INT(128) NOT NULL,
+                created_at DATETIME NOT NULL,
+                updated_at DATETIME NOT NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '10',
+                    'sqlfunction' => 'table-staff', // current SQL function
+                    'description' => 'Successfully completed the creatation of the Database Table "staff".',
+                    'tasktitle' => 'Created Staff',
+                    'taskdescription' => 'Successfully Created Database Table "staff"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-staff-two', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-staff-two') {
+            $query = 
+            'CREATE UNIQUE INDEX staff_username ON staff("staff_username"); CREATE UNIQUE INDEX staff_email ON staff("staff_email")'
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '15',
+                    'sqlfunction' => 'table-staff-two', // current SQL function
+                    'description' => 'Successfully Altered Table Users adding an index to the field "staff".',
+                    'tasktitle' => 'Altered Staff',
+                    'taskdescription' => 'Successfully Created index on table "staff"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-users', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-users') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS users (
+                id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                email_verified_at TIMESTAMP NULL,
+                password VARCHAR(255) NOT NULL,
+                remember_token VARCHAR(100) NULL,
+                created_at DATETIME NULL,
+                updated_at DATETIME NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '20',
+                    'sqlfunction' => 'table-users', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "users".',
+                    'tasktitle' => 'Created users',
+                    'taskdescription' => 'Successfully Created Database Table "users"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-users-two', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-users-two') {
+            $query = 
+            'CREATE UNIQUE INDEX users_email_unique ON users("email")';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '23',
+                    'sqlfunction' => 'table-users-two', // current SQL function
+                    'description' => 'Successfully Altered Table Users adding an index to the field "email".',
+                    'tasktitle' => 'Created users',
+                    'taskdescription' => 'Successfully Created index on table "users"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-warns', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-warns') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS warns (
+                id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                player_id INT(128) NOT NULL,
+                reason VARCHAR(255) NOT NULL,
+                staff_id INT(128) NOT NULL,
+                server_id INT(128) NOT NULL,
+                created_at DATETIME NOT NULL,
+                updated_at DATETIME NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '30',
+                    'sqlfunction' => 'table-warns', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "warns".',
+                    'tasktitle' => 'Created Warns',
+                    'taskdescription' => 'Successfully Created Database Table "warns"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-bans', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-bans') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS bans (
+                id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                player_id INT(128) NOT NULL,
+                reason VARCHAR(255) NOT NULL,
+                staff_id INT(128) NOT NULL,
+                expires INT(1) NULL,
+                expired_date DATETIME NULL,
+                server_id INT(128) NOT NULL,
+                created_at DATETIME NOT NULL,
+                updated_at DATETIME NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '35',
+                    'sqlfunction' => 'table-bans', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "bans".',
+                    'tasktitle' => 'Created Bans',
+                    'taskdescription' => 'Successfully Created Database Table "bans"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-commends', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-commends') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS commends (
+                id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                player_id INT(128) NOT NULL,
+                reason VARCHAR(255) NOT NULL,
+                staff_id INT(128) NOT NULL,
+                server_id INT(128) NOT NULL,
+                created_at DATETIME NOT NULL,
+                updated_at DATETIME NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '40',
+                    'sqlfunction' => 'table-commends', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "commends".',
+                    'tasktitle' => 'Created Commends',
+                    'taskdescription' => 'Successfully Created Database Table "commends"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-failed-jobs', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-failed-jobs') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS failed_jobs (
+                id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                uuid INT(255) NOT NULL,
+                connection TEXT NOT NULL,
+                queue TEXT NOT NULL,
+                payload LONGTEXT NOT NULL,
+                exception LONGTEXT NOT NULL,
+                failed_at TIMESTAMP NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '45',
+                    'sqlfunction' => 'table-failed-jobs', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "failed_jobs".',
+                    'tasktitle' => 'Created users',
+                    'taskdescription' => 'Successfully Created Database Table "failed_jobs"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-failed-jobs-two', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-failed-jobs-two') {
+            $query = 
+            'CREATE UNIQUE INDEX failed_jobs_uuid_unique ON failed_jobs("uuid")';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '47',
+                    'sqlfunction' => 'table-failed-jobs-two', // current SQL function
+                    'description' => 'Successfully altered table "failed_jobs" adding an index for "uuid".',
+                    'tasktitle' => 'Altered failed_jobs',
+                    'taskdescription' => 'Successfully Created index on table "failed_jobs"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-kicks', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-kicks') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS kicks (
+                id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                player_id INT(128) NOT NULL,
+                reason VARCHAR(255) NOT NULL,
+                staff_id INT(128) NOT NULL,
+                server_id INT(128) NOT NULL,
+                created_at DATETIME NOT NULL,
+                updated_at DATETIME NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '50',
+                    'sqlfunction' => 'table-kicks', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "kicks".',
+                    'tasktitle' => 'Created Kicks',
+                    'taskdescription' => 'Successfully Created Database Table "kicks"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-layouts', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-layouts') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS layouts (
+                staff_id INT(128) AUTO_INCREMENT NULL,
+                view VARCHAR(128) NULL,
+                widget_type VARCHAR(128) NULL,
+                col INT(128) NULL,
+                row INT(128) NULL,
+                size_x DATETIME NULL,
+                size_y DATETIME NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '65',
+                    'sqlfunction' => 'table-layouts', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "layouts".',
+                    'tasktitle' => 'Created Layouts',
+                    'taskdescription' => 'Successfully Created Database Table "layouts"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-migrations', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-migrations') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS migrations (
+                id INT(10) AUTO_INCREMENT PRIMARY KEY,
+                migration VARCHAR(255) NOT NULL,
+                batch INT(11) NOT NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '70',
+                    'sqlfunction' => 'table-migrations', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "migrations".',
+                    'tasktitle' => 'Created Commends',
+                    'taskdescription' => 'Successfully Created Database Table "migrations"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-notes', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-notes') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS notes (
+                id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                player_id INT(128) NOT NULL,
+                note VARCHAR(255) NOT NULL,
+                staff_id INT(128) NOT NULL,
+                server_id INT(128) NOT NULL,
+                created_at DATETIME NOT NULL,
+                updated_at DATETIME NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '75',
+                    'sqlfunction' => 'table-notes', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "notes".',
+                    'tasktitle' => 'Created Notes',
+                    'taskdescription' => 'Successfully Created Database Table "notes"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-password-resets', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-password-resets') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS password_resets (
+                id VARCHAR(255) AUTO_INCREMENT PRIMARY KEY,
+                token INT(255) NOT NULL,
+                created_at TIMESTAMP NULL,
+                expires_at TIMESTAMP NULL,
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '80',
+                    'sqlfunction' => 'table-password-resets', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "password_resets".',
+                    'tasktitle' => 'Created Password_resets',
+                    'taskdescription' => 'Successfully Created Database Table "password_resets"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-personal-access-tokens', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-personal-access-tokens') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS personal_access_tokens (
+                id BIGINT(20) AUTO_INCREMENT PRIMARY KEY,
+                tokenable_type VARCHAR(255) NOT NULL,
+                tokenable_id BIGINT(20) NOT NULL,
+                name VARCHAR(255) NOT NULL
+                token VARCHAR(64) NOT NULL,
+                abilities TEXT NULL,
+                last_used_at TIMESTAMP NULL,
+                expires_at TIMESTAMP NULL,
+                created_at TIMESTAMP NULL,
+                updated_at TIMESTAMP NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '85',
+                    'sqlfunction' => 'table-personal-access-tokens', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "personal_access_tokens".',
+                    'tasktitle' => 'Created Personal_access_tokens',
+                    'taskdescription' => 'Successfully Created Database Table "personal_access_tokens"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-personal-access-tokens-two', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-personal-access-tokens-two') {
+            $query = 
+            'CREATE UNIQUE INDEX personal_access_tokens_token_unique ON personal_access_tokens("token"); CREATE INDEX personal_access_tokens_tokenable_type_tokenable_id_index ON personal_access_tokens("tokenable_type", "tokenable_id")';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '87',
+                    'sqlfunction' => 'table-personal-access-tokens-two', // current SQL function
+                    'description' => 'Successfully altered table "personal_access_tokens" adding an index for Multiple Options".',
+                    'tasktitle' => 'Altered failed_jobs',
+                    'taskdescription' => 'Successfully Created index on table "failed_jobs"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-players', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-players') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS players (
+                server_id INT(128) NULL,
+                player_id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                discord_id BIGINT(128) NULL,
+                game_license VARCHAR(128) NULL,
+                steam_id VARCHAR(32) NULL,
+                live VARCHAR(128) NULL,
+                xbl VARCHAR(128) NULL,
+                ip VARCHAR(128) NULL,
+                last_player_name VARCHAR(255) NULL,
+                created_at DATETIME NULL,
+                updated_at DATETIME NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '90',
+                    'sqlfunction' => 'players', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "players".',
+                    'tasktitle' => 'Created Players',
+                    'taskdescription' => 'Successfully Created Database Table "players"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-players-two', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-players-two') {
+            $query = 
+            'CREATE UNIQUE INDEX server_id ON players("server_id"); CREATE UNIQUE INDEX game_license ON players("game_license")';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '92',
+                    'sqlfunction' => 'table-personal-access-tokens-two', // current SQL function
+                    'description' => 'Successfully altered table "players" adding an index for "server_id" and "game_license".',
+                    'tasktitle' => 'Altered Players',
+                    'taskdescription' => 'Successfully Created index on table "players"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-player-data', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-player-data') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS notes (
+                id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                server_id INT(128) NULL,
+                player_id INT(128) NULL,
+                playtime INT(255) NULL,
+                trust_score INT(255) NULL,
+                joins INT(255) NULL,
+                last_join_date DATETIME NULL,
+                created_at DATETIME NULL,
+                updated_at DATETIME NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '95',
+                    'sqlfunction' => 'table-player-data', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "player-data".',
+                    'tasktitle' => 'Created Player-data',
+                    'taskdescription' => 'Successfully Created Database Table "player-data"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-player-data-two', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-player-data-two') {
+            $query = 
+            'CREATE UNIQUE INDEX server_id ON player_data("server_id"); CREATE UNIQUE INDEX player_id ON player_data("player_id")';
+            $result = mysqlExecutioner($query, 1);
+            if ($reset) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '98',
+                    'sqlfunction' => 'table-player-data-two', // current SQL function
+                    'description' => 'Successfully altered table "player-data" adding an index for "server_id" and "player_id".',
+                    'tasktitle' => 'Altered Players',
+                    'taskdescription' => 'Successfully Created index on table "players"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'table-player-data', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $responsee;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
+        if ($function == 'table-servers') {
+            $query = 
+            'CREATE TABLE IF NOT EXISTS notes (
+                id INT(128) AUTO_INCREMENT PRIMARY KEY,
+                server_name VARCHAR(255) NULL,
+                server_slug VARCHAR(255) NULL
+            )';
+            $result = mysqlExecutioner($query, 1);
+            if ($result) {
+                $response = [
+                    'status' => 'success',
+                    'percent' => '100',
+                    'sqlfunction' => 'table-servers', // current SQL function
+                    'description' => 'Successfully completed the creation of the Database Table "servers".',
+                    'tasktitle' => 'Created Servers',
+                    'taskdescription' => 'Successfully Created Database Table "servers"',
+                    'taskicon' => 'check-circle',
+                    'newfunction' => 'completed', // only used to direct new function execution.
+                    'sqlresult' => $result,
+                ];
+                return $response;
+            } else {
+                return response()-json(['error' => $result]);
+            }
+        }
     }
-    private function initLogin() {
-        sleep(2);
-        return [
-            'status' => 'success',
-            'percent' => '5',
-            'function' => 'initLogin',
-            'tasktitle' => 'Logging Into Database',
-            'taskdescription' => 'Just Logging you in for this database operation',
-            'taskicon' => 'check-circle',
-            'outputfunction' => 'Login Attempt',
-            'outputaction' => 'Attempting to log into the database server with the login provided in the ENV file.',
-            'prodesc' => 'Logging into the database server..',
-        ];
+        
     }
-    private function loginDatabaseServer() {
-        sleep(2);
-        return [
-            'status' => 'warning',
-            'percent' => '5',
-            'function' => 'loginDatabaseServer',
-            'tasktitle' => 'Logging Into Database',
-            'taskdescription' => 'Just Logging you in for this database operation',
-            'taskicon' => 'check-circle',
-            'outputfunction' => 'Login Attempt',
-            'outputaction' => 'Attempting to log into the database server with the login provided in the ENV file.',
-            'prodesc' => 'Logging into the database server..',
-        ];
+    public function createDB(Request $request) {
+        $function = $request->input('function_to_execute');
+        $result = $this->DBInstaller($function);
+        return response()->json($result);
     }
-    private function initCreation() {
+    public function initCreation() {
         sleep(2);
         return [
             'status' => 'error',
@@ -205,19 +810,19 @@ class InstallController extends Controller {
             'prodesc' => 'Logging into the database server..',
         ];
     }
-    private function databaseCreationIfNull() {
+    public function databaseCreationIfNull() {
         sleep(2);
     }
-    private function initTables() {
+    public function initTables() {
         sleep(2);
     }
-    private function createTables() {
+    public function createTables() {
         sleep(2);
     }
-    private function insertData() {
+    public function insertData() {
         sleep(2);
     }
-    private function verifyComplete() {
+    public function verifyComplete() {
         sleep(2);
     }
     public function createEnvFunction(Request $request) {
@@ -625,4 +1230,5 @@ class InstallController extends Controller {
         redirect()->intended('DASHBOARD');
         unlink($installerFile); 
     }
+    
 }
