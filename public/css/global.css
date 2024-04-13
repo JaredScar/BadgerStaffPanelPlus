@@ -46,8 +46,7 @@ body {
 }
 
 .full-page-header {
-    display: flex;
-    width: 100vw;
+    height: 30px;
     flex: 1;
     color: white;
     background-color: #57BC54;
@@ -57,6 +56,11 @@ body {
     display: flex;
     width: 100vw;
     flex: 1;
+}
+
+.subpage {
+    background-color: rgba(241, 241, 241, 0.8);
+    height: calc(100vh - 70px);
 }
 
 .page {
