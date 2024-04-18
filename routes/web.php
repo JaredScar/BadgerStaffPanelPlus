@@ -160,7 +160,7 @@ Route::middleware('authWeb:web')->get('/verified/records', function () {
     $data['css_path'] = 'widgets/records';
     $data['view_name'] = 'RECORDS';
     $data['customize'] = false;
-    return view('verified/records', array('data' => $data));
+    return view('verified/records/records', array('data' => $data));
 })->name("RECORDS");
 Route::middleware('authWeb:web')->get('/verified/records/player/{pid}', function (Request $req, $playerId) {
     $data = [];
