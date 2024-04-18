@@ -9,12 +9,6 @@ use Illuminate\Database\Query\Builder;
  * @mixin Builder
  */
 class Layout extends Model {
-    /**
-     * The storage format of the model's date columns.
-     *
-     * @var string
-     */
-    protected $dateFormat = 'U';
 
     // Define validation rules
     public static function rules()

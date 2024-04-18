@@ -97,5 +97,6 @@ class DashboardController extends Controller {
         }
         $layout->store($staff_id, $view, $widget_type, $col, $row, $size_x, $size_y);
         $layout->save();
+        return redirect()->route("DASHBOARD");
     }
 }
