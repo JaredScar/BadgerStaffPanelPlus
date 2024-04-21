@@ -15,7 +15,38 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="subpage">
+                        <div class="subpage d-flex justify-content-center">
+                            <div class="generate-token-form col-12 justify-center" id="tokens">
+                                <div class="row text-center">
+                                    <div class="col-12 justify-center mt-4">
+                                        <button class="btn bg-zap text-white fw-bold">Request new API token</button>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <span class="input-group-text">Note</span>
+                                            <input class="form-control" name="note" type="text" placeholder="What's this token for?" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <span class="input-group-text">Token expires in</span>
+                                            <select class="form-select" name="expiration" id="token_exp_select">
+                                                <option value="7">7 days</option>
+                                                <option value="30">30 days</option>
+                                                <option value="60">60 days</option>
+                                                <option value="90">90 days</option>
+                                                <option value="custom">Custom...</option>
+                                                <option value="noexp">No Expiration</option>
+                                            </select>
+                                            <input type="text" id="custom_exp" class="" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -23,4 +54,11 @@
         </div>
         @include('_partials._html_footer')
     </body>
+    <script type="module">
+        // TODO We want to make a datepicker when custom gets selected for token_exp_select
+        $('#custom_exp').datepicker({
+            container: 'body',
+            isMobile: true
+        });
+    </script>
 </html>

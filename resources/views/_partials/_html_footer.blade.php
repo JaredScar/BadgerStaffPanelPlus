@@ -30,6 +30,8 @@
 <script src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
 <!-- Include GridStack JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.0/gridstack-all.min.js" integrity="sha512-HrBVB/mAEb1KuouvSb7sE9dR43ziTePw/IibQWjK34nl5Mdqj2Dy7tfh2yiNLjyDGEJK4hXTrjlk7myXERaOsA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- Include air-datepicker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.1.0/js/datepicker.min.js" integrity="sha512-BKH4s8XuxwAKFAc9tjouyxHsBiZEt/lIsYiJhFgNrFwqu/KluwHSXN2EW5r+DsQ7beF3ZEBJbfpIlqFh49Kz2w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 @isset($data['captcha'])
     @if($data['captcha'])
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
