@@ -42,7 +42,7 @@
                                                 <option value="custom">Custom...</option>
                                                 <option value="noexp">No Expiration</option>
                                             </select>
-                                            <input type="text" id="custom_exp" class="" />
+                                            <input type="text" id="custom_exp" class="d-none w-35" />
                                         </div>
                                     </div>
                                 </div>
@@ -55,10 +55,20 @@
         @include('_partials._html_footer')
     </body>
     <script type="module">
-        // TODO We want to make a datepicker when custom gets selected for token_exp_select
+        // We want to make a datepicker when custom gets selected for token_exp_select
         $('#custom_exp').datepicker({
-            container: 'body',
-            isMobile: true
+            isMobile: true,
+            range: true,
+            position: 'left center',
+            language: 'en',
+            multipleDatesSeparator: ' -> '
+        });
+        $('#token_exp_select').on('change', (event) => {
+            if (event.target)
+                if (event.target.value === 'custom')
+                    $('#custom_exp').removeClass('d-none');
+                else
+                    $('#custom_exp').addClass('d-none');
         });
     </script>
 </html>

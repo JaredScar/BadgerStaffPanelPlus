@@ -94,3 +94,7 @@ body {
         opacity: .75;
     }
 }
+
+.w-35 {
+    width: 35%;
+}
