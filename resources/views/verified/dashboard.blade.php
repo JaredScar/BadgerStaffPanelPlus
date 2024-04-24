@@ -8,37 +8,39 @@
             <div class="col col-auto px-0">
                 @include('_partials._sidebar')
             </div>
-            <div class="col col-auto page d-flex position-relative">
-                <button class="btn btn-primary position-absolute z-2 opacity-75 end-0 me-2 d-none" id="add_widget_btn"><i class="fa-solid fa-circle-plus"></i></button>
-                @include('_partials._add_widget')
-                <div class="row flex-grow-1">
-                    <div class="col col-12">
-                        <div class="grid-stack">
-                            @foreach($data['widgetData'] as $widget)
-                                <div class="grid-stack-item" id="widget_{{$widget['widget_id']}}" gs-y="{{$widget['row']}}" gs-x="{{$widget['col']}}"
-                                     gs-w="{{$widget['size_x']}}" gs-h="{{$widget['size_y']}}"
-                                     data-widgetType="{{$widget['widget_type']}}"
-                                     data-widgetId="{{$widget['widget_id']}}"
-                                >
-                                    <div class="container-fluid h-100 px-0 grid-stack-item-content">
-                                        <div class="d-flex flex-column h-100">
-                                            <div class="row bg-zap mx-0 widget-header">
-                                                <div class="col-10 text-white">
-                                                    {{ config('widget.WIDGET_NAMES_FROM_TYPE')[$widget['widget_type']] }}
+            <div class="col col-auto flex-fill page-contain">
+                <div class="page position-relative">
+                    <button class="btn btn-primary position-absolute z-2 opacity-75 end-0 me-2 d-none" id="add_widget_btn"><i class="fa-solid fa-circle-plus"></i></button>
+                    @include('_partials._add_widget')
+                    <div class="row flex-grow-1">
+                        <div class="col col-12">
+                            <div class="grid-stack">
+                                @foreach($data['widgetData'] as $widget)
+                                    <div class="grid-stack-item" id="widget_{{$widget['widget_id']}}" gs-y="{{$widget['row']}}" gs-x="{{$widget['col']}}"
+                                         gs-w="{{$widget['size_x']}}" gs-h="{{$widget['size_y']}}"
+                                         data-widgetType="{{$widget['widget_type']}}"
+                                         data-widgetId="{{$widget['widget_id']}}"
+                                    >
+                                        <div class="container-fluid h-100 px-0 grid-stack-item-content">
+                                            <div class="d-flex flex-column h-100">
+                                                <div class="row bg-zap mx-0 widget-header">
+                                                    <div class="col-10 text-white">
+                                                        {{ config('widget.WIDGET_NAMES_FROM_TYPE')[$widget['widget_type']] }}
+                                                    </div>
+                                                    <div class="col-2 text-danger widget-actions text-end d-none">
+                                                        <i onclick="deleteWidget('#widget_{{$widget['widget_id']}}');" class="fa-solid fa-trash"></i>
+                                                    </div>
                                                 </div>
-                                                <div class="col-2 text-danger widget-actions text-end d-none">
-                                                    <i onclick="deleteWidget('#widget_{{$widget['widget_id']}}');" class="fa-solid fa-trash"></i>
-                                                </div>
-                                            </div>
-                                            <div class="row mx-0 bg-white flex-grow-1">
-                                                <div class="col-12 text-dark justify-content-center align-middle d-flex align-items-center">
-                                                    @include("_widgets." . $widget['widget_type'])
+                                                <div class="row mx-0 bg-white flex-grow-1">
+                                                    <div class="col-12 text-dark justify-content-center align-middle d-flex align-items-center">
+                                                        @include("_widgets." . $widget['widget_type'])
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>

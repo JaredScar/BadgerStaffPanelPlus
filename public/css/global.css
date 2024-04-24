@@ -63,10 +63,14 @@ body {
     height: calc(100vh - 70px);
 }
 
+.page-contain {
+    max-width: calc(100vw - 240px);
+    margin-left: 240px;
+}
+
 .page {
     background-color: rgba(241, 241, 241, 0.85);
     display: flex;
-    width: 100vw;
     flex: 1;
     margin: 20px 20px 90px 20px;
     padding: 10px;
@@ -97,4 +101,8 @@ body {
 
 .w-35 {
     width: 35%;
+}
+
+.no-padding {
+    padding: 0;
 }

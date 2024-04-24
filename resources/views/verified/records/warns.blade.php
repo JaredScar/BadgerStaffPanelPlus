@@ -8,7 +8,7 @@
                 <div class="col col-auto px-0">
                     @include('_partials._sidebar')
                 </div>
-                <div class="col col-auto flex-fill">
+                <div class="col col-auto flex-fill page-contain">
                     <div class="row flex-fill">
                         <div class="full-page-header d-flex align-items-center">
                             Warns
