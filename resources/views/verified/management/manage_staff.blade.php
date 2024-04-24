@@ -23,21 +23,4 @@
         </div>
         @include('_partials._html_footer')
     </body>
-    <script type="module">
-        // We want to make a datepicker when custom gets selected for token_exp_select
-        $('#custom_exp').datepicker({
-            isMobile: true,
-            range: true,
-            position: 'left center',
-            language: 'en',
-            multipleDatesSeparator: ' -> '
-        });
-        $('#token_exp_select').on('change', (event) => {
-            if (event.target)
-                if (event.target.value === 'custom')
-                    $('#custom_exp').removeClass('d-none');
-                else
-                    $('#custom_exp').addClass('d-none');
-        });
-    </script>
 </html>
