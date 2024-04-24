@@ -201,13 +201,20 @@ Route::middleware('authWeb:web')->get('/verified/players', function () {})->name
  * MANAGEMENT
  */
 Route::middleware('authWeb:web')->get('/verified/management/settings', function () {})->name("SETTINGS");
-Route::middleware('authWeb:web')->get('/verified/management/manage', function () {
+Route::middleware('authWeb:web')->get('/verified/management/manage_tokens', function () {
     $data = [];
     $data['css_path'] = 'verified/management';
-    $data['view_name'] = 'MANAGEMENT';
+    $data['view_name'] = 'TOKEN_MANAGEMENT';
     $data['customize'] = false;
-    return view('verified/management/manage', array('data' => $data));
-})->name("MANAGEMENT");
+    return view('verified/management/manage_tokens', array('data' => $data));
+})->name("TOKEN_MANAGEMENT");
+Route::middleware('authWeb:web')->get('/verified/management/manage_staff', function () {
+    $data = [];
+    $data['css_path'] = 'verified/management';
+    $data['view_name'] = 'STAFF_MANAGEMENT';
+    $data['customize'] = false;
+    return view('verified/management/manage_staff', array('data' => $data));
+})->name("STAFF_MANAGEMENT");
 Route::middleware('authWeb:web')->get('/verified/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
 
 /**
