@@ -18,139 +18,160 @@
                         <div class="col subpage justify-content-center">
                             <div class="row">
                                 <div class="generate-token-form col-12 justify-center" id="tokens">
-                                    <div class="row mt-4">
-                                        <div class="col-12">
-                                            <div class="input-group">
-                                                <span class="input-group-text fw-bold">Note</span>
-                                                <input class="form-control" name="note" type="text" placeholder="What's this token for?" />
+                                    <form method="post" action="tokens/create">
+                                        @csrf
+                                        <div class="row mt-4">
+                                            <div class="col-12">
+                                                <div class="input-group">
+                                                    <span class="input-group-text fw-bold">Note</span>
+                                                    <input required class="form-control" name="note" type="text" placeholder="What's this token for?" />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row mt-4">
-                                        <div class="col-12">
-                                            <div class="input-group">
-                                                <span class="input-group-text fw-bold">Token expires in</span>
-                                                <select class="form-select" name="expiration" id="token_exp_select">
-                                                    <option value="7">7 days</option>
-                                                    <option value="30">30 days</option>
-                                                    <option value="60">60 days</option>
-                                                    <option value="90">90 days</option>
-                                                    <option value="custom">Custom...</option>
-                                                    <option value="noexp">No Expiration</option>
-                                                </select>
-                                                <input type="text" id="custom_exp" class="d-none w-35" />
+                                        <div class="row mt-4">
+                                            <div class="col-12">
+                                                <div class="input-group">
+                                                    <span class="input-group-text fw-bold">Token expires in</span>
+                                                    <select required class="form-select" name="expiration" id="token_exp_select">
+                                                        <option value="7">7 days</option>
+                                                        <option value="30">30 days</option>
+                                                        <option value="60">60 days</option>
+                                                        <option value="90">90 days</option>
+                                                        <option value="custom">Custom...</option>
+                                                        <option value="noexp">No Expiration</option>
+                                                    </select>
+                                                    <input type="text" id="custom_exp" class="d-none w-35" />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row mt-4 permissions-sect">
-                                        <div class="col-6">
-                                            <!-- Registry -->
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="registry">
-                                                <label class="form-check-label" for="registry">
-                                                    Registry - Register player
-                                                </label>
+                                        <div class="row mt-4 permissions-sect">
+                                            <div class="col-6">
+                                                <!-- Registry -->
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="registrySwitch">
+                                                        Registry - Register player
+                                                    </label>
+                                                    <input class="form-check-input" name="register" type="checkbox" id="registrySwitch">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <!-- Staff -->
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="createStaffSwitch">
+                                                        Staff - Create
+                                                    </label>
+                                                    <input class="form-check-input" name="staff_create" type="checkbox" id="createStaffSwitch">
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="deleteStaffSwitch">
+                                                        Staff - Delete
+                                                    </label>
+                                                    <input class="form-check-input" name="staff_delete" type="checkbox" id="deleteStaffSwitch">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <!-- Bans -->
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="createBansSwitch">
+                                                        Bans - Create
+                                                    </label>
+                                                    <input class="form-check-input" name="ban_create" type="checkbox" id="createBansSwitch">
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="deleteBansSwitch">
+                                                        Bans - Delete
+                                                    </label>
+                                                    <input class="form-check-input" name="ban_delete" type="checkbox" id="deleteBansSwitch">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <!-- Kicks -->
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="createKicksSwitch">
+                                                        Kicks - Create
+                                                    </label>
+                                                    <input class="form-check-input" name="kick_create" type="checkbox" id="createKicksSwitch">
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="deleteKicksSwitch">
+                                                        Kicks - Delete
+                                                    </label>
+                                                    <input class="form-check-input" name="kick_delete" type="checkbox" id="deleteKicksSwitch">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <!-- Warns -->
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="createWarnsSwitch">
+                                                        Warns - Create
+                                                    </label>
+                                                    <input class="form-check-input" name="warn_create" type="checkbox" id="createWarnsSwitch">
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="deleteWarnsSwitch">
+                                                        Warns - Delete
+                                                    </label>
+                                                    <input class="form-check-input" name="warn_delete" type="checkbox" id="deleteWarnsSwitch">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <!-- Commends -->
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="createCommendsSwitch">
+                                                        Commends - Create
+                                                    </label>
+                                                    <input class="form-check-input" name="commend_create" type="checkbox" id="createCommendsSwitch">
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="deleteCommendsSwitch">
+                                                        Commends - Delete
+                                                    </label>
+                                                    <input class="form-check-input" name="commend_delete" type="checkbox" id="deleteCommendsSwitch">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <!-- Notes -->
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="createNotesSwitch">
+                                                        Notes - Create
+                                                    </label>
+                                                    <input class="form-check-input" name="note_create" type="checkbox" id="createNotesSwitch">
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="deleteNotesSwitch">
+                                                        Notes - Delete
+                                                    </label>
+                                                    <input class="form-check-input" name="note_delete" type="checkbox" id="deleteNotesSwitch">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <!-- TrustScores -->
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="resetTrustScoresSwitch">
+                                                        TrustScores - Create
+                                                    </label>
+                                                    <input class="form-check-input" name="trustscore_create" type="checkbox" id="resetTrustScoresSwitch">
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="resetTrustScoresSwitch">
+                                                        TrustScores - Delete
+                                                    </label>
+                                                    <input class="form-check-input" name="trustscore_delete" type="checkbox" id="resetTrustScoresSwitch">
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <label class="form-check-label" for="resetTrustScoresSwitch">
+                                                        TrustScores - Reset
+                                                    </label>
+                                                    <input class="form-check-input" name="trustscore_reset" type="checkbox" id="resetTrustScoresSwitch">
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-6">
-                                            <!-- Staff -->
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="createStaff">
-                                                <label class="form-check-label" for="createStaff">
-                                                    Staff - Create
-                                                </label>
+                                        <div class="row mt-4 text-center">
+                                            <div class="col-12 justify-center">
+                                                <button type="submit" class="btn bg-zap text-white fw-bold">Request new API token</button>
                                             </div>
                                         </div>
-                                        <div class="col-6">
-                                            <!-- Bans -->
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="createBans">
-                                                <label class="form-check-label" for="createBans">
-                                                    Bans - Create
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="deleteBans">
-                                                <label class="form-check-label" for="deleteBans">
-                                                    Bans - Delete
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <!-- Kicks -->
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="createKicks">
-                                                <label class="form-check-label" for="createKicks">
-                                                    Kicks - Create
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="deleteKicks">
-                                                <label class="form-check-label" for="deleteKicks">
-                                                    Kicks - Delete
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <!-- Warns -->
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="createWarns">
-                                                <label class="form-check-label" for="createWarns">
-                                                    Warns - Create
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="deleteWarns">
-                                                <label class="form-check-label" for="deleteWarns">
-                                                    Warns - Delete
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <!-- Commends -->
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="createCommends">
-                                                <label class="form-check-label" for="createCommends">
-                                                    Commends - Create
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="deleteCommends">
-                                                <label class="form-check-label" for="deleteCommends">
-                                                    Commends - Delete
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <!-- Notes -->
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="createNotes">
-                                                <label class="form-check-label" for="createNotes">
-                                                    Notes - Create
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="deleteNotes">
-                                                <label class="form-check-label" for="deleteNotes">
-                                                    Notes - Delete
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <!-- TrustScores -->
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="resetTrustScores">
-                                                <label class="form-check-label" for="resetTrustScores">
-                                                    TrustScores - Reset
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-4 text-center">
-                                        <div class="col-12 justify-center">
-                                            <button class="btn bg-zap text-white fw-bold">Request new API token</button>
-                                        </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
                             <div class="row mt-4">

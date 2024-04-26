@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\TokenController;
 use App\Models\Layout;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Client\Request;
@@ -238,4 +239,4 @@ Route::middleware('authWeb:web')->put('/verified/dashboard/save', [DashboardCont
  * POST methods
  */
 Route::middleware('authWeb:web')->post('/verified/dashboard/add_widget', [DashboardController::class, 'add_widget']);
-Route::middleware('authWeb:web')->post('/verified/management/tokens/create', []);
+Route::middleware('authWeb:web')->post('/verified/management/tokens/create', [TokenController::class, 'doCreateToken']);

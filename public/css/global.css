@@ -99,6 +99,11 @@ body {
     }
 }
 
+.generate-token-form .form-switch {
+    display: flex !important;
+    justify-content: space-between;
+}
+
 .w-35 {
     width: 35%;
 }
