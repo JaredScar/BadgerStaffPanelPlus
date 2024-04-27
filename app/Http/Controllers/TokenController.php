@@ -2,11 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Token;
+use App\Models\TokenPerms;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class TokenController extends Controller {
+    const PERMISSIONS = [
+        'REGISTER',
+        'BAN_CREATE',
+        'BAN_DELETE',
+        'WARN_CREATE',
+        'WARN_DELETE',
+        'NOTE_CREATE',
+        'NOTE_DELETE',
+        'STAFF_CREATE',
+        'STAFF_DELETE',
+        'KICK_CREATE',
+        'KICK_DELETE',
+        'COMMEND_CREATE',
+        'COMMEND_DELETE',
+        'TRUSTSCORE_CREATE',
+        'TRUSTSCORE_DELETE',
+        'TRUSTSCORE_RESET'
+    ];
     function generateToken($length = 32) {
         return bin2hex(random_bytes($length / 2));
     }
@@ -15,29 +36,44 @@ class TokenController extends Controller {
         $params = $request->all();
         $note = $params['note'];
         $expiration = $params['expiration'] ?? '90';
-        $register_flg = $params['register'] ?? false;
-
-        $staff_create = $params['staff_create'] ?? false;
-        $staff_delete = $params['staff_delete'] ?? false;
-
-        $ban_create = $params['ban_create'] ?? false;
-        $ban_delete = $params['ban_delete'] ?? false;
-
-        $kick_create = $params['kick_create'] ?? false;
-        $kick_delete = $params['kick_delete'] ?? false;
-
-        $warn_create = $params['warn_create'] ?? false;
-        $warn_delete = $params['warn_delete'] ?? false;
-
-        $commend_create = $params['commend_create'] ?? false;
-        $commend_delete = $params['commend_delete'] ?? false;
-
-        $note_create = $params['note_create'] ?? false;
-        $note_delete = $params['note_delete'] ?? false;
-
-        $trustscore_create = $params['trustscore_create'] ?? false;
-        $trustscore_delete = $params['trustscore_delete'] ?? false;
-        $trustscore_reset = $params['trustscore_reset'] ?? false;
+        $custom_exp = $params['custom_exp'] ?? false;
         $token = 'BSP_' . $this->generateToken() . '_' . (password_hash(date('Y-m-d H:i:s.', microtime(true)), PASSWORD_DEFAULT));
+
+        $staff_id = Session::get("staff_id");
+
+        $tokenDb = new Token();
+        $cur_datetime = date('Y-m-d');
+        $expiration_date = $cur_datetime;
+        switch ($expiration) {
+            case '7':
+                $expiration_date = date($cur_datetime, strtotime('+7 days'));
+                break;
+            case '30':
+                $expiration_date = date($cur_datetime, strtotime('+30 days'));
+                break;
+            case '60':
+                $expiration_date = date($cur_datetime, strtotime('+60 days'));
+                break;
+            case '90':
+                $expiration_date = date($cur_datetime, strtotime('+90 days'));
+                break;
+            case 'custom':
+                $expiration_date = $custom_exp;
+                break;
+            case 'noexp':
+                $expiration_date = date($cur_datetime, strtotime('+9999 years'));
+                break;
+        }
+        $tokenDb->store($staff_id, $token, $expiration_date);
+        $tokenDb->save();
+        $token_id = $tokenDb->token_id;
+        // We need to store the token permissions
+        foreach (self::PERMISSIONS as $permission) {
+            $tokenPerm = new TokenPerms();
+            $tokenPerm->store($token_id, $permission);
+            $tokenPerm->allowed = ($params[$permission] ?? false);
+            $tokenPerm->save();
+        }
+        return redirect()->route('TOKEN_MANAGEMENT');
     }
 }

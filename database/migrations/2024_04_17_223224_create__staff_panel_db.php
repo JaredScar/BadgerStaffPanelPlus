@@ -33,14 +33,24 @@ return new class extends Migration
         Schema::create('tokens', function (Blueprint $table) {
             $table->bigIncrements('token_id');
             $table->unsignedBigInteger('staff_id');
+            $table->string('note', 255);
             $table->string('token');
             $table->boolean('active');
             $table->unsignedBigInteger('deactivated_by')->nullable();
             $table->dateTime('expires')->nullable();
-            $table->boolean('expired')->default(false);
+            $table->boolean('active_flg')->default(true);
             $table->timestamps();
 
             $table->foreign('staff_id')->references('staff_id')->on('staff');
+        });
+
+        Schema::create('token_perms', function (Blueprint $table) {
+            $table->unsignedBigInteger('token_id');
+            $table->set('permission', ['REGISTER', 'BAN_CREATE', 'BAN_DELETE', 'WARN_CREATE', 'WARN_DELETE', 'NOTE_CREATE', 'NOTE_DELETE', 'STAFF_CREATE', 'STAFF_DELETE', 'KICK_CREATE', 'KICK_DELETE', 'COMMEND_CREATE', 'COMMEND_DELETE', 'TRUSTSCORE_CREATE', 'TRUSTSCORE_DELETE', 'TRUSTSCORE_RESET']);
+            $table->boolean('allowed')->default(0);
+            $table->timestamps();
+
+            $table->primary(['token_id', 'permission']);
         });
 
         Schema::create('players', function (Blueprint $table) {
@@ -161,6 +171,7 @@ return new class extends Migration
         Schema::dropIfExists('warns');
         Schema::dropIfExists('players');
         Schema::dropIfExists('tokens');
+        Schema::dropIfExists('token_perms');
         Schema::dropIfExists('staff');
         Schema::dropIfExists('servers');
         Schema::dropIfExists('notes');

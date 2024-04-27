@@ -20,13 +20,23 @@ CREATE TABLE `staff` (
 CREATE TABLE `tokens` (
     `token_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
     `staff_id` INT(128),
+    `note` VARCHAR(255),
     `token` VARCHAR(255),
-    `active` BIT(1),
+    `active` BIT(1) DEFAULT (1),
     `deactivated_by` INT(128) DEFAULT NULL,
     `expires` DATETIME DEFAULT NULL,
-    `expired` BIT(1) DEFAULT 0,
+    `active_flg` BIT(1) DEFAULT 1,
     `created_at` DATETIME,
     `updated_at` DATETIME
+);
+
+CREATE TABLE `token_perms` (
+    `token_id` INT(128),
+    `permission` SET('REGISTER', 'BAN_CREATE', 'BAN_DELETE', 'WARN_CREATE', 'WARN_DELETE', 'NOTE_CREATE', 'NOTE_DELETE', 'STAFF_CREATE', 'STAFF_DELETE', 'KICK_CREATE', 'KICK_DELETE', 'COMMEND_CREATE', 'COMMEND_DELETE', 'TRUSTSCORE_CREATE', 'TRUSTSCORE_DELETE', 'TRUSTSCORE_RESET'),
+    `allowed` BIT(1) DEFAULT 0,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`token_id`, `permission`)
 );
 
 INSERT INTO `staff` (

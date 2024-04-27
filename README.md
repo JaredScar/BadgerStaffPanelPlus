@@ -64,6 +64,7 @@ Coming Soon
   * Register player into StaffPanel system
 * Staff
   * Create
+  * Delete
 * Bans
   * Create
   * Delete
@@ -80,6 +81,8 @@ Coming Soon
   * Create
   * Delete
 * TrustScores
+  * Create
+  * Delete
   * Reset
 
 ## Screenshots
