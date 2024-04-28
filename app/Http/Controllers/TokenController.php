@@ -36,6 +36,7 @@ class TokenController extends Controller {
         $params = $request->all();
         $note = $params['note'];
         $expiration = $params['expiration'] ?? '90';
+        $expiration = strval($expiration);
         $custom_exp = $params['custom_exp'] ?? false;
         $token = 'BSP_' . $this->generateToken() . '_' . (password_hash(date('Y-m-d H:i:s.', microtime(true)), PASSWORD_DEFAULT));
 
@@ -46,32 +47,33 @@ class TokenController extends Controller {
         $expiration_date = $cur_datetime;
         switch ($expiration) {
             case '7':
-                $expiration_date = date($cur_datetime, strtotime('+7 days'));
+                $expiration_date = date('Y-m-d H:i:s', strtotime('+7 days'));
                 break;
             case '30':
-                $expiration_date = date($cur_datetime, strtotime('+30 days'));
+                $expiration_date = date('Y-m-d H:i:s', strtotime('+30 days'));
                 break;
             case '60':
-                $expiration_date = date($cur_datetime, strtotime('+60 days'));
+                $expiration_date = date('Y-m-d H:i:s', strtotime('+60 days'));
                 break;
             case '90':
-                $expiration_date = date($cur_datetime, strtotime('+90 days'));
+                $expiration_date = date('Y-m-d H:i:s', strtotime('+90 days'));
                 break;
             case 'custom':
                 $expiration_date = $custom_exp;
                 break;
             case 'noexp':
-                $expiration_date = date($cur_datetime, strtotime('+9999 years'));
+                $expiration_date = date('Y-m-d H:i:s', strtotime('+9999 years'));
                 break;
         }
-        $tokenDb->store($staff_id, $token, $expiration_date);
+        $tokenDb->store($staff_id, $token, $note, $expiration_date);
         $tokenDb->save();
-        $token_id = $tokenDb->token_id;
+        $token_id = $tokenDb->id;
         // We need to store the token permissions
         foreach (self::PERMISSIONS as $permission) {
             $tokenPerm = new TokenPerms();
             $tokenPerm->store($token_id, $permission);
-            $tokenPerm->allowed = ($params[$permission] ?? false);
+            $tokenPerm->allowed = ($params[strtolower($permission)] ?? false);
+            $tokenPerm->allowed = $tokenPerm->allowed ? 1 : 0;
             $tokenPerm->save();
         }
         return redirect()->route('TOKEN_MANAGEMENT');

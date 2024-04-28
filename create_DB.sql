@@ -22,7 +22,7 @@ CREATE TABLE `tokens` (
     `staff_id` INT(128),
     `note` VARCHAR(255),
     `token` VARCHAR(255),
-    `active` BIT(1) DEFAULT (1),
+    `active` BIT(1) DEFAULT 1,
     `deactivated_by` INT(128) DEFAULT NULL,
     `expires` DATETIME DEFAULT NULL,
     `active_flg` BIT(1) DEFAULT 1,

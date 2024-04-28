@@ -202,39 +202,48 @@
                                 <thead>
                                 <tr>
                                     <th>Token ID</th>
+                                    <th></th>
                                     <th>Note</th>
                                     <th>Permissions</th>
-                                    <th>Expiration Date</th>
-                                    <th>Expired?</th>
-                                    <th>Active?</th>
-                                    <th>Actions</th>
+                                    <th>Expiration</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <!-- Get the data from PHP and put it here -->
                                 <?php
-                                $tokens = Token::where('staff_id', Session::get('staff_id'));
+                                $tokens = Token::where('staff_id', Session::get('staff_id'))->get();
                                 $currentDate = date('Y-m-d H:i:s');
                                 foreach ($tokens as $token) {
                                     $dataRow = '<tr>';
                                     $token_id = $token->token_id;
-                                    $tokenPerms = TokenPerms::where('token_id', $token_id);
+                                    $tokenPerms = TokenPerms::where('token_id', $token_id)->get();
                                     $expires = $token->expires;
                                     $active = $token->active_flg;
                                     $note = $token->note;
-                                    $dataRow .= `<td>$token_id</td>`;
-                                    $dataRow .= `<td>$note</td><td>`;
+                                    $dataRow .= "<td>$token_id</td>";
+                                    if ($active)
+                                        $dataRow .= "<td><span class='badge bg-success'>Active</span></td>";
+                                    else
+                                        $dataRow .= "<td><span class='badge bg-danger'>Inactive</span></td>";
+                                    $dataRow .= "<td>$note</td><td>";
+                                    $hasPerms = false;
                                     foreach ($tokenPerms as $perm) {
                                         $permName = $perm->permission;
                                         $allowed = $perm->allowed;
-                                        if ($allowed)
-                                            $dataRow .= `$permName`;
+                                        if ($allowed) {
+                                            $dataRow .= "<span class='badge rounded-pill bg-secondary'>$permName</span>";
+                                            $hasPerms = true;
+                                        }
                                     }
-                                    $dataRow .= `<td>$expires</td>`;
                                     $expired = $expires < $currentDate;
-                                    $dataRow .= `<td>$expired</td>`;
-                                    $dataRow .= `<td>Actions</td>`;
-                                    $dataRow .= '</tr>';
+                                    if (!$expired)
+                                        $dataRow .= "<td><span class='badge bg-success'>$expires</span></td>";
+                                    else
+                                        $dataRow .= "<td><span class='badge bg-danger'>$expires</span></td>";
+                                    $dataRow .= "<td>Actions</td>";
+                                    $dataRow .= "</tr>";
+                                    echo $dataRow;
                                 }
                                 ?>
                                 </tbody>

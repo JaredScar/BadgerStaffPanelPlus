@@ -10,9 +10,10 @@ use Illuminate\Database\Query\Builder;
  */
 class Token extends Model {
 
-    public function store($staff_id, $token, $expires) {
+    public function store($staff_id, $token, $note, $expires) {
         $this->staff_id = $staff_id;
         $this->token = $token;
+        $this->note = $note;
         $this->expires = $expires;
     }
 }
