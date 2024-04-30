@@ -237,6 +237,7 @@
                                         }
                                     }
                                     $expired = $expires < $currentDate;
+                                    $expires = date('m/d/Y - h:i a'); // TODO Maybe the time should be a tooltip?
                                     if (!$expired)
                                         $dataRow .= "<td><span class='badge bg-success'>$expires</span></td>";
                                     else
