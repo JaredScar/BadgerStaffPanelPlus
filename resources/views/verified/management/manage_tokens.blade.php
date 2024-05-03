@@ -242,7 +242,7 @@
                                         $dataRow .= "<td><span class='badge bg-success'>$expires</span></td>";
                                     else
                                         $dataRow .= "<td><span class='badge bg-danger'>$expires</span></td>";
-                                    $dataRow .= "<td>Actions</td>";
+                                    $dataRow .= "<td><i class='fa-solid fa-trash text-danger'></i></td>";
                                     $dataRow .= "</tr>";
                                     echo $dataRow;
                                 }
