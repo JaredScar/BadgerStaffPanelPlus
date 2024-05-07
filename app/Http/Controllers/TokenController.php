@@ -65,17 +65,30 @@ class TokenController extends Controller {
                 $expiration_date = date('Y-m-d H:i:s', strtotime('+9999 years'));
                 break;
         }
-        $tokenDb->store($staff_id, $token, $note, $expiration_date);
-        $tokenDb->save();
-        $token_id = $tokenDb->id;
-        // We need to store the token permissions
+        $hasOneOptOn = false;
         foreach (self::PERMISSIONS as $permission) {
-            $tokenPerm = new TokenPerms();
-            $tokenPerm->store($token_id, $permission);
-            $tokenPerm->allowed = ($params[strtolower($permission)] ?? false);
-            $tokenPerm->allowed = $tokenPerm->allowed ? 1 : 0;
-            $tokenPerm->save();
+            $valid = $params[strtolower($permission)] ?? false;
+            if ($valid) {
+                // It's valid
+                $hasOneOptOn = true;
+            }
         }
-        return redirect()->route('TOKEN_MANAGEMENT');
+        if ($hasOneOptOn) {
+            $tokenDb->store($staff_id, $token, $note, $expiration_date);
+            $tokenDb->save();
+            $token_id = $tokenDb->id;
+            // We need to store the token permissions
+            foreach (self::PERMISSIONS as $permission) {
+                $tokenPerm = new TokenPerms();
+                $tokenPerm->store($token_id, $permission);
+                $tokenPerm->allowed = ($params[strtolower($permission)] ?? false);
+                $tokenPerm->allowed = $tokenPerm->allowed ? 1 : 0;
+                $tokenPerm->save();
+            }
+            return redirect()->route('TOKEN_MANAGEMENT');
+        } else {
+            // TODO Error, needs to turn at least one opt on...
+            return redirect()->route('TOKEN_MANAGEMENT')->withErrors(['error' => 'At least one option must be selected.']);
+        }
     }
 }

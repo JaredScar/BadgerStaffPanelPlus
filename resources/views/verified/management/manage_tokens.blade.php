@@ -19,6 +19,15 @@
                 <div class="col subpage justify-content-center">
                     <div class="row">
                         <div class="generate-token-form col-12 justify-center" id="tokens">
+                            @if ($errors->any())
+                                <div class="alert alert-danger mt-4">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             <form method="post" action="tokens/create">
                                 @csrf
                                 <div class="row mt-4">
