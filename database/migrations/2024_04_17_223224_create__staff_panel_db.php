@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('servers', function (Blueprint $table) {
-            $table->bigIncrements('server_id')->primary();
+            $table->bigIncrements('server_id')->autoIncrement();
             $table->string('server_name');
             $table->string('server_slug', 128);
             $table->timestamps();
@@ -27,7 +27,7 @@ return new class extends Migration
         ]);
 
         Schema::create('staff', function (Blueprint $table) {
-            $table->bigIncrements('staff_id')->primary();
+            $table->bigIncrements('staff_id')->autoIncrement();
             $table->string('staff_username')->unique();
             $table->string('staff_password');
             $table->string('staff_email')->unique();
@@ -60,7 +60,7 @@ return new class extends Migration
         });
 
         Schema::create('tokens', function (Blueprint $table) {
-            $table->bigIncrements('token_id')->primary();
+            $table->bigIncrements('token_id')->autoIncrement();
             $table->unsignedBigInteger('staff_id');
             $table->string('note', 255);
             $table->string('token');
@@ -84,7 +84,7 @@ return new class extends Migration
 
         Schema::create('players', function (Blueprint $table) {
             $table->unsignedBigInteger('server_id')->unique();
-            $table->bigIncrements('player_id')->primary();
+            $table->bigIncrements('player_id')->autoIncrement();
             $table->bigInteger('discord_id')->nullable();
             $table->string('game_license')->unique();
             $table->string('steam_id', 32)->nullable();
@@ -95,7 +95,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('server_id')->references('server_id')->on('servers');
-            $table->foreign('player_id')->references('player_id')->on('players');
         });
 
         Schema::create('player_data', function (Blueprint $table) {
@@ -113,7 +112,7 @@ return new class extends Migration
         });
 
         Schema::create('warns', function (Blueprint $table) {
-            $table->bigIncrements('warn_id')->primary();
+            $table->bigIncrements('warn_id')->autoIncrement();
             $table->unsignedBigInteger('player_id');
             $table->string('reason');
             $table->unsignedBigInteger('staff_id');
@@ -126,7 +125,7 @@ return new class extends Migration
         });
 
         Schema::create('layouts', function (Blueprint $table) {
-            $table->bigIncrements('layout_id')->primary();
+            $table->bigIncrements('layout_id')->autoIncrement();
             $table->unsignedBigInteger('server_id');
             $table->unsignedBigInteger('staff_id');
             $table->string('view', 128);
@@ -141,7 +140,7 @@ return new class extends Migration
         });
 
         Schema::create('kicks', function (Blueprint $table) {
-            $table->bigIncrements('kick_id')->primary();
+            $table->bigIncrements('kick_id')->autoIncrement();
             $table->unsignedBigInteger('player_id');
             $table->string('reason', 255);
             $table->unsignedBigInteger('staff_id');
@@ -154,7 +153,7 @@ return new class extends Migration
         });
 
         Schema::create('bans', function (Blueprint $table) {
-            $table->bigIncrements('ban_id')->primary();
+            $table->bigIncrements('ban_id')->autoIncrement();
             $table->unsignedBigInteger('player_id');
             $table->string('reason', 255);
             $table->unsignedBigInteger('staff_id');
@@ -169,7 +168,7 @@ return new class extends Migration
         });
 
         Schema::create('commends', function (Blueprint $table) {
-            $table->bigIncrements('commend_id')->primary();
+            $table->bigIncrements('commend_id')->autoIncrement();
             $table->unsignedBigInteger('player_id');
             $table->string('reason', 255);
             $table->unsignedBigInteger('staff_id');
@@ -182,7 +181,7 @@ return new class extends Migration
         });
 
         Schema::create('notes', function (Blueprint $table) {
-            $table->bigIncrements('note_id')->primary();
+            $table->bigIncrements('note_id')->autoIncrement();
             $table->unsignedBigInteger('player_id');
             $table->string('note', 255);
             $table->unsignedBigInteger('staff_id');
@@ -210,6 +209,7 @@ return new class extends Migration
         Schema::dropIfExists('player_data');
         Schema::dropIfExists('players');
         Schema::dropIfExists('tokens');
+        Schema::dropIfExists('staff_perms');
         Schema::dropIfExists('staff');
         Schema::dropIfExists('servers');
     }
