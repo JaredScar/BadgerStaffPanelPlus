@@ -17,6 +17,14 @@ CREATE TABLE `staff` (
     `updated_at` DATETIME
 );
 
+CREATE TABLE `staff_perms` (
+    `staff_id` INT(128),
+    `permission` SET('TOKEN_MANAGEMENT', 'STAFF_MANAGEMENT', 'SETTINGS_MANAGEMENT'),
+    `allowed` BOOLEAN DEFAULT FALSE,
+    `created_at` DATETIME,
+    `updated_at` DATETIME
+);
+
 CREATE TABLE `tokens` (
     `token_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
     `staff_id` INT(128),

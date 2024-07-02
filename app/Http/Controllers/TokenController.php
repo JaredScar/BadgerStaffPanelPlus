@@ -68,7 +68,7 @@ class TokenController extends Controller {
                 $expiration_date = $custom_exp;
                 break;
             case 'noexp':
-                $expiration_date = date('Y-m-d H:i:s', strtotime('+9999 years'));
+                $expiration_date = date('Y-m-d H:i:s', strtotime('+100 years'));
                 break;
         }
         $hasOneOptOn = false;
