@@ -32,6 +32,12 @@ class TokenController extends Controller {
         return bin2hex(random_bytes($length / 2));
     }
 
+    function doDeleteToken(Request $request, $tokenId) {
+        $db = Token::find($tokenId);
+        $deleted = $db->delete();
+        return ['deleted' => $deleted];
+    }
+
     function doCreateToken(Request $request) {
         $params = $request->all();
         $note = $params['note'];
@@ -76,7 +82,7 @@ class TokenController extends Controller {
         if ($hasOneOptOn) {
             $tokenDb->store($staff_id, $token, $note, $expiration_date);
             $tokenDb->save();
-            $token_id = $tokenDb->id;
+            $token_id = $tokenDb->token_id;
             // We need to store the token permissions
             foreach (self::PERMISSIONS as $permission) {
                 $tokenPerm = new TokenPerms();

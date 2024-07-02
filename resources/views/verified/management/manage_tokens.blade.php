@@ -28,7 +28,7 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form method="post" action="tokens/create">
+                            <form method="post" action="tokens">
                                 @csrf
                                 <div class="row mt-4">
                                     <div class="col-12">
@@ -224,8 +224,8 @@
                                 $tokens = Token::where('staff_id', Session::get('staff_id'))->get();
                                 $currentDate = date('Y-m-d H:i:s');
                                 foreach ($tokens as $token) {
-                                    $dataRow = '<tr>';
                                     $token_id = $token->token_id;
+                                    $dataRow = '<tr id="token-' . $token_id . '">';
                                     $tokenPerms = TokenPerms::where('token_id', $token_id)->get();
                                     $expires = $token->expires;
                                     $active = $token->active_flg;
@@ -251,7 +251,7 @@
                                         $dataRow .= "<td><span class='badge bg-success'>$expires</span></td>";
                                     else
                                         $dataRow .= "<td><span class='badge bg-danger'>$expires</span></td>";
-                                    $dataRow .= "<td><i class='fa-solid fa-trash text-danger'></i></td>";
+                                    $dataRow .= "<td><button onclick='deleteToken($token_id)' class='btn btn-outline btn-danger' type='button'><i class='fa-solid fa-trash text-white'></i></button></td>";
                                     $dataRow .= "</tr>";
                                     echo $dataRow;
                                 }
@@ -267,7 +267,8 @@
 </div>
 @include('_partials._html_footer')
 </body>
-<script type="module">
+<script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     // We want to make a datepicker when custom gets selected for token_exp_select
     $('#custom_exp').datepicker({
         isMobile: true,
@@ -283,5 +284,23 @@
             else
                 $('#custom_exp').addClass('d-none');
     });
+    function deleteToken(tokenId) {
+        $.ajax({
+            url: 'tokens/' + tokenId,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            success: (response) => {
+                console.log("Token deleted successfully", response);
+                $('#token-' + tokenId).remove();
+            },
+            error: (xhr, status, err) => {
+                console.error("Error deleting token", xhr, status, err);
+                // TODO Error message
+            }
+        })
+    }
 </script>
 </html>

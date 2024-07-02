@@ -239,4 +239,5 @@ Route::middleware('authWeb:web')->put('/verified/dashboard/save', [DashboardCont
  * POST methods
  */
 Route::middleware('authWeb:web')->post('/verified/dashboard/add_widget', [DashboardController::class, 'add_widget']);
-Route::middleware('authWeb:web')->post('/verified/management/tokens/create', [TokenController::class, 'doCreateToken']);
+Route::middleware('authWeb:web')->post('/verified/management/tokens', [TokenController::class, 'doCreateToken']);
+Route::middleware('authWeb:web')->delete('/verified/management/tokens/{tokenId}', [TokenController::class, 'doDeleteToken']);
