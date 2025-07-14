@@ -28,7 +28,7 @@ class Staff extends Authenticatable {
      */
     protected $fillable = [
         'staff_username',
-        'staff_password',
+        'password',
         'staff_email',
         'staff_discord',
         'server_id'
@@ -40,13 +40,8 @@ class Staff extends Authenticatable {
      * @var array<int, string>
      */
     protected $hidden = [
-        'staff_password'
+        'password'
     ];
-
-    public function getAuthPassword()
-    {
-        return $this->staff_password;
-    }
 
     public static function getIdByUsername($username) {
         $staff = self::where('staff_username', $username)->first();

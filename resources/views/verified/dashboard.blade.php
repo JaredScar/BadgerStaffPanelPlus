@@ -2,19 +2,17 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 @include('_partials._html_header')
 <body class="background-sizing gta-bg1">
-    <div class="container-fluid master-contain">
-        @include('_partials._toast')
-        <div class="row">
-            <div class="col col-auto px-0">
-                @include('_partials._sidebar')
-            </div>
-            <div class="col col-auto flex-fill page-contain">
-                <div class="page position-relative">
-                    <button class="btn btn-primary position-absolute z-2 opacity-75 end-0 me-2 d-none" id="add_widget_btn"><i class="fa-solid fa-circle-plus"></i></button>
-                    @include('_partials._add_widget')
-                    <div class="row flex-grow-1">
-                        <div class="col col-12">
-                            <div class="grid-stack">
+    @include('_partials._toast')
+    @include('_partials._sidebar')
+    
+    <div class="content-wrapper">
+        <div class="container-fluid page-contain">
+            <div class="page position-relative">
+                <button class="btn btn-primary position-absolute z-2 opacity-75 end-0 me-2 d-none" id="add_widget_btn"><i class="fa-solid fa-circle-plus"></i></button>
+                @include('_partials._add_widget')
+                <div class="row flex-grow-1">
+                    <div class="col col-12">
+                        <div class="grid-stack">
                                 @foreach($data['widgetData'] as $widget)
                                     <div class="grid-stack-item" id="widget_{{$widget['widget_id']}}" gs-y="{{$widget['row']}}" gs-x="{{$widget['col']}}"
                                          gs-w="{{$widget['size_x']}}" gs-h="{{$widget['size_y']}}"
@@ -46,8 +44,8 @@
                 </div>
             </div>
         </div>
-        @include('_partials._html_footer')
     </div>
+    @include('_partials._html_footer')
     <script>
         function deleteWidget(widget_id) {
             $(widget_id).remove();

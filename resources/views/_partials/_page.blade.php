@@ -2,19 +2,20 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 @include('_partials._html_header')
     <body class="background-sizing gta-bg1">
-        <div class="container-fluid master-contain">
-            @include('_partials._toast')
-            <div class="row">
-                <div class="col col-auto px-0">
-                    @include('_partials._sidebar')
-                </div>
-                <div class="col col-auto flex-fill">
-                    <div class="row flex-fill">
+        @include('_partials._toast')
+        @include('_partials._sidebar')
+        
+        <div class="content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
                         <div class="full-page-header d-flex align-items-center">
                             MANAGEMENT
                         </div>
                     </div>
-                    <div class="row">
+                </div>
+                <div class="row">
+                    <div class="col-12">
                         <div class="subpage">
                         </div>
                     </div>

@@ -9,13 +9,22 @@
                     @include('_partials._sidebar')
                 </div>
                 <div class="col col-auto flex-fill page-contain">
-                    <div class="row flex-fill">
-                        <div class="full-page-header d-flex align-items-center">
-                            Warns
+                    <div class="content-wrapper">
+                        <div class="content-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h1 class="content-title">
+                                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                        Warnings
+                                    </h1>
+                                    <p class="content-subtitle">Manage and view player warnings</p>
+                                </div>
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addWarningModal">
+                                    <i class="fas fa-plus me-2"></i>Add Warning
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="subpage">
+                        <div class="content-body">
                             @include('_widgets.records.widget_warns')
                         </div>
                     </div>

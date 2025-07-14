@@ -196,12 +196,24 @@ Route::middleware('authWeb:web')->get('/verified/players/month', function () {
     $data['customize'] = false;
     return view('verified/players/monthly', array('data' => $data));
 })->name("PLAYERS_MONTHLY");
-Route::middleware('authWeb:web')->get('/verified/players', function () {})->name("PLAYERS");
+Route::middleware('authWeb:web')->get('/verified/players', function () {
+    $data = [];
+    $data['css_path'] = 'players';
+    $data['view_name'] = 'ALL_PLAYERS';
+    $data['customize'] = false;
+    return view('verified/players/all_players', array('data' => $data));
+})->name("PLAYERS");
 
 /**
  * MANAGEMENT
  */
-Route::middleware('authWeb:web')->get('/verified/management/settings', function () {})->name("SETTINGS");
+Route::middleware('authWeb:web')->get('/verified/management/settings', function () {
+    $data = [];
+    $data['css_path'] = 'verified/management';
+    $data['view_name'] = 'SETTINGS';
+    $data['customize'] = false;
+    return view('verified/management/settings', array('data' => $data));
+})->name("SETTINGS");
 Route::middleware('authWeb:web')->get('/verified/management/manage_tokens', function () {
     $data = [];
     $data['css_path'] = 'verified/management';
