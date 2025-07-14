@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ApiUser;
 use App\Models\Server;
 use App\Models\Staff;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,11 +31,14 @@ class LoginController extends Controller {
     }
     public function authenticateWeb(Request $request): RedirectResponse {
         $credentials = $request->all();
+        /** /
+        // UNCOMMENT THIS IF YOU WANT TO USE CAPTCHA
         if (!$this->verifyCaptcha($credentials)) {
             return back()->withErrors([
                 'captcha' => 'You failed the captcha...'
             ]);
         }
+        /**/
         if (Auth::guard('web')->attempt(['staff_username' => $credentials['username'], 'password' => $credentials['password']])) {
             // Authentication passed, redirect:
             $serverId = $request->get("server_id", 0);

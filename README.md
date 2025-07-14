@@ -59,6 +59,32 @@ Coming Soon
 * widget_monthly_players
 * widget_all_players
 
+## Permissions via token
+* Registry
+  * Register player into StaffPanel system
+* Staff
+  * Create
+  * Delete
+* Bans
+  * Create
+  * Delete
+* Kicks
+  * Create
+  * Delete
+* Warns
+  * Create
+  * Delete
+* Commends
+  * Create
+  * Delete
+* Notes
+  * Create
+  * Delete
+* TrustScores
+  * Create
+  * Delete
+  * Reset
+
 ## Screenshots
 ### Login Related
 ![Login Page](https://i.gyazo.com/6a400575d5ce1445664b25f201b834aa.jpg)

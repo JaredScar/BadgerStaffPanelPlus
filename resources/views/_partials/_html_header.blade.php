@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.0/css/fixedHeader.dataTables.min.css" />
     <!-- Include GridStack CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.0/gridstack.min.css" integrity="sha512-GEMqAs1Ai2iirp6QhD4N5Qt7tDn1RGgF1CY2xp57LrX3vqTDehSC88IOFewV/L84htjbN7aazcK10FyzH+eXSA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Include air-datepicker CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" />
 
     <link rel="stylesheet" href="{{ asset('css/global.css') }}" />
     <link rel="stylesheet" href="{{ asset('/css/' . $data['css_path'] . '.css') }}" />

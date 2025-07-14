@@ -1,7 +1,9 @@
 CREATE TABLE `servers` (
     `server_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
     `server_name` VARCHAR(255),
-    `server_slug` VARCHAR(128)
+    `server_slug` VARCHAR(128),
+    `created_at` DATETIME,
+    `updated_at` DATETIME
 );
 
 CREATE TABLE `staff` (
@@ -13,6 +15,36 @@ CREATE TABLE `staff` (
     `server_id` INT(128),
     `created_at` DATETIME,
     `updated_at` DATETIME
+);
+
+CREATE TABLE `staff_perms` (
+    `staff_id` INT(128),
+    `permission` SET('TOKEN_MANAGEMENT', 'STAFF_MANAGEMENT', 'SETTINGS_MANAGEMENT'),
+    `allowed` BOOLEAN DEFAULT FALSE,
+    `created_at` DATETIME,
+    `updated_at` DATETIME
+);
+
+CREATE TABLE `tokens` (
+    `token_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
+    `staff_id` INT(128),
+    `note` VARCHAR(255),
+    `token` VARCHAR(255),
+    `active` BIT(1) DEFAULT 1,
+    `deactivated_by` INT(128) DEFAULT NULL,
+    `expires` DATETIME DEFAULT NULL,
+    `active_flg` BIT(1) DEFAULT 1,
+    `created_at` DATETIME,
+    `updated_at` DATETIME
+);
+
+CREATE TABLE `token_perms` (
+    `token_id` INT(128),
+    `permission` SET('REGISTER', 'BAN_CREATE', 'BAN_DELETE', 'WARN_CREATE', 'WARN_DELETE', 'NOTE_CREATE', 'NOTE_DELETE', 'STAFF_CREATE', 'STAFF_DELETE', 'KICK_CREATE', 'KICK_DELETE', 'COMMEND_CREATE', 'COMMEND_DELETE', 'TRUSTSCORE_CREATE', 'TRUSTSCORE_DELETE', 'TRUSTSCORE_RESET'),
+    `allowed` BIT(1) DEFAULT 0,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`token_id`, `permission`)
 );
 
 INSERT INTO `staff` (
@@ -116,5 +148,7 @@ CREATE TABLE `layouts` (
     `col` INT(128),
     `row` INT(128),
     `size_x` INT(128),
-    `size_y` INT(128)
+    `size_y` INT(128),
+    `created_at` DATETIME,
+    `updated_at` DATETIME
 );

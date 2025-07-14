@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\TokenController;
 use App\Models\Layout;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Client\Request;
@@ -160,7 +161,7 @@ Route::middleware('authWeb:web')->get('/verified/records', function () {
     $data['css_path'] = 'widgets/records';
     $data['view_name'] = 'RECORDS';
     $data['customize'] = false;
-    return view('verified/records', array('data' => $data));
+    return view('verified/records/records', array('data' => $data));
 })->name("RECORDS");
 Route::middleware('authWeb:web')->get('/verified/records/player/{pid}', function (Request $req, $playerId) {
     $data = [];
@@ -195,13 +196,38 @@ Route::middleware('authWeb:web')->get('/verified/players/month', function () {
     $data['customize'] = false;
     return view('verified/players/monthly', array('data' => $data));
 })->name("PLAYERS_MONTHLY");
-Route::middleware('authWeb:web')->get('/verified/players', function () {})->name("PLAYERS");
+Route::middleware('authWeb:web')->get('/verified/players', function () {
+    $data = [];
+    $data['css_path'] = 'players';
+    $data['view_name'] = 'ALL_PLAYERS';
+    $data['customize'] = false;
+    return view('verified/players/all_players', array('data' => $data));
+})->name("PLAYERS");
 
 /**
  * MANAGEMENT
  */
-Route::middleware('authWeb:web')->get('/verified/management/settings', function () {})->name("SETTINGS");
-Route::middleware('authWeb:web')->get('/verified/management/manage', function () {})->name("MANAGE_STAFF");
+Route::middleware('authWeb:web')->get('/verified/management/settings', function () {
+    $data = [];
+    $data['css_path'] = 'verified/management';
+    $data['view_name'] = 'SETTINGS';
+    $data['customize'] = false;
+    return view('verified/management/settings', array('data' => $data));
+})->name("SETTINGS");
+Route::middleware('authWeb:web')->get('/verified/management/manage_tokens', function () {
+    $data = [];
+    $data['css_path'] = 'verified/management';
+    $data['view_name'] = 'TOKEN_MANAGEMENT';
+    $data['customize'] = false;
+    return view('verified/management/manage_tokens', array('data' => $data));
+})->name("TOKEN_MANAGEMENT");
+Route::middleware('authWeb:web')->get('/verified/management/manage_staff', function () {
+    $data = [];
+    $data['css_path'] = 'verified/management';
+    $data['view_name'] = 'STAFF_MANAGEMENT';
+    $data['customize'] = false;
+    return view('verified/management/manage_staff', array('data' => $data));
+})->name("STAFF_MANAGEMENT");
 Route::middleware('authWeb:web')->get('/verified/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
 
 /**
@@ -225,3 +251,5 @@ Route::middleware('authWeb:web')->put('/verified/dashboard/save', [DashboardCont
  * POST methods
  */
 Route::middleware('authWeb:web')->post('/verified/dashboard/add_widget', [DashboardController::class, 'add_widget']);
+Route::middleware('authWeb:web')->post('/verified/management/tokens', [TokenController::class, 'doCreateToken']);
+Route::middleware('authWeb:web')->delete('/verified/management/tokens/{tokenId}', [TokenController::class, 'doDeleteToken']);
