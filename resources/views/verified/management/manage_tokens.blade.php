@@ -16,113 +16,207 @@
                         </h1>
                         <p class="page-description">Create and manage API tokens</p>
                     </div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generateTokenModal">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTokenModal">
                         <i class="fas fa-plus me-2"></i>
                         Generate Token
                     </button>
                 </div>
 
-                <!-- Existing Tokens Section -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-header bg-transparent border-0 py-3">
-                                <h3 class="h5 mb-0 text-warning fw-bold">Existing Tokens</h3>
+                @php
+                    $tokens = Token::where('staff_id', Session::get('staff_id'))->get();
+                    $currentDate = date('Y-m-d H:i:s');
+                    
+                    // Calculate statistics
+                    $totalTokens = $tokens->count();
+                    $activeTokens = $tokens->filter(function($token) use ($currentDate) {
+                        return $token->expires > $currentDate && $token->active_flg;
+                    })->count();
+                    $expiredTokens = $tokens->filter(function($token) use ($currentDate) {
+                        return $token->expires < $currentDate;
+                    })->count();
+                    $recentlyUsed = $tokens->filter(function($token) {
+                        return $token->last_used && strtotime($token->last_used) > strtotime('-7 days');
+                    })->count();
+                @endphp
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-blue">
+                                <i class="fas fa-key"></i>
                             </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover mb-0">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th class="border-0 py-3 fw-semibold">Token ID</th>
-                                                <th class="border-0 py-3 fw-semibold">Note</th>
-                                                <th class="border-0 py-3 fw-semibold">Permissions</th>
-                                                <th class="border-0 py-3 fw-semibold">Expiration</th>
-                                                <th class="border-0 py-3 fw-semibold">Last Used</th>
-                                                <th class="border-0 py-3 fw-semibold text-end">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $tokens = Token::where('staff_id', Session::get('staff_id'))->get();
-                                                $currentDate = date('Y-m-d H:i:s');
-                                            @endphp
-                                            @foreach($tokens as $token)
-                                                @php
-                                                    $token_id = $token->token_id;
-                                                    $tokenPerms = TokenPerms::where('token_id', $token_id)->get();
-                                                    $expires = $token->expires;
-                                                    $active = $token->active_flg;
-                                                    $note = $token->note;
-                                                    $expired = $expires < $currentDate;
-                                                    $lastUsed = $token->last_used ?? 'Never';
-                                                @endphp
-                                                <tr id="token-{{ $token_id }}">
-                                                    <td class="py-3 align-middle">
-                                                        <div class="d-flex align-items-center">
-                                                            <span class="font-monospace text-primary me-2">***{{ substr($token_id, -1) }}</span>
-                                                            <button class="btn btn-sm btn-outline-secondary p-1" onclick="copyToClipboard('{{ $token_id }}')" title="Copy token">
-                                                                <i class="fas fa-copy"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                    <td class="py-3 align-middle">
-                                                        <span class="text-dark">{{ $note }}</span>
-                                                    </td>
-                                                    <td class="py-3 align-middle">
-                                                        <div class="d-flex flex-wrap gap-1">
-                                                            @php $permCount = 0; @endphp
-                                                            @foreach($tokenPerms as $perm)
-                                                                @if($perm->allowed)
-                                                                    @if($permCount < 2)
-                                                                        <span class="badge bg-secondary">{{ $perm->permission }}</span>
-                                                                    @endif
-                                                                    @php $permCount++; @endphp
-                                                                @endif
-                                                            @endforeach
-                                                            @if($permCount > 2)
-                                                                <span class="badge bg-light text-dark">+{{ $permCount - 2 }} more</span>
-                                                            @endif
-                                                        </div>
-                                                    </td>
-                                                    <td class="py-3 align-middle">
-                                                        <div class="d-flex align-items-center">
-                                                            <i class="fas fa-calendar-alt text-muted me-2"></i>
-                                                            @if($expired)
-                                                                <span class="text-danger">{{ date('Y-m-d', strtotime($expires)) }}</span>
-                                                            @else
-                                                                <span class="text-success">{{ date('Y-m-d', strtotime($expires)) }}</span>
-                                                            @endif
-                                                        </div>
-                                                    </td>
-                                                    <td class="py-3 align-middle">
-                                                        <span class="text-muted">{{ date('Y-m-d H:i:s', strtotime($lastUsed)) }}</span>
-                                                    </td>
-                                                    <td class="py-3 align-middle text-end">
-                                                        <button onclick="deleteToken({{ $token_id }})" class="btn btn-sm btn-outline-danger" title="Delete token">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                            @if($tokens->isEmpty())
-                                                <tr>
-                                                    <td colspan="6" class="text-center py-5">
-                                                        <div class="text-muted">
-                                                            <i class="fas fa-key fa-2x mb-3"></i>
-                                                            <p class="mb-0">No API tokens found</p>
-                                                            <small>Create your first token to get started</small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">{{ $totalTokens }}</h3>
+                                <p class="stat-label">Total Tokens</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-green">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">{{ $activeTokens }}</h3>
+                                <p class="stat-label">Active Tokens</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-red">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">{{ $expiredTokens }}</h3>
+                                <p class="stat-label">Expired Tokens</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-orange">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="stat-number">{{ $recentlyUsed }}</h3>
+                                <p class="stat-label">Recently Used</p>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Search and Filter Section -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="form-control" placeholder="Search tokens..." id="tokenSearch">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-select" id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="expired">Expired</option>
+                            <option value="unused">Never Used</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- API Tokens Section -->
+                <div class="section-header">
+                    <h2>API Tokens ({{ $totalTokens }})</h2>
+                </div>
+
+                <!-- Tokens Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover tokens-table">
+                        <thead>
+                            <tr>
+                                <th>Token ID</th>
+                                <th>Note</th>
+                                <th>Permissions</th>
+                                <th>Status</th>
+                                <th>Expiration</th>
+                                <th>Last Used</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($tokens as $token)
+                                @php
+                                    $token_id = $token->token_id;
+                                    $tokenPerms = TokenPerms::where('token_id', $token_id)->get();
+                                    $expires = $token->expires;
+                                    $active = $token->active_flg;
+                                    $note = $token->note;
+                                    $expired = $expires < $currentDate;
+                                    $lastUsed = $token->last_used ?? 'Never';
+                                    $neverUsed = $token->last_used === null;
+                                @endphp
+                                <tr id="token-{{ $token_id }}" data-status="{{ $expired ? 'expired' : ($neverUsed ? 'unused' : 'active') }}">
+                                    <td>
+                                        <div class="token-info">
+                                            <div class="token-avatar">
+                                                <i class="fas fa-key"></i>
+                                            </div>
+                                            <div>
+                                                <span class="token-id">***{{ substr($token_id, -4) }}</span>
+                                                <button class="btn btn-sm btn-outline-secondary ms-2 p-1" onclick="copyToClipboard('{{ $token_id }}')" title="Copy token">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="token-note">{{ $note }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="permissions-list">
+                                            @php $permCount = 0; @endphp
+                                            @foreach($tokenPerms as $perm)
+                                                @if($perm->allowed)
+                                                    @if($permCount < 2)
+                                                        <span class="permission-badge">{{ $perm->permission }}</span>
+                                                    @endif
+                                                    @php $permCount++; @endphp
+                                                @endif
+                                            @endforeach
+                                            @if($permCount > 2)
+                                                <span class="permission-badge permission-more">+{{ $permCount - 2 }} more</span>
+                                            @endif
+                                            @if($permCount === 0)
+                                                <span class="text-muted">No permissions</span>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if($expired)
+                                            <span class="status-badge status-expired">Expired</span>
+                                        @elseif($neverUsed)
+                                            <span class="status-badge status-unused">Never Used</span>
+                                        @else
+                                            <span class="status-badge status-active">Active</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="token-expires {{ $expired ? 'text-danger' : 'text-success' }}">
+                                            {{ date('Y-m-d H:i', strtotime($expires)) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="token-lastused">
+                                            @if($lastUsed === 'Never')
+                                                <span class="text-muted">Never</span>
+                                            @else
+                                                {{ date('Y-m-d H:i', strtotime($lastUsed)) }}
+                                            @endif
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button onclick="deleteToken({{ $token_id }})" class="btn btn-sm btn-outline-danger" title="Delete token">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                @if($tokens->isEmpty())
+                    <div class="no-data-message">
+                        <div class="text-center py-5">
+                            <i class="fas fa-key fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No API tokens found</h4>
+                            <p class="text-muted">Create your first token to get started.</p>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -338,6 +432,40 @@
 
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        // Search functionality
+        document.getElementById('tokenSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.tokens-table tbody tr');
+            
+            rows.forEach(row => {
+                const tokenId = row.cells[0].textContent.toLowerCase();
+                const note = row.cells[1].textContent.toLowerCase();
+                const permissions = row.cells[2].textContent.toLowerCase();
+                
+                if (tokenId.includes(searchTerm) || note.includes(searchTerm) || permissions.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Status filter functionality
+        document.getElementById('statusFilter').addEventListener('change', function(e) {
+            const selectedStatus = e.target.value;
+            const rows = document.querySelectorAll('.tokens-table tbody tr');
+            
+            rows.forEach(row => {
+                const status = row.getAttribute('data-status');
+                
+                if (selectedStatus === '' || status === selectedStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
         
         // Custom expiration date picker
         $('#custom_exp').datepicker({

@@ -927,6 +927,143 @@ body {
     color: #495057;
 }
 
+/* Tokens Page Styles */
+.tokens-table {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tokens-table thead {
+    background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+    color: white;
+}
+
+.tokens-table th {
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.tokens-table td {
+    border: none;
+    padding: 15px;
+    vertical-align: middle;
+    color: #333;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.tokens-table tbody tr:hover {
+    background-color: rgba(253, 126, 20, 0.05);
+}
+
+.token-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.token-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.token-id {
+    font-weight: 600;
+    color: #fd7e14;
+    font-size: 1.1rem;
+    font-family: 'Courier New', monospace;
+}
+
+.token-note {
+    color: #495057;
+    font-weight: 500;
+}
+
+.permissions-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.permission-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.permission-more {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    color: #6c757d;
+}
+
+.status-unused {
+    background-color: #6c757d;
+    color: white;
+}
+
+.token-expires {
+    font-family: 'Courier New', monospace;
+    background-color: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.token-lastused {
+    font-family: 'Courier New', monospace;
+    background-color: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+/* Responsive adjustments for tokens table */
+@media (max-width: 768px) {
+    .tokens-table {
+        font-size: 0.9rem;
+    }
+    
+    .tokens-table th,
+    .tokens-table td {
+        padding: 10px 8px;
+    }
+    
+    .token-avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .permission-badge {
+        font-size: 0.65rem;
+        padding: 2px 6px;
+    }
+    
+    .permissions-list {
+        gap: 2px;
+    }
+}
+
 /* Responsive adjustments for bans table */
 @media (max-width: 768px) {
     .bans-table {
