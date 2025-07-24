@@ -166,6 +166,21 @@ body {
     margin-bottom: 20px;
     color: white;
     min-height: calc(100vh - 140px);
+    margin-left: 280px;
+    margin-right: 20px;
+    transition: margin-left 0.3s ease;
+    width: calc(100vw - 280px);
+}
+
+.content-wrapper.sidebar-collapsed {
+    margin-left: 60px;
+    width: calc(100vw - 60px);
+}
+
+.master-contain {
+    padding: 0;
+    margin: 0;
+    height: 100vh;
 }
 
 .grid-stack-item {
@@ -188,6 +203,9 @@ body {
 @media (max-width: 768px) {
     .content-wrapper {
         padding: 15px;
+        margin-left: 0;
+        margin-right: 10px;
+        width: calc(100vw - 10px);
     }
     
     .full-page-header {

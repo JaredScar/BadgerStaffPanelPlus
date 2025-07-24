@@ -4,31 +4,25 @@
     <body class="background-sizing gta-bg1">
         <div class="container-fluid master-contain">
             @include('_partials._toast')
-            <div class="row">
-                <div class="col col-auto px-0">
-                    @include('_partials._sidebar')
-                </div>
-                <div class="col col-auto flex-fill page-contain">
-                    <div class="content-wrapper">
-                        <!-- Header Section -->
-                        <div class="page-header d-flex justify-content-between align-items-center mb-4">
-                            <div>
-                                <h1 class="page-title">
-                                    <i class="fas fa-star me-2"></i>
-                                    Commends
-                                </h1>
-                                <p class="page-description">Manage and view player commendations</p>
-                            </div>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCommendModal">
-                                <i class="fas fa-plus me-2"></i>
-                                Add Commend
-                            </button>
-                        </div>
-
-                        <!-- Include the commends widget -->
-                        @include('_widgets.records.widget_commends')
+            @include('_partials._sidebar')
+            <div class="content-wrapper">
+                <!-- Header Section -->
+                <div class="page-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-thumbs-up text-success me-2"></i>
+                            Commends
+                        </h1>
+                        <p class="page-description">Manage and view player commendations</p>
                     </div>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCommendModal">
+                        <i class="fas fa-plus me-2"></i>
+                        Add Commend
+                    </button>
                 </div>
+
+                <!-- Include the commends widget -->
+                @include('_widgets.records.widget_commends')
             </div>
         </div>
 

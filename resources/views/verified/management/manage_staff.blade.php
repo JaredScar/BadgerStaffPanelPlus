@@ -4,26 +4,22 @@
     <body class="background-sizing gta-bg1">
         <div class="container-fluid master-contain">
             @include('_partials._toast')
-            <div class="row">
-                <div class="col col-auto px-0">
-                    @include('_partials._sidebar')
+            @include('_partials._sidebar')
+            <div class="content-wrapper">
+                <!-- Header Section -->
+                <div class="page-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-users me-2"></i>
+                            Manage Staff
+                        </h1>
+                        <p class="page-description">Manage staff members and their permissions</p>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStaffModal">
+                        <i class="fas fa-plus me-2"></i>
+                        Add Staff Member
+                    </button>
                 </div>
-                <div class="col col-auto flex-fill page-contain">
-                    <div class="content-wrapper">
-                        <!-- Header Section -->
-                        <div class="page-header d-flex justify-content-between align-items-center mb-4">
-                            <div>
-                                <h1 class="page-title">
-                                    <i class="fas fa-users me-2"></i>
-                                    Manage Staff
-                                </h1>
-                                <p class="page-description">Manage staff members and their permissions</p>
-                            </div>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStaffModal">
-                                <i class="fas fa-plus me-2"></i>
-                                Add Staff Member
-                            </button>
-                        </div>
 
                         <!-- Statistics Cards -->
                         <div class="row mb-4">

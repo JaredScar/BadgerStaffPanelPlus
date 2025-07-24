@@ -2,134 +2,129 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 @include('_partials._html_header')
-<body class="background-sizing gta-bg1">
-    @include('_partials._toast')
-    @include('_partials._sidebar')
-    
-    <div class="content-wrapper">
-        <div class="container-fluid">
-            <!-- Header Section -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center py-3">
-                        <div>
-                            <h1 class="h2 mb-1 text-dark fw-bold">
-                                <i class="fas fa-key text-warning me-2"></i>
-                                Token Management
-                            </h1>
-                            <p class="text-muted mb-0">Create and manage API tokens for external integrations</p>
-                        </div>
-                        <button class="btn btn-primary btn-lg px-4" data-bs-toggle="modal" data-bs-target="#createTokenModal">
-                            <i class="fas fa-plus me-2"></i>
-                            Request New API Token
-                        </button>
+    <body class="background-sizing gta-bg1">
+        <div class="container-fluid master-contain">
+            @include('_partials._toast')
+            @include('_partials._sidebar')
+            <div class="content-wrapper">
+                <!-- Header Section -->
+                <div class="page-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-key me-2"></i>
+                            Manage Tokens
+                        </h1>
+                        <p class="page-description">Create and manage API tokens</p>
                     </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generateTokenModal">
+                        <i class="fas fa-plus me-2"></i>
+                        Generate Token
+                    </button>
                 </div>
-            </div>
 
-            <!-- Existing Tokens Section -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-transparent border-0 py-3">
-                            <h3 class="h5 mb-0 text-warning fw-bold">Existing Tokens</h3>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th class="border-0 py-3 fw-semibold">Token ID</th>
-                                            <th class="border-0 py-3 fw-semibold">Note</th>
-                                            <th class="border-0 py-3 fw-semibold">Permissions</th>
-                                            <th class="border-0 py-3 fw-semibold">Expiration</th>
-                                            <th class="border-0 py-3 fw-semibold">Last Used</th>
-                                            <th class="border-0 py-3 fw-semibold text-end">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php
-                                            $tokens = Token::where('staff_id', Session::get('staff_id'))->get();
-                                            $currentDate = date('Y-m-d H:i:s');
-                                        @endphp
-                                        @foreach($tokens as $token)
-                                            @php
-                                                $token_id = $token->token_id;
-                                                $tokenPerms = TokenPerms::where('token_id', $token_id)->get();
-                                                $expires = $token->expires;
-                                                $active = $token->active_flg;
-                                                $note = $token->note;
-                                                $expired = $expires < $currentDate;
-                                                $lastUsed = $token->last_used ?? 'Never';
-                                            @endphp
-                                            <tr id="token-{{ $token_id }}">
-                                                <td class="py-3 align-middle">
-                                                    <div class="d-flex align-items-center">
-                                                        <span class="font-monospace text-primary me-2">***{{ substr($token_id, -1) }}</span>
-                                                        <button class="btn btn-sm btn-outline-secondary p-1" onclick="copyToClipboard('{{ $token_id }}')" title="Copy token">
-                                                            <i class="fas fa-copy"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                                <td class="py-3 align-middle">
-                                                    <span class="text-dark">{{ $note }}</span>
-                                                </td>
-                                                <td class="py-3 align-middle">
-                                                    <div class="d-flex flex-wrap gap-1">
-                                                        @php $permCount = 0; @endphp
-                                                        @foreach($tokenPerms as $perm)
-                                                            @if($perm->allowed)
-                                                                @if($permCount < 2)
-                                                                    <span class="badge bg-secondary">{{ $perm->permission }}</span>
-                                                                @endif
-                                                                @php $permCount++; @endphp
-                                                            @endif
-                                                        @endforeach
-                                                        @if($permCount > 2)
-                                                            <span class="badge bg-light text-dark">+{{ $permCount - 2 }} more</span>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td class="py-3 align-middle">
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="fas fa-calendar-alt text-muted me-2"></i>
-                                                        @if($expired)
-                                                            <span class="text-danger">{{ date('Y-m-d', strtotime($expires)) }}</span>
-                                                        @else
-                                                            <span class="text-success">{{ date('Y-m-d', strtotime($expires)) }}</span>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td class="py-3 align-middle">
-                                                    <span class="text-muted">{{ date('Y-m-d H:i:s', strtotime($lastUsed)) }}</span>
-                                                </td>
-                                                <td class="py-3 align-middle text-end">
-                                                    <button onclick="deleteToken({{ $token_id }})" class="btn btn-sm btn-outline-danger" title="Delete token">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        @if($tokens->isEmpty())
+                <!-- Existing Tokens Section -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-transparent border-0 py-3">
+                                <h3 class="h5 mb-0 text-warning fw-bold">Existing Tokens</h3>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
                                             <tr>
-                                                <td colspan="6" class="text-center py-5">
-                                                    <div class="text-muted">
-                                                        <i class="fas fa-key fa-2x mb-3"></i>
-                                                        <p class="mb-0">No API tokens found</p>
-                                                        <small>Create your first token to get started</small>
-                                                    </div>
-                                                </td>
+                                                <th class="border-0 py-3 fw-semibold">Token ID</th>
+                                                <th class="border-0 py-3 fw-semibold">Note</th>
+                                                <th class="border-0 py-3 fw-semibold">Permissions</th>
+                                                <th class="border-0 py-3 fw-semibold">Expiration</th>
+                                                <th class="border-0 py-3 fw-semibold">Last Used</th>
+                                                <th class="border-0 py-3 fw-semibold text-end">Actions</th>
                                             </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                $tokens = Token::where('staff_id', Session::get('staff_id'))->get();
+                                                $currentDate = date('Y-m-d H:i:s');
+                                            @endphp
+                                            @foreach($tokens as $token)
+                                                @php
+                                                    $token_id = $token->token_id;
+                                                    $tokenPerms = TokenPerms::where('token_id', $token_id)->get();
+                                                    $expires = $token->expires;
+                                                    $active = $token->active_flg;
+                                                    $note = $token->note;
+                                                    $expired = $expires < $currentDate;
+                                                    $lastUsed = $token->last_used ?? 'Never';
+                                                @endphp
+                                                <tr id="token-{{ $token_id }}">
+                                                    <td class="py-3 align-middle">
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="font-monospace text-primary me-2">***{{ substr($token_id, -1) }}</span>
+                                                            <button class="btn btn-sm btn-outline-secondary p-1" onclick="copyToClipboard('{{ $token_id }}')" title="Copy token">
+                                                                <i class="fas fa-copy"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-3 align-middle">
+                                                        <span class="text-dark">{{ $note }}</span>
+                                                    </td>
+                                                    <td class="py-3 align-middle">
+                                                        <div class="d-flex flex-wrap gap-1">
+                                                            @php $permCount = 0; @endphp
+                                                            @foreach($tokenPerms as $perm)
+                                                                @if($perm->allowed)
+                                                                    @if($permCount < 2)
+                                                                        <span class="badge bg-secondary">{{ $perm->permission }}</span>
+                                                                    @endif
+                                                                    @php $permCount++; @endphp
+                                                                @endif
+                                                            @endforeach
+                                                            @if($permCount > 2)
+                                                                <span class="badge bg-light text-dark">+{{ $permCount - 2 }} more</span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-3 align-middle">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-calendar-alt text-muted me-2"></i>
+                                                            @if($expired)
+                                                                <span class="text-danger">{{ date('Y-m-d', strtotime($expires)) }}</span>
+                                                            @else
+                                                                <span class="text-success">{{ date('Y-m-d', strtotime($expires)) }}</span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-3 align-middle">
+                                                        <span class="text-muted">{{ date('Y-m-d H:i:s', strtotime($lastUsed)) }}</span>
+                                                    </td>
+                                                    <td class="py-3 align-middle text-end">
+                                                        <button onclick="deleteToken({{ $token_id }})" class="btn btn-sm btn-outline-danger" title="Delete token">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            @if($tokens->isEmpty())
+                                                <tr>
+                                                    <td colspan="6" class="text-center py-5">
+                                                        <div class="text-muted">
+                                                            <i class="fas fa-key fa-2x mb-3"></i>
+                                                            <p class="mb-0">No API tokens found</p>
+                                                            <small>Create your first token to get started</small>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- Create Token Modal -->
     <div class="modal fade" id="createTokenModal" tabindex="-1" aria-labelledby="createTokenModalLabel" aria-hidden="true">

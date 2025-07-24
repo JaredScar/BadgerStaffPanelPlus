@@ -39,8 +39,7 @@ $locations = ['Los Santos', 'Sandy Shores', 'Paleto Bay', 'Vinewood', 'Mirror Pa
 $data['data'] = $todayPlayers->values()->all();
 ?>
 
-<div class="container-fluid">
-    <!-- Statistics Cards -->
+<!-- Statistics Cards -->
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card players-stat-card">
@@ -258,7 +257,6 @@ $data['data'] = $todayPlayers->values()->all();
             </div>
         </div>
     </div>
-</div>
 
 <style>
 /* Players-specific styles */

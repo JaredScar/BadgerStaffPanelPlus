@@ -4,52 +4,48 @@
 <body class="background-sizing gta-bg1">
     <div class="container-fluid master-contain">
         @include('_partials._toast')
-        <div class="row">
-            <div class="col col-auto px-0">
-                @include('_partials._sidebar')
-            </div>
-            <div class="col col-auto flex-fill page-contain">
-                <div class="content-wrapper">
-                    <!-- Dashboard Header -->
-                    <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <h1 class="dashboard-title">Dashboard</h1>
-                            <p class="dashboard-subtitle">Welcome back! Here's what's happening with your server.</p>
+        @include('_partials._sidebar')
+        <div class="content-wrapper">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="dashboard-title">Dashboard</h1>
+                    <p class="dashboard-subtitle">Welcome back! Here's what's happening with your server.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="dashboard-selector me-3">
+                        <select class="form-select" id="dashboardSelect">
+                            <option value="main" selected>Main Dashboard</option>
+                            <option value="analytics">Analytics Dashboard</option>
+                            <option value="staff">Staff Dashboard</option>
+                        </select>
+                    </div>
+                    <div class="action-buttons">
+                        <!-- Normal Mode Buttons -->
+                        <div class="normal-mode-buttons">
+                            <button type="button" class="btn btn-outline-secondary" id="customizeBtn">
+                                <i class="fas fa-cog me-2"></i>
+                                Customize
+                            </button>
                         </div>
-                        <div class="header-actions">
-                            <div class="dashboard-selector me-3">
-                                <select class="form-select" id="dashboardSelect">
-                                    <option value="main" selected>Main Dashboard</option>
-                                    <option value="analytics">Analytics Dashboard</option>
-                                    <option value="staff">Staff Dashboard</option>
-                                </select>
-                            </div>
-                            <div class="action-buttons">
-                                <!-- Normal Mode Buttons -->
-                                <div class="normal-mode-buttons">
-                                    <button type="button" class="btn btn-outline-secondary" id="customizeBtn">
-                                        <i class="fas fa-cog me-2"></i>
-                                        Customize
-                                    </button>
-                                </div>
-                                <!-- Customize Mode Buttons -->
-                                <div class="customize-mode-buttons d-none">
-                                    <button type="button" class="btn btn-outline-secondary me-2" id="resetLayoutBtn">
-                                        <i class="fas fa-undo me-2"></i>
-                                        Reset Layout
-                                    </button>
-                                    <button type="button" class="btn btn-primary" id="doneBtn">
-                                        <i class="fas fa-check me-2"></i>
-                                        Done
-                                    </button>
-                                </div>
-                            </div>
+                        <!-- Customize Mode Buttons -->
+                        <div class="customize-mode-buttons d-none">
+                            <button type="button" class="btn btn-outline-secondary me-2" id="resetLayoutBtn">
+                                <i class="fas fa-undo me-2"></i>
+                                Reset Layout
+                            </button>
+                            <button type="button" class="btn btn-primary" id="doneBtn">
+                                <i class="fas fa-check me-2"></i>
+                                Done
+                            </button>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Dashboard Content -->
-                    <div class="dashboard-content">
-                        <div class="grid-stack" id="dashboard-grid">
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="grid-stack" id="dashboard-grid">
                             <!-- Notes Widget -->
                             <div class="grid-stack-item widget-container" 
                                  gs-x="0" gs-y="0" gs-w="6" gs-h="8" 
@@ -129,7 +125,6 @@
                 </div>
             </div>
         </div>
-    </div>
     @include('_partials._html_footer')
 </body>
 </html>
@@ -140,7 +135,6 @@
     padding: 0;
     margin: 0;
     height: 100vh;
-    overflow: hidden;
 }
 
 .page-contain {
@@ -152,6 +146,7 @@
 .content-wrapper {
     padding: 20px;
     min-height: 100vh;
+    width: calc(100vw - 295px) !important;
 }
 
 .dashboard-header {

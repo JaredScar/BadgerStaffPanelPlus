@@ -27,8 +27,7 @@ $avgTrustScore = $totalPlayers > 0 ?
 $data['data'] = $tabData->values()->all();
 ?>
 
-<div class="container-fluid">
-    <!-- Statistics Cards -->
+<!-- Statistics Cards -->
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card all-players-stat-card">
@@ -213,7 +212,6 @@ $data['data'] = $tabData->values()->all();
             </div>
         </div>
     </div>
-</div>
 
 <style>
 /* All Players Widget specific styles */
