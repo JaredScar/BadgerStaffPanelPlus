@@ -782,6 +782,151 @@ body {
     color: white;
 }
 
+/* Warns Page Styles */
+.warns-table {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.warns-table thead {
+    background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+    color: white;
+}
+
+.warns-table th {
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.warns-table td {
+    border: none;
+    padding: 15px;
+    vertical-align: middle;
+    color: #333;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.warns-table tbody tr:hover {
+    background-color: rgba(253, 126, 20, 0.05);
+}
+
+/* Commends Page Styles */
+.commends-table {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.commends-table thead {
+    background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+    color: white;
+}
+
+.commends-table th {
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.commends-table td {
+    border: none;
+    padding: 15px;
+    vertical-align: middle;
+    color: #333;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.commends-table tbody tr:hover {
+    background-color: rgba(253, 126, 20, 0.05);
+}
+
+/* Trust Scores Page Styles */
+.trustscores-table {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.trustscores-table thead {
+    background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+    color: white;
+}
+
+.trustscores-table th {
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.trustscores-table td {
+    border: none;
+    padding: 15px;
+    vertical-align: middle;
+    color: #333;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.trustscores-table tbody tr:hover {
+    background-color: rgba(253, 126, 20, 0.05);
+}
+
+/* Records Page Styles */
+.records-table {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.records-table thead {
+    background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+    color: white;
+}
+
+.records-table th {
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.records-table td {
+    border: none;
+    padding: 15px;
+    vertical-align: middle;
+    color: #333;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.records-table tbody tr:hover {
+    background-color: rgba(253, 126, 20, 0.05);
+}
+
+.record-datetime {
+    font-family: 'Courier New', monospace;
+    background-color: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
 /* Responsive adjustments for bans table */
 @media (max-width: 768px) {
     .bans-table {
