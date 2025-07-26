@@ -9,7 +9,10 @@
             <!-- Dashboard Header -->
             <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="dashboard-title">Dashboard</h1>
+                    <h1 class="dashboard-title">
+                        <i class="fas fa-tachometer-alt me-2"></i>
+                        Dashboard
+                    </h1>
                     <p class="dashboard-subtitle">Welcome back! Here's what's happening with your server.</p>
                 </div>
                 <div class="header-actions">

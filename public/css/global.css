@@ -148,6 +148,8 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 60px;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 .subpage {
@@ -215,6 +217,52 @@ body {
     
     .subpage {
         padding: 15px;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .page-description {
+        font-size: 1rem;
+    }
+    
+    .dashboard-header .dashboard-title {
+        font-size: 1.5rem !important;
+    }
+    
+    .dashboard-header .dashboard-title i {
+        font-size: 1.3rem !important;
+    }
+    
+    .dashboard-header .dashboard-subtitle {
+        font-size: 0.9rem !important;
+    }
+    
+    .dashboard-header {
+        padding: 12px 15px;
+    }
+    
+    .dashboard-header .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    
+    .dashboard-selector {
+        margin-right: 0 !important;
+        margin-bottom: 10px;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        margin-bottom: 5px;
     }
 }
 
@@ -316,6 +364,7 @@ body {
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .staff-table {
@@ -452,6 +501,8 @@ body {
 
 .page-header {
     margin-bottom: 30px;
+    padding: 20px 0 10px 0;
+    border-bottom: 2px solid rgba(253, 126, 20, 0.3);
 }
 
 .page-title {
@@ -461,12 +512,102 @@ body {
     margin: 0;
     display: flex;
     align-items: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .page-description {
-    color: #6c757d;
+    color: #e9ecef;
     margin: 5px 0 0 0;
     font-size: 1.1rem;
+    font-weight: 500;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Dashboard specific header styles */
+.dashboard-header .dashboard-title {
+    font-size: 2rem !important;
+    font-weight: 600 !important;
+    color: #fd7e14 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    text-shadow: none !important;
+}
+
+.dashboard-header .dashboard-title i {
+    color: #fd7e14 !important;
+    font-size: 1.8rem !important;
+    margin-right: 0.5rem !important;
+}
+
+.dashboard-header .dashboard-subtitle {
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin: 5px 0 0 0 !important;
+    font-size: 1rem !important;
+    font-weight: normal !important;
+    text-shadow: none !important;
+}
+
+.dashboard-header {
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    background: rgba(52, 52, 52, 0.8) !important;
+    border-radius: 10px;
+    border-bottom: none;
+}
+
+/* Additional color enforcement for dashboard */
+.dashboard-header h1,
+.dashboard-header .dashboard-title,
+h1.dashboard-title {
+    color: #fd7e14 !important;
+}
+
+.dashboard-header p,
+.dashboard-header .dashboard-subtitle,
+p.dashboard-subtitle {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.dashboard-header i,
+.dashboard-header .fas {
+    color: #fd7e14 !important;
+}
+
+/* Dashboard selector and action buttons */
+.dashboard-selector .form-select {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(253, 126, 20, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.dashboard-selector .form-select:focus {
+    border-color: #fd7e14;
+    box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+    background-color: white;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-buttons .btn {
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    text-shadow: none;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary {
@@ -502,6 +643,7 @@ body {
 .modal-title {
     font-weight: 600;
     margin: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .modal-body {
