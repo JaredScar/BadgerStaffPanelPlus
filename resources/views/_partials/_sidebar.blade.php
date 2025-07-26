@@ -365,18 +365,7 @@
 
     <nav class="sidebar-nav">
         <ul class="nav flex-column">
-            @if ($data['customize'])
-                <li class="nav-item">
-                    <div class="nav-link">
-                        <i class="fas fa-pen-ruler nav-icon"></i>
-                        <span class="nav-text">Customize</span>
-                        <div class="ms-auto">
-                            <input id="customize_val" type="checkbox" data-toggle="toggle" data-size="xs" />
-                        </div>
-                    </div>
-                </li>
-                <div class="nav-divider"></div>
-            @endif
+
 
             <li class="nav-item">
                 <a href="/web/verified/dashboard" class="nav-link {{ request()->is('web/verified/dashboard') ? 'active' : '' }}">
@@ -486,6 +475,7 @@
                 <div class="nav-flyover" id="managementFlyover">
                     <div class="flyover-header">Management</div>
                     <a href="/web/verified/management/manage_staff" class="flyover-item {{ request()->is('web/verified/management/manage_staff') ? 'active' : '' }}">Manage Staff</a>
+                    <a href="/web/verified/management/manage_roles" class="flyover-item {{ request()->is('web/verified/management/manage_roles') ? 'active' : '' }}">Manage Roles</a>
                     <a href="/web/verified/management/manage_tokens" class="flyover-item {{ request()->is('web/verified/management/manage_tokens') ? 'active' : '' }}">Manage Tokens</a>
                     <a href="/web/verified/management/settings" class="flyover-item {{ request()->is('web/verified/management/settings') ? 'active' : '' }}">Settings</a>
                 </div>
@@ -494,6 +484,11 @@
                         <li class="nav-item">
                             <a href="/web/verified/management/manage_staff" class="nav-link {{ request()->is('web/verified/management/manage_staff') ? 'active' : '' }}">
                                 Manage Staff
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/management/manage_roles" class="nav-link {{ request()->is('web/verified/management/manage_roles') ? 'active' : '' }}">
+                                Manage Roles
                             </a>
                         </li>
                         <li class="nav-item">

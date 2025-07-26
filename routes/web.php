@@ -228,6 +228,13 @@ Route::middleware('authWeb:web')->get('/verified/management/manage_staff', funct
     $data['customize'] = false;
     return view('verified/management/manage_staff', array('data' => $data));
 })->name("STAFF_MANAGEMENT");
+Route::middleware('authWeb:web')->get('/verified/management/manage_roles', function () {
+    $data = [];
+    $data['css_path'] = 'verified/management';
+    $data['view_name'] = 'ROLE_MANAGEMENT';
+    $data['customize'] = false;
+    return view('verified/management/manage_roles', array('data' => $data));
+})->name("ROLE_MANAGEMENT");
 Route::middleware('authWeb:web')->get('/verified/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
 
 /**

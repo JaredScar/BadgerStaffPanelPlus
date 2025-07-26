@@ -27,6 +27,7 @@ class DashboardController extends Controller {
                 $sizeY = $wData['h'] ?? null;
                 // Define the data to be updated or inserted
                 $data = [
+                    'staff_id' => $staffId,
                     'updated_at' => $updated,
                     'widget_type' => $widgetType,
                     'col' => $col,
