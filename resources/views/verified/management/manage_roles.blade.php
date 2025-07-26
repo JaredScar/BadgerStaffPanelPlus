@@ -298,6 +298,10 @@
                                     <i class="fas fa-key me-2"></i>
                                     Permissions
                                 </h6>
+                                <div class="alert alert-info mb-3">
+                                    <i class="fas fa-shield-alt me-2"></i>
+                                    <strong>Security Note:</strong> You can only assign permissions that you currently have. Roles cannot be granted higher privileges than your own role level.
+                                </div>
                                 <div class="permissions-grid">
                                     <div class="permission-category">
                                         <h6 class="permission-category-title">Player Management</h6>
@@ -346,8 +350,16 @@
                                             <label for="perm_manage_staff" class="form-check-label">Manage Staff</label>
                                         </div>
                                         <div class="permission-item">
+                                            <input type="checkbox" id="perm_edit_staff" class="form-check-input">
+                                            <label for="perm_edit_staff" class="form-check-label">Edit Staff</label>
+                                        </div>
+                                        <div class="permission-item">
                                             <input type="checkbox" id="perm_manage_roles" class="form-check-input">
                                             <label for="perm_manage_roles" class="form-check-label">Manage Roles</label>
+                                        </div>
+                                        <div class="permission-item">
+                                            <input type="checkbox" id="perm_edit_roles" class="form-check-input">
+                                            <label for="perm_edit_roles" class="form-check-label">Edit Roles</label>
                                         </div>
                                         <div class="permission-item">
                                             <input type="checkbox" id="perm_manage_tokens" class="form-check-input">
@@ -356,6 +368,18 @@
                                         <div class="permission-item">
                                             <input type="checkbox" id="perm_system_settings" class="form-check-input">
                                             <label for="perm_system_settings" class="form-check-label">System Settings</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="permission-category">
+                                        <h6 class="permission-category-title">Trust Scores</h6>
+                                        <div class="permission-item">
+                                            <input type="checkbox" id="perm_trustscore_update" class="form-check-input">
+                                            <label for="perm_trustscore_update" class="form-check-label">Update Trust Scores</label>
+                                        </div>
+                                        <div class="permission-item">
+                                            <input type="checkbox" id="perm_trustscore_reset" class="form-check-input">
+                                            <label for="perm_trustscore_reset" class="form-check-label">Reset Trust Scores</label>
                                         </div>
                                     </div>
                                 </div>
@@ -445,6 +469,10 @@
                                     <i class="fas fa-key me-2"></i>
                                     Permissions
                                 </h6>
+                                <div class="alert alert-info mb-3">
+                                    <i class="fas fa-shield-alt me-2"></i>
+                                    <strong>Security Note:</strong> You can only assign permissions that you currently have. Roles cannot be granted higher privileges than your own role level.
+                                </div>
                                 <div class="permissions-grid">
                                     <div class="permission-category">
                                         <h6 class="permission-category-title">Player Management</h6>
@@ -493,8 +521,16 @@
                                             <label for="edit_perm_manage_staff" class="form-check-label">Manage Staff</label>
                                         </div>
                                         <div class="permission-item">
+                                            <input type="checkbox" id="edit_perm_edit_staff" class="form-check-input">
+                                            <label for="edit_perm_edit_staff" class="form-check-label">Edit Staff</label>
+                                        </div>
+                                        <div class="permission-item">
                                             <input type="checkbox" id="edit_perm_manage_roles" class="form-check-input">
                                             <label for="edit_perm_manage_roles" class="form-check-label">Manage Roles</label>
+                                        </div>
+                                        <div class="permission-item">
+                                            <input type="checkbox" id="edit_perm_edit_roles" class="form-check-input">
+                                            <label for="edit_perm_edit_roles" class="form-check-label">Edit Roles</label>
                                         </div>
                                         <div class="permission-item">
                                             <input type="checkbox" id="edit_perm_manage_tokens" class="form-check-input">
@@ -503,6 +539,18 @@
                                         <div class="permission-item">
                                             <input type="checkbox" id="edit_perm_system_settings" class="form-check-input">
                                             <label for="edit_perm_system_settings" class="form-check-label">System Settings</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="permission-category">
+                                        <h6 class="permission-category-title">Trust Scores</h6>
+                                        <div class="permission-item">
+                                            <input type="checkbox" id="edit_perm_trustscore_update" class="form-check-input">
+                                            <label for="edit_perm_trustscore_update" class="form-check-label">Update Trust Scores</label>
+                                        </div>
+                                        <div class="permission-item">
+                                            <input type="checkbox" id="edit_perm_trustscore_reset" class="form-check-input">
+                                            <label for="edit_perm_trustscore_reset" class="form-check-label">Reset Trust Scores</label>
                                         </div>
                                     </div>
                                 </div>
@@ -1009,8 +1057,8 @@
                 
                 // Set permissions based on role
                 const permissions = {
-                    admin: ['perm_ban_players', 'perm_kick_players', 'perm_warn_players', 'perm_commend_players', 'perm_view_dashboard', 'perm_view_records', 'perm_view_players', 'perm_export_data', 'perm_manage_staff', 'perm_manage_roles', 'perm_manage_tokens', 'perm_system_settings'],
-                    moderator: ['perm_ban_players', 'perm_kick_players', 'perm_warn_players', 'perm_commend_players', 'perm_view_dashboard', 'perm_view_records', 'perm_view_players', 'perm_export_data'],
+                    admin: ['perm_ban_players', 'perm_kick_players', 'perm_warn_players', 'perm_commend_players', 'perm_view_dashboard', 'perm_view_records', 'perm_view_players', 'perm_export_data', 'perm_manage_staff', 'perm_edit_staff', 'perm_manage_roles', 'perm_edit_roles', 'perm_manage_tokens', 'perm_system_settings', 'perm_trustscore_update', 'perm_trustscore_reset'],
+                    moderator: ['perm_ban_players', 'perm_kick_players', 'perm_warn_players', 'perm_commend_players', 'perm_view_dashboard', 'perm_view_records', 'perm_view_players', 'perm_export_data', 'perm_edit_staff', 'perm_trustscore_update', 'perm_trustscore_reset'],
                     helper: ['perm_warn_players', 'perm_commend_players', 'perm_view_dashboard', 'perm_view_records']
                 };
                 
@@ -1027,17 +1075,20 @@
                     admin: {
                         'Player Management': ['Ban Players', 'Kick Players', 'Warn Players', 'Commend Players'],
                         'System Access': ['View Dashboard', 'View Records', 'View Players', 'Export Data'],
-                        'Administration': ['Manage Staff', 'Manage Roles', 'Manage Tokens', 'System Settings']
+                        'Administration': ['Manage Staff', 'Edit Staff', 'Manage Roles', 'Edit Roles', 'Manage Tokens', 'System Settings'],
+                        'Trust Scores': ['Update Trust Scores', 'Reset Trust Scores']
                     },
                     moderator: {
                         'Player Management': ['Ban Players', 'Kick Players', 'Warn Players', 'Commend Players'],
                         'System Access': ['View Dashboard', 'View Records', 'View Players', 'Export Data'],
-                        'Administration': []
+                        'Administration': ['Edit Staff'],
+                        'Trust Scores': ['Update Trust Scores', 'Reset Trust Scores']
                     },
                     helper: {
                         'Player Management': ['Warn Players', 'Commend Players'],
                         'System Access': ['View Dashboard', 'View Records'],
-                        'Administration': []
+                        'Administration': [],
+                        'Trust Scores': []
                     }
                 };
 

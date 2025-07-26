@@ -295,6 +295,10 @@
                                                 <label class="form-check-label" for="createStaffSwitch">Create</label>
                                             </div>
                                             <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="editStaffSwitch" name="staff_edit">
+                                                <label class="form-check-label" for="editStaffSwitch">Edit</label>
+                                            </div>
+                                            <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" id="deleteStaffSwitch" name="staff_delete">
                                                 <label class="form-check-label" for="deleteStaffSwitch">Delete</label>
                                             </div>
@@ -391,7 +395,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                                                <div class="col-md-6">
                                     <div class="card border-light">
                                         <div class="card-body p-3">
                                             <h6 class="card-subtitle mb-2 text-muted">
@@ -399,16 +403,26 @@
                                                 Trust Scores
                                             </h6>
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="createTrustScoresSwitch" name="trustscore_create">
-                                                <label class="form-check-label" for="createTrustScoresSwitch">Create</label>
-                                            </div>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="deleteTrustScoresSwitch" name="trustscore_delete">
-                                                <label class="form-check-label" for="deleteTrustScoresSwitch">Delete</label>
+                                                <input class="form-check-input" type="checkbox" id="updateTrustScoresSwitch" name="trustscore_update">
+                                                <label class="form-check-label" for="updateTrustScoresSwitch">Update</label>
                                             </div>
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" id="resetTrustScoresSwitch" name="trustscore_reset">
                                                 <label class="form-check-label" for="resetTrustScoresSwitch">Reset</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-light">
+                                        <div class="card-body p-3">
+                                            <h6 class="card-subtitle mb-2 text-muted">
+                                                <i class="fas fa-user-shield me-1"></i>
+                                                Roles
+                                            </h6>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="editRolesSwitch" name="role_edit">
+                                                <label class="form-check-label" for="editRolesSwitch">Edit</label>
                                             </div>
                                         </div>
                                     </div>
