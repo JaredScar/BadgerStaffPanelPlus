@@ -1,3 +1,19 @@
+-- Drop existing tables if they exist (in reverse dependency order)
+DROP TABLE IF EXISTS `layouts`;
+DROP TABLE IF EXISTS `notes`;
+DROP TABLE IF EXISTS `commends`;
+DROP TABLE IF EXISTS `bans`;
+DROP TABLE IF EXISTS `kicks`;
+DROP TABLE IF EXISTS `warns`;
+DROP TABLE IF EXISTS `player_data`;
+DROP TABLE IF EXISTS `players`;
+DROP TABLE IF EXISTS `token_perms`;
+DROP TABLE IF EXISTS `tokens`;
+DROP TABLE IF EXISTS `staff_perms`;
+DROP TABLE IF EXISTS `staff`;
+DROP TABLE IF EXISTS `servers`;
+
+-- Create tables
 CREATE TABLE `servers` (
     `server_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
     `server_name` VARCHAR(255),
@@ -13,6 +29,7 @@ CREATE TABLE `staff` (
     `staff_email` VARCHAR(255) UNIQUE KEY,
     `staff_discord` BIGINT(128),
     `server_id` INT(128),
+    `role` VARCHAR(128) DEFAULT 'staff',
     `created_at` DATETIME,
     `updated_at` DATETIME
 );
@@ -53,14 +70,16 @@ INSERT INTO `staff` (
                      `password`,
                      `staff_email`,
                      `staff_discord`,
-                     `server_id`
+                     `server_id`,
+                     `role`
                      ) VALUES (
                      1, -- Staff ID
                      'badger', -- Username
                      '$2a$15$ONynqN.bUe7SvpYhVksoqegQTCviThdqzCSsmoN/KmGwR61bmRQ5q', -- This is just "password" lol
                      'thewolfbadger@gmail.com', -- Email
                      394446211341615104, -- Discord ID
-                     1
+                     1, -- Server ID
+                     'admin' -- Role
                      );
 
 CREATE TABLE `players` (
