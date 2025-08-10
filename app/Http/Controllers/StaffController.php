@@ -23,38 +23,180 @@ class StaffController extends Controller {
      * GET methods
      */
     public function getStaff(): array {
-        return Staff::getAllStaffWithStats()->toArray();
+        try {
+            $staff = Staff::getAllStaffWithStats()->toArray();
+            
+            // Log staff list retrieval
+            Log::info('Staff list retrieved', [
+                'staff_count' => count($staff),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return $staff;
+        } catch (\Exception $e) {
+            Log::error('Failed to retrieve staff list', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return ['error' => 'Failed to retrieve staff list'];
+        }
     }
     
     public function getStaffById(Request $request, $staff_id): array {
-        $staff = Staff::withCount(['kicks', 'bans', 'commends', 'notes', 'warns'])
-                     ->find($staff_id);
-        
-        if (!$staff) {
-            return ['error' => 'Staff member not found'];
+        try {
+            $staff = Staff::withCount(['kicks', 'bans', 'commends', 'notes', 'warns'])
+                         ->find($staff_id);
+            
+            if (!$staff) {
+                Log::warning('Attempted to retrieve non-existent staff member', [
+                    'staff_id' => $staff_id,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+                
+                return ['error' => 'Staff member not found'];
+            }
+            
+            $staff->total_actions = $staff->kicks_count + $staff->bans_count + 
+                                   $staff->commends_count + $staff->notes_count + $staff->warns_count;
+            
+            // Log staff retrieval
+            Log::info('Staff member retrieved by ID', [
+                'staff_id' => $staff_id,
+                'staff_username' => $staff->staff_username,
+                'total_actions' => $staff->total_actions,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return $staff->toArray();
+        } catch (\Exception $e) {
+            Log::error('Failed to retrieve staff member by ID', [
+                'staff_id' => $staff_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return ['error' => 'Failed to retrieve staff member'];
         }
-        
-        $staff->total_actions = $staff->kicks_count + $staff->bans_count + 
-                               $staff->commends_count + $staff->notes_count + $staff->warns_count;
-        
-        return $staff->toArray();
     }
     
     public function getStaffStatistics(): array {
-        return Staff::getStaffStatistics();
+        try {
+            $stats = Staff::getStaffStatistics();
+            
+            // Log statistics retrieval
+            Log::info('Staff statistics retrieved', [
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return $stats;
+        } catch (\Exception $e) {
+            Log::error('Failed to retrieve staff statistics', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return ['error' => 'Failed to retrieve staff statistics'];
+        }
     }
     
     public function getBannedPlayerCount(Request $request, $staff_id): int {
-        return Ban::where('staff_id', $staff_id)->count();
+        try {
+            $count = Ban::where('staff_id', $staff_id)->count();
+            
+            // Log ban count retrieval
+            Log::info('Banned player count retrieved for staff', [
+                'staff_id' => $staff_id,
+                'ban_count' => $count,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return $count;
+        } catch (\Exception $e) {
+            Log::error('Failed to retrieve banned player count', [
+                'staff_id' => $staff_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return 0;
+        }
     }
     
     public function getKickedPlayerCount(Request $request, $staff_id): int {
-        return Kick::where('staff_id', $staff_id)->count();
+        try {
+            $count = Kick::where('staff_id', $staff_id)->count();
+            
+            // Log kick count retrieval
+            Log::info('Kicked player count retrieved for staff', [
+                'staff_id' => $staff_id,
+                'kick_count' => $count,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return $count;
+        } catch (\Exception $e) {
+            Log::error('Failed to retrieve kicked player count', [
+                'staff_id' => $staff_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return 0;
+        }
     }
     
     public function getStaffIdFromDiscord(Request $request, $discord_id): array {
-        $staff = Staff::where('staff_discord', $discord_id)->first();
-        return $staff ? $staff->toArray() : ['error' => 'Staff not found'];
+        try {
+            $staff = Staff::where('staff_discord', $discord_id)->first();
+            
+            if (!$staff) {
+                Log::warning('Attempted to find staff by non-existent Discord ID', [
+                    'discord_id' => $discord_id,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+                
+                return ['error' => 'Staff not found'];
+            }
+            
+            // Log Discord ID lookup
+            Log::info('Staff found by Discord ID', [
+                'discord_id' => $discord_id,
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return $staff->toArray();
+        } catch (\Exception $e) {
+            Log::error('Failed to find staff by Discord ID', [
+                'discord_id' => $discord_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return ['error' => 'Failed to find staff member'];
+        }
     }
 
     /**
@@ -72,6 +214,14 @@ class StaffController extends Controller {
         ]);
 
         if ($validator->fails()) {
+            // Log validation failure
+            Log::warning('Staff creation failed - validation errors', [
+                'validation_errors' => $validator->errors()->toArray(),
+                'request_data' => $request->all(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return ['error' => $validator->errors()->first()];
         }
 
@@ -97,8 +247,8 @@ class StaffController extends Controller {
                 $staff->server->server_name ?? null
             );
 
-            // Additional Laravel logging for audit trail
-            Log::info('Staff member created', [
+            // Enhanced Laravel logging for audit trail
+            Log::info('Staff member created successfully', [
                 'staff_id' => $staff->staff_id,
                 'staff_username' => $staff->staff_username,
                 'staff_email' => $staff->staff_email,
@@ -110,6 +260,7 @@ class StaffController extends Controller {
                 'server_id' => $staff->server_id,
                 'server_name' => $staff->server->server_name ?? 'Unknown',
                 'created_by' => 'System',
+                'creation_timestamp' => now()->format('Y-m-d H:i:s'),
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent()
             ]);
@@ -120,6 +271,15 @@ class StaffController extends Controller {
                 'staff_id' => $staff->staff_id
             ];
         } catch (\Exception $e) {
+            // Log creation failure
+            Log::error('Failed to create staff member', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return ['error' => 'Failed to create staff member: ' . $e->getMessage()];
         }
     }
@@ -140,6 +300,15 @@ class StaffController extends Controller {
         ]);
 
         if ($validator->fails()) {
+            // Log validation failure
+            Log::warning('Staff update failed - validation errors', [
+                'staff_id' => $staff_id,
+                'validation_errors' => $validator->errors()->toArray(),
+                'request_data' => $request->all(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return ['error' => $validator->errors()->first()];
         }
 
@@ -147,6 +316,13 @@ class StaffController extends Controller {
             $staff = Staff::find($staff_id);
             
             if (!$staff) {
+                Log::warning('Attempted to update non-existent staff member', [
+                    'staff_id' => $staff_id,
+                    'request_data' => $request->all(),
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+                
                 return ['error' => 'Staff member not found'];
             }
 
@@ -199,8 +375,8 @@ class StaffController extends Controller {
                 'timestamp' => now()->format('Y-m-d H:i:s')
             ], 0x9370db); // Medium purple for staff actions
 
-            // Additional Laravel logging for audit trail
-            Log::info('Staff member updated', [
+            // Enhanced Laravel logging for audit trail
+            Log::info('Staff member updated successfully', [
                 'staff_id' => $staff->staff_id,
                 'old_values' => $oldValues,
                 'new_values' => [
@@ -216,6 +392,7 @@ class StaffController extends Controller {
                 'server_name' => $staff->server->server_name ?? 'Unknown',
                 'updated_by' => 'System',
                 'password_changed' => $request->has('password') && $request->password,
+                'update_timestamp' => now()->format('Y-m-d H:i:s'),
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent()
             ]);
@@ -225,6 +402,16 @@ class StaffController extends Controller {
                 'message' => 'Staff member updated successfully'
             ];
         } catch (\Exception $e) {
+            // Log update failure
+            Log::error('Failed to update staff member', [
+                'staff_id' => $staff_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return ['error' => 'Failed to update staff member: ' . $e->getMessage()];
         }
     }
@@ -237,6 +424,12 @@ class StaffController extends Controller {
             $staff = Staff::find($staff_id);
             
             if (!$staff) {
+                Log::warning('Attempted to delete non-existent staff member', [
+                    'staff_id' => $staff_id,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+                
                 return ['error' => 'Staff member not found'];
             }
 
@@ -269,11 +462,12 @@ class StaffController extends Controller {
             
             $staff->delete();
 
-            // Additional Laravel logging for audit trail
-            Log::info('Staff member deleted', [
+            // Enhanced Laravel logging for audit trail
+            Log::info('Staff member deleted successfully', [
                 'deleted_staff_details' => $staffDetails,
                 'server_name' => $staff->server->server_name ?? 'Unknown',
                 'deleted_by' => 'System',
+                'deletion_timestamp' => now()->format('Y-m-d H:i:s'),
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent()
             ]);
@@ -284,6 +478,15 @@ class StaffController extends Controller {
                 'deleted_actions_count' => $actionCount
             ];
         } catch (\Exception $e) {
+            // Log deletion failure
+            Log::error('Failed to delete staff member', [
+                'staff_id' => $staff_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return ['error' => 'Failed to delete staff member: ' . $e->getMessage()];
         }
     }
@@ -296,17 +499,44 @@ class StaffController extends Controller {
             $staff = Staff::find($staff_id);
             
             if (!$staff) {
+                Log::warning('Attempted to update last active for non-existent staff member', [
+                    'staff_id' => $staff_id,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+                
                 return ['error' => 'Staff member not found'];
             }
 
+            $oldLastActive = $staff->last_active;
             $staff->last_active = now();
             $staff->save();
+
+            // Log last active update
+            Log::info('Staff last active time updated', [
+                'staff_id' => $staff_id,
+                'staff_username' => $staff->staff_username,
+                'old_last_active' => $oldLastActive,
+                'new_last_active' => $staff->last_active,
+                'update_timestamp' => now()->format('Y-m-d H:i:s'),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return [
                 'success' => true,
                 'message' => 'Last active time updated'
             ];
         } catch (\Exception $e) {
+            // Log update failure
+            Log::error('Failed to update last active time', [
+                'staff_id' => $staff_id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return ['error' => 'Failed to update last active time: ' . $e->getMessage()];
         }
     }
