@@ -79,6 +79,17 @@ class KickController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to create kick', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'player_id' => $request->player_id,
+                'staff_id' => Auth::id(),
+                'reason' => $request->reason,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to create kick: ' . $e->getMessage()], 500);
         }
     }
@@ -114,6 +125,15 @@ class KickController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to retrieve kicks', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to retrieve kicks: ' . $e->getMessage()], 500);
         }
     }
@@ -150,6 +170,16 @@ class KickController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to retrieve kick', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'kick_id' => $kick_id,
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to retrieve kick: ' . $e->getMessage()], 500);
         }
     }
@@ -223,6 +253,16 @@ class KickController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to update kick', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'kick_id' => $kick_id,
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to update kick: ' . $e->getMessage()], 500);
         }
     }
@@ -286,6 +326,16 @@ class KickController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to delete kick', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'kick_id' => $kick_id,
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to delete kick: ' . $e->getMessage()], 500);
         }
     }
@@ -322,6 +372,16 @@ class KickController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to retrieve kicks by player', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'player_id' => $player_id,
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to retrieve kicks: ' . $e->getMessage()], 500);
         }
     }
@@ -358,6 +418,16 @@ class KickController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to retrieve kicks by staff', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'target_staff_id' => $staff_id,
+                'current_staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to retrieve kicks: ' . $e->getMessage()], 500);
         }
     }

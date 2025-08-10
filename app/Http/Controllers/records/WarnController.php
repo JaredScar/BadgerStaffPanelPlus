@@ -79,6 +79,17 @@ class WarnController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to create warning', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'player_id' => $request->player_id,
+                'staff_id' => Auth::id(),
+                'reason' => $request->reason,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to create warning: ' . $e->getMessage()], 500);
         }
     }
@@ -114,6 +125,15 @@ class WarnController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to fetch warnings', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to fetch warnings: ' . $e->getMessage()], 500);
         }
     }
@@ -150,6 +170,16 @@ class WarnController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to fetch warning', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'warn_id' => $warn_id,
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to fetch warning: ' . $e->getMessage()], 500);
         }
     }
@@ -223,6 +253,16 @@ class WarnController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to update warning', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'warn_id' => $warn_id,
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to update warning: ' . $e->getMessage()], 500);
         }
     }
@@ -286,6 +326,16 @@ class WarnController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to delete warning', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'warn_id' => $warn_id,
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to delete warning: ' . $e->getMessage()], 500);
         }
     }
@@ -321,6 +371,16 @@ class WarnController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to fetch player warnings', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'player_id' => $player_id,
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to fetch player warnings: ' . $e->getMessage()], 500);
         }
     }
@@ -356,6 +416,16 @@ class WarnController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to fetch staff warnings', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'target_staff_id' => $staff_id,
+                'current_staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to fetch staff warnings: ' . $e->getMessage()], 500);
         }
     }

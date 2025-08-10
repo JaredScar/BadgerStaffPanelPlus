@@ -86,6 +86,19 @@ class BanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to create ban', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'player_id' => $request->player_id,
+                'staff_id' => Auth::id(),
+                'reason' => $request->reason,
+                'expires' => $request->expires,
+                'expiredDate' => $request->expiredDate,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to create ban: ' . $e->getMessage()], 500);
         }
     }
@@ -124,6 +137,15 @@ class BanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to fetch bans', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to fetch bans: ' . $e->getMessage()], 500);
         }
     }
@@ -163,6 +185,16 @@ class BanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to fetch ban', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ban_id' => $ban_id,
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to fetch ban: ' . $e->getMessage()], 500);
         }
     }
@@ -251,6 +283,19 @@ class BanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to update ban', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ban_id' => $ban_id,
+                'staff_id' => Auth::id(),
+                'reason' => $request->reason ?? 'not_provided',
+                'expires' => $request->expires ?? 'not_provided',
+                'expiredDate' => $request->expiredDate ?? 'not_provided',
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to update ban: ' . $e->getMessage()], 500);
         }
     }
@@ -355,6 +400,16 @@ class BanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to fetch player bans', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'player_id' => $player_id,
+                'staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to fetch player bans: ' . $e->getMessage()], 500);
         }
     }
@@ -393,6 +448,16 @@ class BanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log error with detailed information
+            Log::error('Failed to fetch staff bans', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'target_staff_id' => $staff_id,
+                'current_staff_id' => Auth::id(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             return response()->json(['error' => 'Failed to fetch staff bans: ' . $e->getMessage()], 500);
         }
     }
