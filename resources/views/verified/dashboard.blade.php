@@ -18,10 +18,22 @@
                 <div class="header-actions">
                     <div class="dashboard-selector me-3">
                         <select class="form-select" id="dashboardSelect">
-                            <option value="main" selected>Main Dashboard</option>
-                            <option value="analytics">Analytics Dashboard</option>
-                            <option value="staff">Staff Dashboard</option>
+                            @foreach($data['available_dashboards'] as $dashboard)
+                                <option value="{{ $dashboard }}" {{ $dashboard === $data['current_dashboard'] ? 'selected' : '' }}>
+                                    {{ ucfirst($dashboard) }} Dashboard
+                                </option>
+                            @endforeach
                         </select>
+                        <div class="dashboard-actions mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="createDashboardBtn">
+                                <i class="fas fa-plus me-1"></i>New
+                            </button>
+                            @if($data['current_dashboard'] !== 'main')
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="deleteDashboardBtn">
+                                    <i class="fas fa-trash me-1"></i>Delete
+                                </button>
+                            @endif
+                        </div>
                     </div>
                     <div class="action-buttons">
                         <!-- Normal Mode Buttons -->
@@ -53,13 +65,15 @@
             <!-- Dashboard Content -->
             <div class="dashboard-content">
                 <div class="grid-stack" id="dashboard-grid">
-                            <!-- Notes Widget -->
+                    @if(isset($data['layout']) && count($data['layout']) > 0)
+                        @foreach($data['layout'] as $widget)
                             <div class="grid-stack-item widget-container" 
-                                 gs-x="0" gs-y="0" gs-w="6" gs-h="8" 
-                                 data-widget-type="notes">
+                                 gs-x="{{ $widget->col }}" gs-y="{{ $widget->row }}" gs-w="{{ $widget->size_x }}" gs-h="{{ $widget->size_y }}" 
+                                 data-widget-type="{{ $widget->widget_type }}"
+                                 data-widget-id="{{ $widget->layout_id }}">
                                 <div class="widget-wrapper h-100">
                                     <div class="widget-header d-none">
-                                        <div class="widget-title">Notes</div>
+                                        <div class="widget-title">{{ ucfirst(str_replace('widget_', '', str_replace('records.widget_', '', str_replace('players.widget_', '', $widget->widget_type)))) }}</div>
                                         <div class="widget-controls">
                                             <button class="widget-control-btn" data-action="expand">
                                                 <i class="fas fa-expand"></i>
@@ -73,65 +87,117 @@
                                         </div>
                                     </div>
                                     <div class="widget-content">
-                                        @include('_widgets.widget_notes')
+                                        @include('_widgets.' . str_replace('records.widget_', '', str_replace('players.widget_', '', $widget->widget_type)))
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Trust Scores Widget -->
-                            <div class="grid-stack-item widget-container" 
-                                 gs-x="6" gs-y="0" gs-w="6" gs-h="8" 
-                                 data-widget-type="trust_scores">
-                                <div class="widget-wrapper h-100">
-                                    <div class="widget-header d-none">
-                                        <div class="widget-title">Trust Scores</div>
-                                        <div class="widget-controls">
-                                            <button class="widget-control-btn" data-action="expand">
-                                                <i class="fas fa-expand"></i>
-                                            </button>
-                                            <button class="widget-control-btn" data-action="drag">
-                                                <i class="fas fa-grip-vertical"></i>
-                                            </button>
-                                            <button class="widget-control-btn" data-action="remove">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="widget-content">
-                                        @include('_widgets.widget_trust_scores')
+                        @endforeach
+                    @else
+                        <!-- Default widgets if no layout exists -->
+                        <div class="grid-stack-item widget-container" 
+                             gs-x="0" gs-y="0" gs-w="6" gs-h="8" 
+                             data-widget-type="widget_notes">
+                            <div class="widget-wrapper h-100">
+                                <div class="widget-header d-none">
+                                    <div class="widget-title">Notes</div>
+                                    <div class="widget-controls">
+                                        <button class="widget-control-btn" data-action="expand">
+                                            <i class="fas fa-expand"></i>
+                                        </button>
+                                        <button class="widget-control-btn" data-action="drag">
+                                            <i class="fas fa-grip-vertical"></i>
+                                        </button>
+                                        <button class="widget-control-btn" data-action="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Recent Activity Widget -->
-                            <div class="grid-stack-item widget-container" 
-                                 gs-x="0" gs-y="8" gs-w="12" gs-h="10" 
-                                 data-widget-type="recent_activity">
-                                <div class="widget-wrapper h-100">
-                                    <div class="widget-header d-none">
-                                        <div class="widget-title">Recent Activity</div>
-                                        <div class="widget-controls">
-                                            <button class="widget-control-btn" data-action="expand">
-                                                <i class="fas fa-expand"></i>
-                                            </button>
-                                            <button class="widget-control-btn" data-action="drag">
-                                                <i class="fas fa-grip-vertical"></i>
-                                            </button>
-                                            <button class="widget-control-btn" data-action="remove">
-                                                <i class="fas fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="widget-content">
-                                        @include('_widgets.widget_recent_activity')
-                                    </div>
+                                <div class="widget-content">
+                                    @include('_widgets.widget_notes')
                                 </div>
                             </div>
                         </div>
-                    </div>
+
+                        <div class="grid-stack-item widget-container" 
+                             gs-x="6" gs-y="0" gs-w="6" gs-h="8" 
+                             data-widget-type="widget_trust_scores">
+                            <div class="widget-wrapper h-100">
+                                <div class="widget-header d-none">
+                                    <div class="widget-title">Trust Scores</div>
+                                    <div class="widget-controls">
+                                        <button class="widget-control-btn" data-action="expand">
+                                            <i class="fas fa-expand"></i>
+                                        </button>
+                                        <button class="widget-control-btn" data-action="drag">
+                                            <i class="fas fa-grip-vertical"></i>
+                                        </button>
+                                        <button class="widget-control-btn" data-action="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="widget-content">
+                                    @include('_widgets.widget_trust_scores')
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-stack-item widget-container" 
+                             gs-x="0" gs-y="8" gs-w="12" gs-h="10" 
+                             data-widget-type="widget_recent_activity">
+                            <div class="widget-wrapper h-100">
+                                <div class="widget-header d-none">
+                                    <div class="widget-title">Recent Activity</div>
+                                    <div class="widget-controls">
+                                        <button class="widget-control-btn" data-action="expand">
+                                            <i class="fas fa-expand"></i>
+                                        </button>
+                                        <button class="widget-control-btn" data-action="drag">
+                                            <i class="fas fa-grip-vertical"></i>
+                                        </button>
+                                        <button class="widget-control-btn" data-action="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="widget-content">
+                                    @include('_widgets.widget_recent_activity')
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Create Dashboard Modal -->
+    <div class="modal fade" id="createDashboardModal" tabindex="-1" aria-labelledby="createDashboardModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createDashboardModalLabel">
+                        <i class="fas fa-plus me-2"></i>
+                        Create New Dashboard
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newDashboardName" class="form-label">Dashboard Name</label>
+                        <input type="text" class="form-control" id="newDashboardName" placeholder="Enter dashboard name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmCreateDashboard">
+                        <i class="fas fa-plus me-2"></i>
+                        Create Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Add Widget Modal -->
     <div class="modal fade" id="addWidgetModal" tabindex="-1" aria-labelledby="addWidgetModalLabel" aria-hidden="true">
@@ -154,7 +220,7 @@
                             </h6>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="notes" data-widget-category="general">
+                                    <div class="widget-option" data-widget-type="widget_notes" data-widget-category="general">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-sticky-note"></i>
                                         </div>
@@ -165,7 +231,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="trust_scores" data-widget-category="general">
+                                    <div class="widget-option" data-widget-type="widget_trust_scores" data-widget-category="general">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-shield-alt"></i>
                                         </div>
@@ -176,7 +242,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="recent_activity" data-widget-category="general">
+                                    <div class="widget-option" data-widget-type="widget_recent_activity" data-widget-category="general">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-clock"></i>
                                         </div>
@@ -197,7 +263,7 @@
                             </h6>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="players" data-widget-category="players">
+                                    <div class="widget-option" data-widget-type="widget_players" data-widget-category="players">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-user"></i>
                                         </div>
@@ -208,7 +274,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="all_players" data-widget-category="players">
+                                    <div class="widget-option" data-widget-type="widget_all_players" data-widget-category="players">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-users"></i>
                                         </div>
@@ -229,7 +295,7 @@
                             </h6>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="records" data-widget-category="records">
+                                    <div class="widget-option" data-widget-type="records.widget_records" data-widget-category="records">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-list"></i>
                                         </div>
@@ -240,7 +306,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="bans" data-widget-category="records">
+                                    <div class="widget-option" data-widget-type="records.widget_bans" data-widget-category="records">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-ban"></i>
                                         </div>
@@ -251,7 +317,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="warns" data-widget-category="records">
+                                    <div class="widget-option" data-widget-type="records.widget_warns" data-widget-category="records">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-exclamation-triangle"></i>
                                         </div>
@@ -262,7 +328,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="kicks" data-widget-category="records">
+                                    <div class="widget-option" data-widget-type="records.widget_kicks" data-widget-category="records">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-sign-out-alt"></i>
                                         </div>
@@ -273,7 +339,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="commends" data-widget-category="records">
+                                    <div class="widget-option" data-widget-type="records.widget_commends" data-widget-category="records">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-thumbs-up"></i>
                                         </div>
@@ -284,7 +350,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <div class="widget-option" data-widget-type="trustscores" data-widget-category="records">
+                                    <div class="widget-option" data-widget-type="records.widget_trustscores" data-widget-category="records">
                                         <div class="widget-option-icon">
                                             <i class="fas fa-star"></i>
                                         </div>
@@ -355,16 +421,31 @@
     align-items: center;
 }
 
+.dashboard-selector {
+    margin-right: 20px;
+}
+
 .dashboard-selector .form-select {
     border-radius: 8px;
     border: 2px solid #e3e6f0;
     font-weight: 500;
-    min-width: 180px;
+    min-width: 200px;
 }
 
 .dashboard-selector .form-select:focus {
     border-color: #fd7e14;
     box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+}
+
+.dashboard-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.dashboard-actions .btn {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 6px;
 }
 
 .btn {
@@ -405,6 +486,30 @@
 
 .btn-success:hover {
     background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    border: 2px solid #fd7e14;
+    color: #fd7e14;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: #fd7e14;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-outline-danger {
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    background: transparent;
+}
+
+.btn-outline-danger:hover {
+    background: #dc3545;
+    color: white;
     transform: translateY(-1px);
 }
 
@@ -708,15 +813,55 @@ document.addEventListener('DOMContentLoaded', function() {
     const normalModeButtons = document.querySelector('.normal-mode-buttons');
     const customizeModeButtons = document.querySelector('.customize-mode-buttons');
     const widgets = document.querySelectorAll('.widget-container');
+    const dashboardSelect = document.getElementById('dashboardSelect');
+    const createDashboardBtn = document.getElementById('createDashboardBtn');
+    const deleteDashboardBtn = document.getElementById('deleteDashboardBtn');
 
     let isCustomizeMode = false;
     let selectedWidgetType = null;
     let widgetCounter = 0;
+    let currentDashboard = dashboardSelect.value;
 
     // Add Widget Modal Elements
     const addWidgetModal = new bootstrap.Modal(document.getElementById('addWidgetModal'));
     const widgetOptions = document.querySelectorAll('.widget-option');
     const confirmAddWidgetBtn = document.getElementById('confirmAddWidget');
+
+    // Create Dashboard Modal Elements
+    const createDashboardModal = new bootstrap.Modal(document.getElementById('createDashboardModal'));
+    const newDashboardNameInput = document.getElementById('newDashboardName');
+    const confirmCreateDashboardBtn = document.getElementById('confirmCreateDashboard');
+
+    // Dashboard switching
+    dashboardSelect.addEventListener('change', function() {
+        const selectedDashboard = this.value;
+        if (selectedDashboard !== currentDashboard) {
+            switchDashboard(selectedDashboard);
+        }
+    });
+
+    // Create dashboard
+    createDashboardBtn.addEventListener('click', function() {
+        newDashboardNameInput.value = '';
+        createDashboardModal.show();
+    });
+
+    // Confirm create dashboard
+    confirmCreateDashboardBtn.addEventListener('click', function() {
+        const dashboardName = newDashboardNameInput.value.trim();
+        if (dashboardName) {
+            createDashboard(dashboardName);
+        }
+    });
+
+    // Delete dashboard
+    if (deleteDashboardBtn) {
+        deleteDashboardBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this dashboard? This action cannot be undone.')) {
+                deleteDashboard(currentDashboard);
+            }
+        });
+    }
 
     // Customize Mode Toggle
     customizeBtn.addEventListener('click', function() {
@@ -763,6 +908,189 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    function switchDashboard(dashboardName) {
+        // Show loading indicator
+        showNotification('Loading dashboard...', 'info', 0);
+        
+        // Load the new dashboard layout
+        fetch(`/verified/dashboard/layout?dashboard=${dashboardName}`)
+            .then(response => response.json())
+            .then(data => {
+                // Clear current grid
+                grid.removeAll();
+                
+                // Load new layout
+                if (data.layout && data.layout.length > 0) {
+                    data.layout.forEach(widget => {
+                        addWidgetToGrid(widget);
+                    });
+                } else {
+                    // Create default layout for new dashboard
+                    createDefaultLayout();
+                }
+                
+                currentDashboard = dashboardName;
+                updateDashboardActions();
+                showNotification(`${dashboardName.charAt(0).toUpperCase() + dashboardName.slice(1)} dashboard loaded!`, 'success');
+            })
+            .catch(error => {
+                console.error('Error loading dashboard:', error);
+                showNotification('Error loading dashboard. Please try again.', 'danger');
+            });
+    }
+
+    function createDashboard(dashboardName) {
+        fetch('/verified/dashboard/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ dashboard_name: dashboardName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                showNotification(data.message, 'success');
+                createDashboardModal.hide();
+                
+                // Add new dashboard to selector
+                const option = document.createElement('option');
+                option.value = dashboardName;
+                option.textContent = dashboardName.charAt(0).toUpperCase() + dashboardName.slice(1) + ' Dashboard';
+                dashboardSelect.appendChild(option);
+                
+                // Switch to new dashboard
+                dashboardSelect.value = dashboardName;
+                switchDashboard(dashboardName);
+            } else {
+                showNotification(data.error || 'Error creating dashboard', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error creating dashboard:', error);
+            showNotification('Error creating dashboard. Please try again.', 'danger');
+        });
+    }
+
+    function deleteDashboard(dashboardName) {
+        fetch('/verified/dashboard/delete', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ dashboard_name: dashboardName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                showNotification(data.message, 'success');
+                
+                // Remove dashboard from selector
+                const option = dashboardSelect.querySelector(`option[value="${dashboardName}"]`);
+                if (option) {
+                    option.remove();
+                }
+                
+                // Switch to main dashboard
+                dashboardSelect.value = 'main';
+                switchDashboard('main');
+            } else {
+                showNotification(data.error || 'Error deleting dashboard', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting dashboard:', error);
+            showNotification('Error deleting dashboard. Please try again.', 'danger');
+        });
+    }
+
+    function updateDashboardActions() {
+        // Update delete button visibility
+        if (deleteDashboardBtn) {
+            if (currentDashboard === 'main') {
+                deleteDashboardBtn.style.display = 'none';
+            } else {
+                deleteDashboardBtn.style.display = 'inline-block';
+            }
+        }
+    }
+
+    function addWidgetToGrid(widget) {
+        const widgetHTML = `
+            <div class="grid-stack-item widget-container" 
+                 gs-x="${widget.col}" gs-y="${widget.row}" gs-w="${widget.size_x}" gs-h="${widget.size_y}" 
+                 data-widget-type="${widget.widget_type}"
+                 data-widget-id="${widget.layout_id}">
+                <div class="widget-wrapper h-100">
+                    <div class="widget-header ${isCustomizeMode ? '' : 'd-none'}">
+                        <div class="widget-title">${getWidgetTitle(widget.widget_type)}</div>
+                        <div class="widget-controls">
+                            <button class="widget-control-btn" data-action="expand">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                            <button class="widget-control-btn" data-action="drag">
+                                <i class="fas fa-grip-vertical"></i>
+                            </button>
+                            <button class="widget-control-btn" data-action="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="widget-content">
+                        ${getWidgetContent(widget.widget_type)}
+                    </div>
+                </div>
+            </div>`;
+        
+        grid.addWidget(widgetHTML);
+    }
+
+    function createDefaultLayout() {
+        const defaultWidgets = [
+            { widget_type: 'widget_notes', col: 0, row: 0, size_x: 6, size_y: 8 },
+            { widget_type: 'widget_trust_scores', col: 6, row: 0, size_x: 6, size_y: 8 },
+            { widget_type: 'widget_recent_activity', col: 0, row: 8, size_x: 12, size_y: 10 }
+        ];
+
+        defaultWidgets.forEach(widget => {
+            addWidgetToGrid(widget);
+        });
+    }
+
+    function getWidgetTitle(widgetType) {
+        const titleMap = {
+            'widget_notes': 'Notes',
+            'widget_trust_scores': 'Trust Scores',
+            'widget_recent_activity': 'Recent Activity',
+            'widget_players': 'Players',
+            'widget_all_players': 'All Players',
+            'records.widget_records': 'All Records',
+            'records.widget_bans': 'Bans',
+            'records.widget_warns': 'Warnings',
+            'records.widget_kicks': 'Kicks',
+            'records.widget_commends': 'Commends',
+            'records.widget_trustscores': 'Trust Score Records'
+        };
+        
+        return titleMap[widgetType] || widgetType.replace('widget_', '').replace('records.widget_', '').replace('players.widget_', '');
+    }
+
+    function getWidgetContent(widgetType) {
+        // For now, return placeholder content
+        // In a real implementation, you'd render the actual widget content
+        return `<div class="blank-widget">
+            <div class="blank-widget-content">
+                <div class="blank-widget-icon">
+                    <i class="fas fa-puzzle-piece"></i>
+                </div>
+                <h5>${getWidgetTitle(widgetType)}</h5>
+                <p>Widget content will be loaded here</p>
+            </div>
+        </div>`;
+    }
+
     function enableCustomizeMode() {
         isCustomizeMode = true;
         
@@ -774,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         grid.enableMove(true);
         grid.enableResize(true);
         
-        // Add customize styling to all widgets (including dynamically added ones)
+        // Add customize styling to all widgets
         document.querySelectorAll('.widget-container').forEach(widget => {
             widget.classList.add('customize-mode');
         });
@@ -796,7 +1124,7 @@ document.addEventListener('DOMContentLoaded', function() {
         grid.enableMove(false);
         grid.enableResize(false);
         
-        // Remove customize styling from all widgets (including dynamically added ones)
+        // Remove customize styling from all widgets
         document.querySelectorAll('.widget-container').forEach(widget => {
             widget.classList.remove('customize-mode');
         });
@@ -806,47 +1134,85 @@ document.addEventListener('DOMContentLoaded', function() {
             header.classList.add('d-none');
         });
         
-        // Save layout and refresh page
-        saveLayoutAndRefresh();
+        // Save layout
+        saveLayout();
     }
 
     function resetLayout() {
         // Reset to default positions
         const defaultLayout = [
-            { x: 0, y: 0, w: 6, h: 8, id: 'notes' },
-            { x: 6, y: 0, w: 6, h: 8, id: 'trust_scores' },
-            { x: 0, y: 8, w: 12, h: 10, id: 'recent_activity' }
+            { x: 0, y: 0, w: 6, h: 8, id: 'widget_notes' },
+            { x: 6, y: 0, w: 6, h: 8, id: 'widget_trust_scores' },
+            { x: 0, y: 8, w: 12, h: 10, id: 'widget_recent_activity' }
         ];
         
+        // Clear current grid
+        grid.removeAll();
+        
         // Apply default layout
-        grid.load(defaultLayout.map(item => ({
-            ...item,
-            content: document.querySelector(`[data-widget-type="${item.id}"]`).outerHTML
-        })));
+        defaultLayout.forEach(item => {
+            const widget = {
+                widget_type: item.id,
+                col: item.x,
+                row: item.y,
+                size_x: item.w,
+                size_y: item.h
+            };
+            addWidgetToGrid(widget);
+        });
     }
 
     function saveLayout() {
-        const layout = [];
+        const widgetDataList = [];
+        
         grid.getGridItems().forEach(item => {
             const node = item.gridstackNode;
             const widgetType = item.getAttribute('data-widget-type');
-            layout.push({
+            const widgetId = item.getAttribute('data-widget-id');
+            
+            widgetDataList.push({
+                widgetType: widgetType,
+                widgetId: widgetId,
                 x: node.x,
                 y: node.y,
                 w: node.w,
-                h: node.h,
-                type: widgetType
+                h: node.h
             });
         });
-        
-        // In real implementation, send to server
-        console.log('Saving layout:', layout);
+
+        // Show saving indicator
+        const savingToast = showNotification('Saving dashboard layout...', 'info', 0);
+
+        // Send layout to backend
+        fetch('/verified/dashboard/save', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                dashboard: currentDashboard,
+                widgets: widgetDataList
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message && data.message.includes('successfully')) {
+                showNotification('Dashboard saved successfully!', 'success');
+            } else {
+                showNotification('Error saving dashboard: ' + (data.message || 'Unknown error'), 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error saving layout:', error);
+            showNotification('Error saving dashboard layout. Please try again.', 'danger');
+        });
     }
 
     // Add blank widget to grid function
     function addBlankWidget(widgetType) {
         widgetCounter++;
-        const widgetId = `${widgetType}_${widgetCounter}`;
+        const widgetId = `new_${widgetCounter}`;
         
         // Get widget title and icon
         const widgetInfo = getWidgetInfo(widgetType);
@@ -906,100 +1272,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Helper function to get widget info
     function getWidgetInfo(widgetType) {
         const widgetInfoMap = {
-            'notes': { title: 'Notes', icon: 'fas fa-sticky-note' },
-            'trust_scores': { title: 'Trust Scores', icon: 'fas fa-shield-alt' },
-            'recent_activity': { title: 'Recent Activity', icon: 'fas fa-clock' },
-            'players': { title: 'Players', icon: 'fas fa-user' },
-            'all_players': { title: 'All Players', icon: 'fas fa-users' },
-            'records': { title: 'All Records', icon: 'fas fa-list' },
-            'bans': { title: 'Bans', icon: 'fas fa-ban' },
-            'warns': { title: 'Warnings', icon: 'fas fa-exclamation-triangle' },
-            'kicks': { title: 'Kicks', icon: 'fas fa-sign-out-alt' },
-            'commends': { title: 'Commends', icon: 'fas fa-thumbs-up' },
-            'trustscores': { title: 'Trust Score Records', icon: 'fas fa-star' }
+            'widget_notes': { title: 'Notes', icon: 'fas fa-sticky-note' },
+            'widget_trust_scores': { title: 'Trust Scores', icon: 'fas fa-shield-alt' },
+            'widget_recent_activity': { title: 'Recent Activity', icon: 'fas fa-clock' },
+            'widget_players': { title: 'Players', icon: 'fas fa-user' },
+            'widget_all_players': { title: 'All Players', icon: 'fas fa-users' },
+            'records.widget_records': { title: 'All Records', icon: 'fas fa-list' },
+            'records.widget_bans': { title: 'Bans', icon: 'fas fa-ban' },
+            'records.widget_warns': { title: 'Warnings', icon: 'fas fa-exclamation-triangle' },
+            'records.widget_kicks': { title: 'Kicks', icon: 'fas fa-sign-out-alt' },
+            'records.widget_commends': { title: 'Commends', icon: 'fas fa-thumbs-up' },
+            'records.widget_trustscores': { title: 'Trust Score Records', icon: 'fas fa-star' }
         };
         
         return widgetInfoMap[widgetType] || { 
             title: widgetType.charAt(0).toUpperCase() + widgetType.slice(1), 
             icon: 'fas fa-puzzle-piece' 
         };
-    }
-
-    // Function to save layout to backend and refresh page
-    function saveLayoutAndRefresh() {
-        const widgetDataList = [];
-        
-        grid.getGridItems().forEach(item => {
-            const node = item.gridstackNode;
-            const widgetType = item.getAttribute('data-widget-type');
-            const widgetId = item.getAttribute('data-widget-id');
-            
-            // Format data to match existing save method expectations
-            widgetDataList.push({
-                widgetType: mapWidgetTypeForBackend(widgetType),
-                widgetId: widgetId,
-                x: node.x,
-                y: node.y,
-                w: node.w,
-                h: node.h
-            });
-        });
-
-        // Show saving indicator
-        const savingToast = showNotification('Saving dashboard layout...', 'info', 0);
-
-        // Send layout to existing backend endpoint
-        fetch('/verified/dashboard/save', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify(widgetDataList)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message && data.message.includes('successfully')) {
-                showNotification('Dashboard saved successfully! Refreshing...', 'success');
-                // Refresh page after short delay
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            } else {
-                showNotification('Error saving dashboard: ' + (data.message || 'Unknown error'), 'danger');
-                // Re-enable customize mode on error
-                isCustomizeMode = true;
-                normalModeButtons.classList.add('d-none');
-                customizeModeButtons.classList.remove('d-none');
-            }
-        })
-        .catch(error => {
-            console.error('Error saving layout:', error);
-            showNotification('Error saving dashboard layout. Please try again.', 'danger');
-            // Re-enable customize mode on error
-            isCustomizeMode = true;
-            normalModeButtons.classList.add('d-none');
-            customizeModeButtons.classList.remove('d-none');
-        });
-    }
-
-    // Helper function to map widget types for backend compatibility
-    function mapWidgetTypeForBackend(widgetType) {
-        const widgetMap = {
-            'notes': 'widget_notes',
-            'trust_scores': 'widget_trust_scores', 
-            'recent_activity': 'widget_recent_activity',
-            'players': 'players.widget_players',
-            'all_players': 'players.widget_all_players',
-            'records': 'records.widget_records',
-            'bans': 'records.widget_bans',
-            'warns': 'records.widget_warns',
-            'kicks': 'records.widget_kicks',
-            'commends': 'records.widget_commends',
-            'trustscores': 'records.widget_trustscores'
-        };
-        
-        return widgetMap[widgetType] || widgetType;
     }
 
     // Helper function to show notifications
@@ -1066,11 +1355,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Dashboard selector
-    document.getElementById('dashboardSelect').addEventListener('change', function() {
-        const selectedDashboard = this.value;
-        console.log('Switching to dashboard:', selectedDashboard);
-        // In real implementation, this would load different dashboard layouts
-    });
+    // Initialize dashboard actions
+    updateDashboardActions();
 });
 </script>

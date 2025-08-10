@@ -246,16 +246,12 @@ Route::middleware('authWeb:web')->get('/verified/signout', [LogoutController::cl
 /**
  * DASHBOARD
  */
-Route::middleware('authWeb:web')->get('/verified/dashboard', function () {
-    $data = [];
-    $data['css_path'] = 'verified/dashboard';
-    $data['view_name'] = 'DASHBOARD';
-    $data['customize'] = true;
-    $layoutData = Layout::where("staff_id", Auth::user()->staff_id)->get();
-    $data['widgetData'] = $layoutData;
-    return view('verified/dashboard', array('data' => $data), );
-})->name("DASHBOARD");
-
+Route::middleware('authWeb:web')->get('/verified/dashboard', [DashboardController::class, 'index'])->name("DASHBOARD");
+Route::middleware('authWeb:web')->put('/verified/dashboard/save', [DashboardController::class, 'save']);
+Route::middleware('authWeb:web')->post('/verified/dashboard/add_widget', [DashboardController::class, 'add_widget']);
+Route::middleware('authWeb:web')->post('/verified/dashboard/create', [DashboardController::class, 'createDashboard']);
+Route::middleware('authWeb:web')->delete('/verified/dashboard/delete', [DashboardController::class, 'deleteDashboard']);
+Route::middleware('authWeb:web')->get('/verified/dashboard/layout', [DashboardController::class, 'getDashboardLayout']);
 /**
  * PUT methods
  */

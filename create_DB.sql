@@ -144,6 +144,7 @@ CREATE TABLE `notes` (
 CREATE TABLE `layouts` (
     `staff_id` INT(128),
     `view` VARCHAR(128),
+    `dashboard_name` VARCHAR(128) DEFAULT 'main',
     `widget_type` VARCHAR(128),
     `col` INT(128),
     `row` INT(128),
@@ -152,3 +153,37 @@ CREATE TABLE `layouts` (
     `created_at` DATETIME,
     `updated_at` DATETIME
 );
+
+-- Sample layout data for the main dashboard
+INSERT INTO `layouts` (
+    `staff_id`,
+    `view`,
+    `dashboard_name`,
+    `widget_type`,
+    `col`,
+    `row`,
+    `size_x`,
+    `size_y`,
+    `created_at`,
+    `updated_at`
+) VALUES 
+(1, 'dashboard', 'main', 'widget_notes', 0, 0, 6, 8, NOW(), NOW()),
+(1, 'dashboard', 'main', 'widget_trust_scores', 6, 0, 6, 8, NOW(), NOW()),
+(1, 'dashboard', 'main', 'widget_recent_activity', 0, 8, 12, 10, NOW(), NOW());
+
+-- Sample layout data for a secondary dashboard
+INSERT INTO `layouts` (
+    `staff_id`,
+    `view`,
+    `dashboard_name`,
+    `widget_type`,
+    `col`,
+    `row`,
+    `size_x`,
+    `size_y`,
+    `created_at`,
+    `updated_at`
+) VALUES 
+(1, 'dashboard', 'monitoring', 'widget_players', 0, 0, 6, 8, NOW(), NOW()),
+(1, 'dashboard', 'monitoring', 'widget_all_players', 6, 0, 6, 8, NOW(), NOW()),
+(1, 'dashboard', 'monitoring', 'records.widget_records', 0, 8, 12, 10, NOW(), NOW());
