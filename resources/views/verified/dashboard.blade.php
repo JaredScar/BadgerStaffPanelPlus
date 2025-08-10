@@ -17,23 +17,23 @@
                 </div>
                 <div class="header-actions">
                     <div class="dashboard-selector me-3">
-                        <select class="form-select" id="dashboardSelect">
-                            @foreach($data['available_dashboards'] as $dashboard)
-                                <option value="{{ $dashboard }}" {{ $dashboard === $data['current_dashboard'] ? 'selected' : '' }}>
-                                    {{ ucfirst($dashboard) }} Dashboard
-                                </option>
-                            @endforeach
-                        </select>
-                        <div class="dashboard-actions mt-2">
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="createDashboardBtn">
-                                <i class="fas fa-plus me-1"></i>New
+                        <div class="input-group">
+                            <select class="form-select" id="dashboardSelect">
+                                @foreach($data['available_dashboards'] as $dashboard)
+                                    <option value="{{ $dashboard }}" {{ $dashboard === $data['current_dashboard'] ? 'selected' : '' }}>
+                                        {{ ucfirst($dashboard) }} Dashboard
+                                    </option>
+                                @endforeach
+                            </select>
+                            <button type="button" class="btn btn-outline-primary" id="createDashboardBtn" title="Create New Dashboard">
+                                <i class="fas fa-plus"></i>
                             </button>
-                            @if($data['current_dashboard'] !== 'main')
-                                <button type="button" class="btn btn-sm btn-outline-danger" id="deleteDashboardBtn">
-                                    <i class="fas fa-trash me-1"></i>Delete
-                                </button>
-                            @endif
                         </div>
+                        @if($data['current_dashboard'] !== 'main')
+                            <button type="button" class="btn btn-sm btn-outline-danger mt-2" id="deleteDashboardBtn">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </button>
+                        @endif
                     </div>
                     <div class="action-buttons">
                         <!-- Normal Mode Buttons -->
@@ -425,27 +425,98 @@
     margin-right: 20px;
 }
 
-.dashboard-selector .form-select {
-    border-radius: 8px;
-    border: 2px solid #e3e6f0;
-    font-weight: 500;
+.dashboard-selector .input-group {
     min-width: 200px;
+    display: flex;
+    align-items: stretch;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
 }
 
-.dashboard-selector .form-select:focus {
+.dashboard-selector .input-group .form-select {
+    flex: 1;
+    border-radius: 8px 0 0 8px;
+    border: 2px solid #e3e6f0;
+    border-right: 1px solid #e3e6f0;
+    font-weight: 500;
+    padding: 8px 12px;
+}
+
+.dashboard-selector .input-group .form-select:focus {
     border-color: #fd7e14;
     box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+    z-index: 2;
 }
 
-.dashboard-actions {
+.dashboard-selector .input-group .btn {
+    flex: 0 0 auto;
+    border-radius: 0 8px 8px 0;
+    border: 2px solid #e3e6f0;
+    border-left: 1px solid #e3e6f0;
+    padding: 8px 12px;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #fd7e14 !important;
+    transition: all 0.3s ease;
+    min-width: 44px;
     display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none !important;
 }
 
-.dashboard-actions .btn {
+.dashboard-selector .input-group .btn:hover {
+    border-color: #fd7e14 !important;
+    background-color: #fd7e14 !important;
+    background-image: none !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: none !important;
+}
+
+.dashboard-selector .input-group .btn:hover i.fas.fa-plus {
+    color: white !important;
+}
+
+.dashboard-selector .input-group .btn i.fas.fa-plus {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.dashboard-selector .input-group:focus-within .btn {
+    border-color: #fd7e14;
+    border-left-color: #fd7e14;
+}
+
+.dashboard-selector .input-group:focus-within .form-select {
+    border-right-color: #fd7e14;
+}
+
+/* Style for the delete button */
+.dashboard-selector #deleteDashboardBtn {
+    margin-top: 8px;
+    margin-left: 0;
     font-size: 0.8rem;
     padding: 6px 12px;
     border-radius: 6px;
+}
+
+/* Ensure proper input group spacing */
+.dashboard-selector .input-group > * + * {
+    margin-left: -1px;
+}
+
+/* Fix any Bootstrap input group issues */
+.dashboard-selector .input-group .form-select:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.dashboard-selector .input-group .btn:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .btn {
@@ -764,6 +835,10 @@
     .header-actions {
         width: 100%;
         flex-direction: column;
+    }
+    
+    .dashboard-selector .input-group {
+        min-width: 100%;
     }
     
     .dashboard-selector .form-select {
