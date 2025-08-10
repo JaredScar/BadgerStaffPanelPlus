@@ -9,6 +9,7 @@ use App\Models\Staff;
 use App\Services\DiscordWebhookService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class BanController extends Controller
@@ -61,6 +62,22 @@ class BanController extends Controller
                 $request->expiredDate,
                 $staff->server->server_name ?? null
             );
+
+            // Additional Laravel logging for audit trail
+            Log::info('Ban created', [
+                'ban_id' => $ban->id,
+                'player_id' => $request->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'reason' => $request->reason,
+                'expires' => $request->expires ?? 0,
+                'expiredDate' => $request->expiredDate,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -181,6 +198,11 @@ class BanController extends Controller
 
             $player = Player::find($ban->player_id);
 
+            // Store old values for logging
+            $oldReason = $ban->reason;
+            $oldExpires = $ban->expires;
+            $oldExpiredDate = $ban->expiredDate;
+
             // Update fields if provided
             if ($request->has('reason')) {
                 $ban->reason = $request->reason;
@@ -203,6 +225,25 @@ class BanController extends Controller
                 'server_name' => $staff->server->server_name ?? null,
                 'timestamp' => now()->format('Y-m-d H:i:s')
             ], 0xff8c00); // Dark orange for updates
+
+            // Additional Laravel logging for audit trail
+            Log::info('Ban updated', [
+                'ban_id' => $ban->id,
+                'player_id' => $ban->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'old_reason' => $oldReason,
+                'new_reason' => $ban->reason,
+                'old_expires' => $oldExpires,
+                'new_expires' => $ban->expires,
+                'old_expiredDate' => $oldExpiredDate,
+                'new_expiredDate' => $ban->expiredDate,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -234,6 +275,17 @@ class BanController extends Controller
             }
 
             $player = Player::find($ban->player_id);
+            
+            // Store ban details for logging before deletion
+            $banDetails = [
+                'ban_id' => $ban->id,
+                'player_id' => $ban->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'reason' => $ban->reason,
+                'expires' => $ban->expires,
+                'expiredDate' => $ban->expiredDate
+            ];
+            
             $ban->delete();
 
             // Log to Discord webhook
@@ -242,6 +294,22 @@ class BanController extends Controller
                 $staff->staff_username,
                 $staff->server->server_name ?? null
             );
+
+            // Additional Laravel logging for audit trail
+            Log::info('Ban deleted', [
+                'ban_id' => $banDetails['ban_id'],
+                'player_id' => $banDetails['player_id'],
+                'player_name' => $banDetails['player_name'],
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'deleted_reason' => $banDetails['reason'],
+                'deleted_expires' => $banDetails['expires'],
+                'deleted_expiredDate' => $banDetails['expiredDate'],
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,

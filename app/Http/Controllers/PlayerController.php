@@ -10,6 +10,7 @@ use App\Models\Player;
 use App\Models\PlayerData;
 use App\Services\DiscordWebhookService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PlayerController extends Controller {
     protected $webhookService;
@@ -70,6 +71,22 @@ class PlayerController extends Controller {
                 'server_id' => $server_id,
                 'timestamp' => now()->format('Y-m-d H:i:s')
             ], 0x00bfff); // Deep sky blue for player actions
+
+            // Additional Laravel logging for audit trail
+            Log::info('Player registered', [
+                'player_id' => $player->player_id,
+                'player_name' => $last_player_name,
+                'server_id' => $server_id,
+                'discord_id' => $discord_id,
+                'game_license' => $license,
+                'steam_id' => $steam_id,
+                'live' => $live,
+                'xbl' => $xbl,
+                'ip' => $ip,
+                'player_data_id' => $playerData->id,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
         }
         return $player->aggregate;
     }
@@ -97,6 +114,22 @@ class PlayerController extends Controller {
                 $expiredDate,
                 $staff->server->server_name ?? null
             );
+
+            // Additional Laravel logging for audit trail
+            Log::info('Player banned via PlayerController', [
+                'ban_id' => $banPlayer->id,
+                'player_id' => $player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff_id,
+                'staff_username' => $staff->staff_username ?? 'Unknown',
+                'server_id' => $server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'reason' => $reason,
+                'expires' => $expires,
+                'expiredDate' => $expiredDate,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
         }
         
         return $saveSuccess;
@@ -122,6 +155,20 @@ class PlayerController extends Controller {
                 $reason,
                 $staff->server->server_name ?? null
             );
+
+            // Additional Laravel logging for audit trail
+            Log::info('Player kicked via PlayerController', [
+                'kick_id' => $kickPlayer->id,
+                'player_id' => $player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff_id,
+                'staff_username' => $staff->staff_username ?? 'Unknown',
+                'server_id' => $server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'reason' => $reason,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
         }
         
         return $saveSuccess;
@@ -147,6 +194,20 @@ class PlayerController extends Controller {
                 $reason,
                 $staff->server->server_name ?? null
             );
+
+            // Additional Laravel logging for audit trail
+            Log::info('Player commended via PlayerController', [
+                'commend_id' => $commendPlayer->id,
+                'player_id' => $player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff_id,
+                'staff_username' => $staff->staff_username ?? 'Unknown',
+                'server_id' => $server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'reason' => $reason,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
         }
         
         return $saveSuccess;
@@ -172,6 +233,20 @@ class PlayerController extends Controller {
                 $reason,
                 $staff->server->server_name ?? null
             );
+
+            // Additional Laravel logging for audit trail
+            Log::info('Player note added via PlayerController', [
+                'note_id' => $notePlayer->id,
+                'player_id' => $player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff_id,
+                'staff_username' => $staff->staff_username ?? 'Unknown',
+                'server_id' => $server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'note' => $reason,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
         }
         
         return $saveSuccess;

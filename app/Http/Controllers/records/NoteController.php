@@ -9,6 +9,7 @@ use App\Models\Staff;
 use App\Services\DiscordWebhookService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class NoteController extends Controller
@@ -56,6 +57,20 @@ class NoteController extends Controller
                 $request->note,
                 $staff->server->server_name ?? null
             );
+
+            // Additional Laravel logging for audit trail
+            Log::info('Note created', [
+                'note_id' => $note->id,
+                'player_id' => $request->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'note' => $request->note,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -168,6 +183,9 @@ class NoteController extends Controller
 
             $player = Player::find($note->player_id);
 
+            // Store old value for logging
+            $oldNote = $note->note;
+
             // Update fields if provided
             if ($request->has('note')) {
                 $note->note = $request->note;
@@ -183,6 +201,21 @@ class NoteController extends Controller
                 'server_name' => $staff->server->server_name ?? null,
                 'timestamp' => now()->format('Y-m-d H:i:s')
             ], 0xff8c00); // Dark orange for updates
+
+            // Additional Laravel logging for audit trail
+            Log::info('Note updated', [
+                'note_id' => $note->id,
+                'player_id' => $note->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'old_note' => $oldNote,
+                'new_note' => $note->note,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -214,6 +247,15 @@ class NoteController extends Controller
             }
 
             $player = Player::find($note->player_id);
+            
+            // Store note details for logging before deletion
+            $noteDetails = [
+                'note_id' => $note->id,
+                'player_id' => $note->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'note' => $note->note
+            ];
+            
             $note->delete();
 
             // Log to Discord webhook
@@ -223,6 +265,20 @@ class NoteController extends Controller
                 'server_name' => $staff->server->server_name ?? null,
                 'timestamp' => now()->format('Y-m-d H:i:s')
             ], 0xff0000); // Red for deletions
+
+            // Additional Laravel logging for audit trail
+            Log::info('Note deleted', [
+                'note_id' => $noteDetails['note_id'],
+                'player_id' => $noteDetails['player_id'],
+                'player_name' => $noteDetails['player_name'],
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'deleted_note' => $noteDetails['note'],
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,

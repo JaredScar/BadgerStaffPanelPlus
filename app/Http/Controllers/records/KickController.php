@@ -9,6 +9,7 @@ use App\Models\Staff;
 use App\Services\DiscordWebhookService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class KickController extends Controller
@@ -56,6 +57,20 @@ class KickController extends Controller
                 $request->reason,
                 $staff->server->server_name ?? null
             );
+
+            // Additional Laravel logging for audit trail
+            Log::info('Kick created', [
+                'kick_id' => $kick->id,
+                'player_id' => $request->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'reason' => $request->reason,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -168,6 +183,9 @@ class KickController extends Controller
 
             $player = Player::find($kick->player_id);
 
+            // Store old value for logging
+            $oldReason = $kick->reason;
+
             // Update fields if provided
             if ($request->has('reason')) {
                 $kick->reason = $request->reason;
@@ -183,6 +201,21 @@ class KickController extends Controller
                 'server_name' => $staff->server->server_name ?? null,
                 'timestamp' => now()->format('Y-m-d H:i:s')
             ], 0xff8c00); // Dark orange for updates
+
+            // Additional Laravel logging for audit trail
+            Log::info('Kick updated', [
+                'kick_id' => $kick->id,
+                'player_id' => $kick->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'old_reason' => $oldReason,
+                'new_reason' => $kick->reason,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -214,6 +247,15 @@ class KickController extends Controller
             }
 
             $player = Player::find($kick->player_id);
+            
+            // Store kick details for logging before deletion
+            $kickDetails = [
+                'kick_id' => $kick->id,
+                'player_id' => $kick->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'reason' => $kick->reason
+            ];
+            
             $kick->delete();
 
             // Log to Discord webhook
@@ -223,6 +265,20 @@ class KickController extends Controller
                 'server_name' => $staff->server->server_name ?? null,
                 'timestamp' => now()->format('Y-m-d H:i:s')
             ], 0xff0000); // Red for deletions
+
+            // Additional Laravel logging for audit trail
+            Log::info('Kick deleted', [
+                'kick_id' => $kickDetails['kick_id'],
+                'player_id' => $kickDetails['player_id'],
+                'player_name' => $kickDetails['player_name'],
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'deleted_reason' => $kickDetails['reason'],
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,

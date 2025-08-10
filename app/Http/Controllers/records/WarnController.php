@@ -9,6 +9,7 @@ use App\Models\Staff;
 use App\Services\DiscordWebhookService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class WarnController extends Controller
@@ -56,6 +57,20 @@ class WarnController extends Controller
                 $request->reason,
                 $staff->server->server_name ?? null
             );
+
+            // Additional Laravel logging for audit trail
+            Log::info('Warning created', [
+                'warn_id' => $warn->id,
+                'player_id' => $request->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'reason' => $request->reason,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -168,6 +183,9 @@ class WarnController extends Controller
 
             $player = Player::find($warn->player_id);
 
+            // Store old value for logging
+            $oldReason = $warn->reason;
+
             // Update fields if provided
             if ($request->has('reason')) {
                 $warn->reason = $request->reason;
@@ -182,7 +200,22 @@ class WarnController extends Controller
                 'reason' => $warn->reason,
                 'server_name' => $staff->server->server_name ?? null,
                 'timestamp' => now()->format('Y-m-d H:i:s')
-            ], 0xffa500); // Orange for warning updates
+            ], 0xff8c00); // Dark orange for updates
+
+            // Additional Laravel logging for audit trail
+            Log::info('Warning updated', [
+                'warn_id' => $warn->id,
+                'player_id' => $warn->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'old_reason' => $oldReason,
+                'new_reason' => $warn->reason,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -214,6 +247,15 @@ class WarnController extends Controller
             }
 
             $player = Player::find($warn->player_id);
+            
+            // Store warn details for logging before deletion
+            $warnDetails = [
+                'warn_id' => $warn->id,
+                'player_id' => $warn->player_id,
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'reason' => $warn->reason
+            ];
+            
             $warn->delete();
 
             // Log to Discord webhook
@@ -222,7 +264,21 @@ class WarnController extends Controller
                 'staff_username' => $staff->staff_username,
                 'server_name' => $staff->server->server_name ?? null,
                 'timestamp' => now()->format('Y-m-d H:i:s')
-            ], 0x00ff00); // Green for removals
+            ], 0xff0000); // Red for deletions
+
+            // Additional Laravel logging for audit trail
+            Log::info('Warning deleted', [
+                'warn_id' => $warnDetails['warn_id'],
+                'player_id' => $warnDetails['player_id'],
+                'player_name' => $warnDetails['player_name'],
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'deleted_reason' => $warnDetails['reason'],
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return response()->json([
                 'success' => true,

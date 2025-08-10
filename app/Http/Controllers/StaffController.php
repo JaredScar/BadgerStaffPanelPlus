@@ -8,6 +8,7 @@ use App\Models\Staff;
 use App\Services\DiscordWebhookService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class StaffController extends Controller {
@@ -96,6 +97,23 @@ class StaffController extends Controller {
                 $staff->server->server_name ?? null
             );
 
+            // Additional Laravel logging for audit trail
+            Log::info('Staff member created', [
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'staff_email' => $staff->staff_email,
+                'staff_discord' => $staff->staff_discord,
+                'role' => $staff->role,
+                'status' => $staff->status,
+                'join_date' => $staff->join_date,
+                'notes' => $staff->notes,
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'created_by' => 'System',
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+
             return [
                 'success' => true,
                 'message' => 'Staff member created successfully',
@@ -131,6 +149,17 @@ class StaffController extends Controller {
             if (!$staff) {
                 return ['error' => 'Staff member not found'];
             }
+
+            // Store old values for logging
+            $oldValues = [
+                'staff_username' => $staff->staff_username,
+                'staff_email' => $staff->staff_email,
+                'staff_discord' => $staff->staff_discord,
+                'role' => $staff->role,
+                'status' => $staff->status,
+                'join_date' => $staff->join_date,
+                'notes' => $staff->notes
+            ];
 
             // Update fields if provided
             if ($request->has('staff_username')) {
@@ -170,6 +199,27 @@ class StaffController extends Controller {
                 'timestamp' => now()->format('Y-m-d H:i:s')
             ], 0x9370db); // Medium purple for staff actions
 
+            // Additional Laravel logging for audit trail
+            Log::info('Staff member updated', [
+                'staff_id' => $staff->staff_id,
+                'old_values' => $oldValues,
+                'new_values' => [
+                    'staff_username' => $staff->staff_username,
+                    'staff_email' => $staff->staff_email,
+                    'staff_discord' => $staff->staff_discord,
+                    'role' => $staff->role,
+                    'status' => $staff->status,
+                    'join_date' => $staff->join_date,
+                    'notes' => $staff->notes
+                ],
+                'server_id' => $staff->server_id,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'updated_by' => 'System',
+                'password_changed' => $request->has('password') && $request->password,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+
             return [
                 'success' => true,
                 'message' => 'Staff member updated successfully'
@@ -193,6 +243,20 @@ class StaffController extends Controller {
             // Check if staff has any actions (optional - you might want to prevent deletion if they have actions)
             $actionCount = $staff->getTotalActionsCount();
             
+            // Store staff details for logging before deletion
+            $staffDetails = [
+                'staff_id' => $staff->staff_id,
+                'staff_username' => $staff->staff_username,
+                'staff_email' => $staff->staff_email,
+                'staff_discord' => $staff->staff_discord,
+                'role' => $staff->role,
+                'status' => $staff->status,
+                'join_date' => $staff->join_date,
+                'notes' => $staff->notes,
+                'server_id' => $staff->server_id,
+                'total_actions' => $actionCount
+            ];
+            
             // Log to Discord webhook before deletion
             $this->webhookService->logAction('staff_delete', [
                 'username' => $staff->staff_username,
@@ -204,6 +268,15 @@ class StaffController extends Controller {
             ], 0x9370db); // Medium purple for staff actions
             
             $staff->delete();
+
+            // Additional Laravel logging for audit trail
+            Log::info('Staff member deleted', [
+                'deleted_staff_details' => $staffDetails,
+                'server_name' => $staff->server->server_name ?? 'Unknown',
+                'deleted_by' => 'System',
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
             return [
                 'success' => true,
