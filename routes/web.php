@@ -226,6 +226,12 @@ Route::middleware('authWeb:web')->get('/verified/management/manage_staff', funct
     $data['css_path'] = 'verified/management';
     $data['view_name'] = 'STAFF_MANAGEMENT';
     $data['customize'] = false;
+    
+    // Get staff statistics and data
+    $staffController = new \App\Http\Controllers\StaffController();
+    $data['staff_statistics'] = $staffController->getStaffStatistics();
+    $data['staff_members'] = $staffController->getStaff();
+    
     return view('verified/management/manage_staff', array('data' => $data));
 })->name("STAFF_MANAGEMENT");
 Route::middleware('authWeb:web')->get('/verified/management/manage_roles', function () {
