@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Token;
 use App\Models\TokenPerms;
+use App\Services\DiscordWebhookService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class TokenController extends Controller {
+    protected $webhookService;
+
+    public function __construct()
+    {
+        $this->webhookService = new DiscordWebhookService();
+    }
+
     const PERMISSIONS = [
         'REGISTER',
         'BAN_CREATE',
@@ -34,6 +42,20 @@ class TokenController extends Controller {
 
     function doDeleteToken(Request $request, $tokenId) {
         $db = Token::find($tokenId);
+        
+        // Log to Discord webhook before deletion
+        if ($db) {
+            $staff = \App\Models\Staff::find(Session::get("staff_id"));
+            if ($staff) {
+                $this->webhookService->logAction('token_deactivate', [
+                    'username' => $db->note ?? 'Unknown',
+                    'staff_username' => $staff->staff_username,
+                    'server_name' => $staff->server->server_name ?? null,
+                    'timestamp' => now()->format('Y-m-d H:i:s')
+                ], 0x20b2aa); // Light sea green for tokens
+            }
+        }
+        
         $deleted = $db->delete();
         return ['deleted' => $deleted];
     }
@@ -91,6 +113,18 @@ class TokenController extends Controller {
                 $tokenPerm->allowed = $tokenPerm->allowed ? 1 : 0;
                 $tokenPerm->save();
             }
+            
+            // Log to Discord webhook
+            $staff = \App\Models\Staff::find($staff_id);
+            if ($staff) {
+                $this->webhookService->logTokenCreate(
+                    $staff->staff_username,
+                    $note,
+                    $staff->staff_username,
+                    $staff->server->server_name ?? null
+                );
+            }
+            
             return redirect()->route('TOKEN_MANAGEMENT');
         } else {
             // TODO Error, needs to turn at least one opt on...

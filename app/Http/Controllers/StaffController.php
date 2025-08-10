@@ -5,11 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Ban;
 use App\Models\Kick;
 use App\Models\Staff;
+use App\Services\DiscordWebhookService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class StaffController extends Controller {
+    protected $webhookService;
+
+    public function __construct()
+    {
+        $this->webhookService = new DiscordWebhookService();
+    }
+
     /**
      * GET methods
      */
@@ -79,6 +87,15 @@ class StaffController extends Controller {
             $staff->server_id = 1; // Default server ID
             $staff->save();
 
+            // Log to Discord webhook
+            $this->webhookService->logStaffCreate(
+                $staff->staff_username,
+                $staff->role,
+                $staff->staff_email,
+                'System', // The system created this staff member
+                $staff->server->server_name ?? null
+            );
+
             return [
                 'success' => true,
                 'message' => 'Staff member created successfully',
@@ -143,6 +160,16 @@ class StaffController extends Controller {
 
             $staff->save();
 
+            // Log to Discord webhook
+            $this->webhookService->logAction('staff_update', [
+                'username' => $staff->staff_username,
+                'role' => $staff->role,
+                'email' => $staff->staff_email,
+                'staff_username' => 'System', // The system updated this staff member
+                'server_name' => $staff->server->server_name ?? null,
+                'timestamp' => now()->format('Y-m-d H:i:s')
+            ], 0x9370db); // Medium purple for staff actions
+
             return [
                 'success' => true,
                 'message' => 'Staff member updated successfully'
@@ -165,6 +192,16 @@ class StaffController extends Controller {
 
             // Check if staff has any actions (optional - you might want to prevent deletion if they have actions)
             $actionCount = $staff->getTotalActionsCount();
+            
+            // Log to Discord webhook before deletion
+            $this->webhookService->logAction('staff_delete', [
+                'username' => $staff->staff_username,
+                'role' => $staff->role,
+                'email' => $staff->staff_email,
+                'staff_username' => 'System', // The system deleted this staff member
+                'server_name' => $staff->server->server_name ?? null,
+                'timestamp' => now()->format('Y-m-d H:i:s')
+            ], 0x9370db); // Medium purple for staff actions
             
             $staff->delete();
 

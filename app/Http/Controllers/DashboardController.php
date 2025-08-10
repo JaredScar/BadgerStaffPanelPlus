@@ -3,12 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Layout;
+use App\Models\Staff;
+use App\Services\DiscordWebhookService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller {
+    
+    protected $webhookService;
+
+    public function __construct()
+    {
+        $this->webhookService = new DiscordWebhookService();
+    }
     
     public function index(Request $request) {
         $staffId = Session::get("staff_id");
@@ -106,6 +115,18 @@ class DashboardController extends Controller {
                     ->where('dashboard_name', $dashboardName)
                     ->delete();
             }
+            
+            // Log dashboard save action to Discord webhook
+            $staff = Staff::find($staffId);
+            if ($staff) {
+                $this->webhookService->logAction('dashboard_save', [
+                    'dashboard_name' => $dashboardName,
+                    'staff_username' => $staff->staff_username,
+                    'server_name' => $staff->server->server_name ?? null,
+                    'timestamp' => now()->format('Y-m-d H:i:s')
+                ], 0x00bfff); // Deep sky blue for dashboard actions
+            }
+            
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -165,6 +186,16 @@ class DashboardController extends Controller {
         $layout->store($staffId, $view, $dashboardName, $widget_type, $col, $row, $size_x, $size_y);
         $layout->save();
         
+        // Log to Discord webhook
+        $staff = Staff::find($staffId);
+        if ($staff) {
+            $this->webhookService->logWidgetAdd(
+                $widget_type,
+                $staff->staff_username,
+                $staff->server->server_name ?? null
+            );
+        }
+        
         return redirect()->route("DASHBOARD", ['dashboard' => $dashboardName]);
     }
 
@@ -182,6 +213,16 @@ class DashboardController extends Controller {
         
         Layout::createDefaultDashboard($staffId, $dashboardName);
         
+        // Log to Discord webhook
+        $staff = Staff::find($staffId);
+        if ($staff) {
+            $this->webhookService->logDashboardCreate(
+                $dashboardName,
+                $staff->staff_username,
+                $staff->server->server_name ?? null
+            );
+        }
+        
         return response()->json(['message' => 'Dashboard created successfully', 'dashboard_name' => $dashboardName]);
     }
 
@@ -191,6 +232,17 @@ class DashboardController extends Controller {
         
         if ($dashboardName === 'main') {
             return response()->json(['error' => 'Cannot delete main dashboard'], 400);
+        }
+        
+        // Log to Discord webhook before deletion
+        $staff = Staff::find($staffId);
+        if ($staff) {
+            $this->webhookService->logAction('dashboard_delete', [
+                'dashboard_name' => $dashboardName,
+                'staff_username' => $staff->staff_username,
+                'server_name' => $staff->server->server_name ?? null,
+                'timestamp' => now()->format('Y-m-d H:i:s')
+            ], 0x00bfff); // Deep sky blue for dashboard actions
         }
         
         Layout::where('staff_id', $staffId)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ApiUser;
 use App\Models\Server;
 use App\Models\Staff;
+use App\Services\DiscordWebhookService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
@@ -12,6 +13,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 
 class LoginController extends Controller {
+    protected $webhookService;
+
+    public function __construct()
+    {
+        $this->webhookService = new DiscordWebhookService();
+    }
+
     private function verifyCaptcha($credentials): bool {
         $recaptcha_resp = $credentials['g-recaptcha-response'];
         $headers = [
@@ -42,9 +50,20 @@ class LoginController extends Controller {
         if (Auth::guard('web')->attempt(['staff_username' => $credentials['username'], 'password' => $credentials['password']])) {
             // Authentication passed, redirect:
             $serverId = $request->get("server_id", 0);
-            Session::put('staff_id', Staff::getIdByUsername($credentials['username']));
+            $staffId = Staff::getIdByUsername($credentials['username']);
+            $serverName = Server::getServerNameById($serverId);
+            
+            Session::put('staff_id', $staffId);
             Session::put("server_id", $serverId);
-            Session::put("server_name", Server::getServerNameById($serverId));
+            Session::put("server_name", $serverName);
+            
+            // Log successful login to Discord webhook
+            $this->webhookService->logAction('staff_login', [
+                'username' => $credentials['username'],
+                'server_name' => $serverName,
+                'timestamp' => now()->format('Y-m-d H:i:s')
+            ], 0x00ff00); // Green for successful actions
+            
             return redirect()->intended(route('DASHBOARD'));
         }
         return back()->withErrors([
@@ -58,6 +77,14 @@ class LoginController extends Controller {
             $user = Staff::where('staff_username', $credentials['username'])->first();
             $user->tokens()->delete();
             $newToken = $user->createToken("access_token")->plainTextToken;
+            
+            // Log successful API authentication to Discord webhook
+            $this->webhookService->logAction('api_login', [
+                'username' => $credentials['username'],
+                'server_name' => $user->server->server_name ?? null,
+                'timestamp' => now()->format('Y-m-d H:i:s')
+            ], 0x00ff00); // Green for successful actions
+            
             return [
                 'success' => true,
                 'api_token' => $newToken,

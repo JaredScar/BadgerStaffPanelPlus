@@ -647,19 +647,42 @@
                 
                 const finalScore = resetToScore === 'custom' ? customScore : resetToScore;
                 
-                // Here you would typically send the data to your backend
-                console.log('Resetting trust scores:', { 
-                    players: selectedPlayersReset.map(p => ({ id: p.id, name: p.name, currentScore: p.trustScore })), 
-                    resetToScore: finalScore,
-                    reason: reason
+                // Send data to backend API
+                const resetPromises = selectedPlayersReset.map(player => {
+                    return fetch(`/api/trustscores/${player.id}/reset`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Authorization': `Bearer ${localStorage.getItem('api_token')}`
+                        },
+                        body: JSON.stringify({
+                            trust_score: finalScore
+                        })
+                    });
                 });
-                
-                // Show success message and close modal
-                const playerCount = selectedPlayersReset.length;
-                const playerNames = selectedPlayersReset.map(p => p.name).join(', ');
-                alert(`Trust scores reset successfully for ${playerCount} player(s): ${playerNames} (New Score: ${finalScore})`);
-                
-                bootstrap.Modal.getInstance(document.getElementById('resetScoreModal')).hide();
+
+                Promise.all(resetPromises)
+                    .then(responses => {
+                        const successCount = responses.filter(r => r.ok).length;
+                        const playerCount = selectedPlayersReset.length;
+                        const playerNames = selectedPlayersReset.map(p => p.name).join(', ');
+                        
+                        if (successCount === playerCount) {
+                            alert(`Trust scores reset successfully for ${playerCount} player(s): ${playerNames} (New Score: ${finalScore})`);
+                            // Refresh the page or update the display
+                            location.reload();
+                        } else {
+                            alert(`Some trust score resets failed. ${successCount}/${playerCount} successful.`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error resetting trust scores:', error);
+                        alert('Failed to reset trust scores. Please try again.');
+                    })
+                    .finally(() => {
+                        bootstrap.Modal.getInstance(document.getElementById('resetScoreModal')).hide();
+                    });
                 
                 // Reset form and selections
                 this.reset();
@@ -692,43 +715,79 @@
                     return;
                 }
                 
-                // Here you would typically send the data to your backend
-                const updateData = {
-                    players: selectedPlayersUpdate.map(p => ({ 
-                        id: p.id, 
-                        name: p.name, 
-                        currentScore: p.trustScore,
-                        calculatedScore: calculateTrustScore(p),
-                        records: {
-                            commends: p.commends,
-                            warnings: p.warnings,
-                            kicks: p.kicks,
-                            bans: p.bans
+                // Send data to backend API based on update type
+                const updatePromises = selectedPlayersUpdate.map(player => {
+                    let endpoint, method, body;
+                    
+                    if (updateType === 'recalculate') {
+                        // For recalculation, we'll create/update with calculated score
+                        const calculatedScore = calculateTrustScore(player);
+                        endpoint = `/api/trustscores`;
+                        method = 'POST';
+                        body = {
+                            player_id: player.id,
+                            trust_score: calculatedScore
+                        };
+                    } else if (updateType === 'adjust') {
+                        // For adjustment, we need to get current score first, then adjust
+                        const newScore = Math.max(0, Math.min(100, (player.trustScore || 50) + parseInt(scoreValue)));
+                        endpoint = `/api/trustscores`;
+                        method = 'POST';
+                        body = {
+                            player_id: player.id,
+                            trust_score: newScore
+                        };
+                    } else if (updateType === 'set') {
+                        // For setting, directly set the score
+                        endpoint = `/api/trustscores`;
+                        method = 'POST';
+                        body = {
+                            player_id: player.id,
+                            trust_score: parseInt(scoreValue)
+                        };
+                    }
+                    
+                    return fetch(endpoint, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Authorization': `Bearer ${localStorage.getItem('api_token')}`
+                        },
+                        body: JSON.stringify(body)
+                    });
+                });
+
+                Promise.all(updatePromises)
+                    .then(responses => {
+                        const successCount = responses.filter(r => r.ok).length;
+                        const playerCount = selectedPlayersUpdate.length;
+                        const playerNames = selectedPlayersUpdate.map(p => p.name).join(', ');
+                        
+                        let successMessage = `Trust scores updated successfully for ${playerCount} player(s): ${playerNames}`;
+                        if (updateType === 'recalculate') {
+                            successMessage += ' (Recalculated from records)';
+                        } else if (updateType === 'adjust') {
+                            successMessage += ` (Adjusted by ${scoreValue})`;
+                        } else if (updateType === 'set') {
+                            successMessage += ` (Set to ${scoreValue})`;
                         }
-                    })), 
-                    updateType: updateType,
-                    scoreValue: scoreValue,
-                    reason: reason
-                };
-                
-                console.log('Updating trust scores:', updateData);
-                
-                // Show success message and close modal
-                const playerCount = selectedPlayersUpdate.length;
-                const playerNames = selectedPlayersUpdate.map(p => p.name).join(', ');
-                
-                let successMessage = `Trust scores updated successfully for ${playerCount} player(s): ${playerNames}`;
-                if (updateType === 'recalculate') {
-                    successMessage += ' (Recalculated from records)';
-                } else if (updateType === 'adjust') {
-                    successMessage += ` (Adjusted by ${scoreValue})`;
-                } else if (updateType === 'set') {
-                    successMessage += ` (Set to ${scoreValue})`;
-                }
-                
-                alert(successMessage);
-                
-                bootstrap.Modal.getInstance(document.getElementById('updateScoreModal')).hide();
+                        
+                        if (successCount === playerCount) {
+                            alert(successMessage);
+                            // Refresh the page or update the display
+                            location.reload();
+                        } else {
+                            alert(`Some trust score updates failed. ${successCount}/${playerCount} successful.`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating trust scores:', error);
+                        alert('Failed to update trust scores. Please try again.');
+                    })
+                    .finally(() => {
+                        bootstrap.Modal.getInstance(document.getElementById('updateScoreModal')).hide();
+                    });
                 
                 // Reset form and selections
                 this.reset();

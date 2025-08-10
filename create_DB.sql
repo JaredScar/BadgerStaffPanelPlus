@@ -18,6 +18,8 @@ CREATE TABLE `servers` (
     `server_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
     `server_name` VARCHAR(255),
     `server_slug` VARCHAR(128),
+    `discord_webhook_url` VARCHAR(500),
+    `webhook_enabled` BOOLEAN DEFAULT TRUE,
     `created_at` DATETIME,
     `updated_at` DATETIME
 );
@@ -218,3 +220,15 @@ INSERT INTO `layouts` (
 (1, 'dashboard', 'monitoring', 'widget_players', 0, 0, 6, 8, NOW(), NOW()),
 (1, 'dashboard', 'monitoring', 'widget_all_players', 6, 0, 6, 8, NOW(), NOW()),
 (1, 'dashboard', 'monitoring', 'records.widget_records', 0, 8, 12, 10, NOW(), NOW());
+
+-- Sample server data
+INSERT INTO `servers` (
+    `server_id`,
+    `server_name`,
+    `server_slug`,
+    `discord_webhook_url`,
+    `webhook_enabled`,
+    `created_at`,
+    `updated_at`
+) VALUES 
+(1, 'Badger Server', 'badger-server', 'https://discord.com/api/webhooks/your-webhook-url-here', TRUE, NOW(), NOW());
