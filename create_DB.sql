@@ -30,6 +30,10 @@ CREATE TABLE `staff` (
     `staff_discord` BIGINT(128),
     `server_id` INT(128),
     `role` VARCHAR(128) DEFAULT 'staff',
+    `status` ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
+    `join_date` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `notes` TEXT,
+    `last_active` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `created_at` DATETIME,
     `updated_at` DATETIME
 );
@@ -71,7 +75,11 @@ INSERT INTO `staff` (
                      `staff_email`,
                      `staff_discord`,
                      `server_id`,
-                     `role`
+                     `role`,
+                     `status`,
+                     `join_date`,
+                     `notes`,
+                     `last_active`
                      ) VALUES (
                      1, -- Staff ID
                      'badger', -- Username
@@ -79,7 +87,11 @@ INSERT INTO `staff` (
                      'thewolfbadger@gmail.com', -- Email
                      394446211341615104, -- Discord ID
                      1, -- Server ID
-                     'admin' -- Role
+                     'admin', -- Role
+                     'active', -- Status
+                     NOW(), -- Join Date
+                     'System Administrator', -- Notes
+                     NOW() -- Last Active
                      );
 
 CREATE TABLE `players` (
