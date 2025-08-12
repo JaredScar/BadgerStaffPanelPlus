@@ -486,6 +486,18 @@ class DashboardController extends Controller {
             $staffId = Session::get("staff_id");
             $dashboardName = $request->get('dashboard', 'main');
             
+            // Debug logging
+            Log::info('getDashboardLayout - Debug info', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'session_id' => Session::getId(),
+                'auth_check' => auth()->check(),
+                'auth_user' => auth()->user() ? auth()->user()->staff_username : 'no_user',
+                'request_headers' => $request->headers->all(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
             // Log dashboard layout retrieval attempt
             Log::info('Dashboard layout retrieval attempt', [
                 'staff_id' => $staffId,

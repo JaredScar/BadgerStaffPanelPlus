@@ -252,13 +252,16 @@ Route::middleware('authWeb:web')->post('/verified/dashboard/add_widget', [Dashbo
 Route::middleware('authWeb:web')->post('/verified/dashboard/create', [DashboardController::class, 'createDashboard']);
 Route::middleware('authWeb:web')->delete('/verified/dashboard/delete', [DashboardController::class, 'deleteDashboard']);
 Route::middleware('authWeb:web')->get('/verified/dashboard/layout', [DashboardController::class, 'getDashboardLayout']);
-/**
- * PUT methods
- */
-Route::middleware('authWeb:web')->put('/verified/dashboard/save', [DashboardController::class, 'save']);
-/**
- * POST methods
- */
-Route::middleware('authWeb:web')->post('/verified/dashboard/add_widget', [DashboardController::class, 'add_widget']);
+
+// Test route for debugging
+Route::middleware('authWeb:web')->get('/verified/test-auth', function() {
+    return response()->json([
+        'authenticated' => auth()->check(),
+        'user' => auth()->user() ? auth()->user()->staff_username : null,
+        'session_id' => session()->getId(),
+        'staff_id' => session()->get('staff_id')
+    ]);
+});
+
 Route::middleware('authWeb:web')->post('/verified/management/tokens', [TokenController::class, 'doCreateToken']);
 Route::middleware('authWeb:web')->delete('/verified/management/tokens/{tokenId}', [TokenController::class, 'doDeleteToken']);

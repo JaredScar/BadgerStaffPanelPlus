@@ -988,30 +988,69 @@ document.addEventListener('DOMContentLoaded', function() {
         showNotification('Loading dashboard...', 'info', 0);
         
         // Load the new dashboard layout
-        fetch(`/verified/dashboard/layout?dashboard=${dashboardName}`)
-            .then(response => response.json())
-            .then(data => {
-                // Clear current grid
-                grid.removeAll();
-                
-                // Load new layout
-                if (data.layout && data.layout.length > 0) {
-                    data.layout.forEach(widget => {
-                        addWidgetToGrid(widget);
-                    });
-                } else {
-                    // Create default layout for new dashboard
-                    createDefaultLayout();
+        console.log('Switching to dashboard:', dashboardName);
+        console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+        
+        fetch(`/web/verified/dashboard/layout?dashboard=${dashboardName}`, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'include'
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 419) {
+                    // Authentication error - redirect to login
+                    console.log('Authentication error, redirecting to login');
+                    window.location.href = '/login';
+                    return;
                 }
-                
-                currentDashboard = dashboardName;
-                updateDashboardActions();
-                showNotification(`${dashboardName.charAt(0).toUpperCase() + dashboardName.slice(1)} dashboard loaded!`, 'success');
-            })
-            .catch(error => {
-                console.error('Error loading dashboard:', error);
-                showNotification('Error loading dashboard. Please try again.', 'danger');
-            });
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error('Response is not JSON:', contentType);
+                // Try to get the text to see what we're actually getting
+                return response.text().then(text => {
+                    console.error('Response text:', text);
+                    throw new Error('Response is not JSON');
+                });
+            }
+            
+            return response.json();
+        })
+        .then(data => {
+            if (!data) return; // Handle redirect case
+            
+            // Clear current grid
+            grid.removeAll();
+            
+            // Load new layout
+            if (data.layout && data.layout.length > 0) {
+                data.layout.forEach(widget => {
+                    addWidgetToGrid(widget);
+                });
+            } else {
+                // Create default layout for new dashboard
+                createDefaultLayout();
+            }
+            
+            currentDashboard = dashboardName;
+            updateDashboardActions();
+            showNotification(`${dashboardName.charAt(0).toUpperCase() + dashboardName.slice(1)} dashboard loaded!`, 'success');
+        })
+        .catch(error => {
+            console.error('Error loading dashboard:', error);
+            showNotification('Error loading dashboard. Please try again.', 'danger');
+        });
     }
 
     function createDashboard(dashboardName) {
