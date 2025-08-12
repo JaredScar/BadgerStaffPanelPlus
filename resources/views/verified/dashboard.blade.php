@@ -867,6 +867,9 @@
 </style>
 
 <script>
+// Base URL configuration for AJAX requests
+const BASE_URL = '/web';
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize GridStack
     const grid = GridStack.init({
@@ -991,7 +994,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Switching to dashboard:', dashboardName);
         console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
         
-        fetch(`/web/verified/dashboard/layout?dashboard=${dashboardName}`, {
+        fetch(`${BASE_URL}/verified/dashboard/layout?dashboard=${dashboardName}`, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -1054,7 +1057,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function createDashboard(dashboardName) {
-        fetch('/verified/dashboard/create', {
+        fetch(`${BASE_URL}/verified/dashboard/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1088,7 +1091,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function deleteDashboard(dashboardName) {
-        fetch('/verified/dashboard/delete', {
+        fetch(`${BASE_URL}/verified/dashboard/delete`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -1298,7 +1301,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const savingToast = showNotification('Saving dashboard layout...', 'info', 0);
 
         // Send layout to backend
-        fetch('/verified/dashboard/save', {
+        fetch(`${BASE_URL}/verified/dashboard/save`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
