@@ -10,6 +10,25 @@ use Illuminate\Database\Query\Builder;
  */
 class Layout extends Model {
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'staff_id',
+        'server_id',
+        'view',
+        'dashboard_name',
+        'widget_type',
+        'col',
+        'row',
+        'size_x',
+        'size_y',
+        'created_at',
+        'updated_at'
+    ];
+
     // Define validation rules
     public static function rules()
     {
@@ -25,8 +44,9 @@ class Layout extends Model {
         ];
     }
 
-    public function store($staff_id, $view, $dashboard_name, $widget_type, $col, $row, $size_x, $size_y) {
+    public function store($staff_id, $server_id, $view, $dashboard_name, $widget_type, $col, $row, $size_x, $size_y) {
         $this->staff_id = $staff_id;
+        $this->server_id = $server_id;
         $this->view = $view;
         $this->dashboard_name = $dashboard_name;
         $this->widget_type = $widget_type;
@@ -72,7 +92,7 @@ class Layout extends Model {
     /**
      * Create default dashboard layout
      */
-    public static function createDefaultDashboard($staffId, $dashboardName)
+    public static function createDefaultDashboard($staffId, $serverId, $dashboardName)
     {
         $defaultWidgets = [
             ['widget_type' => 'widget_notes', 'col' => 0, 'row' => 0, 'size_x' => 6, 'size_y' => 8],
@@ -84,6 +104,7 @@ class Layout extends Model {
             $layout = new self();
             $layout->store(
                 $staffId,
+                $serverId,
                 'dashboard',
                 $dashboardName,
                 $widget['widget_type'],

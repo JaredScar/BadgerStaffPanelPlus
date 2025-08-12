@@ -37,7 +37,8 @@ class DashboardController extends Controller {
             
             // If no dashboards exist, create the main dashboard
             if (empty($availableDashboards)) {
-                Layout::createDefaultDashboard($staffId, 'main');
+                $serverId = Session::get("server_id");
+                Layout::createDefaultDashboard($staffId, $serverId, 'main');
                 $availableDashboards = ['main'];
                 
                 Log::info('Default dashboard created for staff', [
@@ -50,7 +51,8 @@ class DashboardController extends Controller {
             
             // If requested dashboard doesn't exist, create it
             if (!in_array($dashboardName, $availableDashboards)) {
-                Layout::createDefaultDashboard($staffId, $dashboardName);
+                $serverId = Session::get("server_id");
+                Layout::createDefaultDashboard($staffId, $serverId, $dashboardName);
                 
                 Log::info('New dashboard created for staff', [
                     'staff_id' => $staffId,
@@ -135,15 +137,20 @@ class DashboardController extends Controller {
             foreach ($widgetDataList as $wData) {
                 // Extract the data from the JSON payload
                 $widgetType = $wData['widgetType'] ?? null;
-                $widgetId = $wData['widgetId'] ?? null;
+                $layoutId = $wData['widgetId'] ?? null;
                 $col = $wData['x'] ?? null;
                 $row = $wData['y'] ?? null;
                 $sizeX = $wData['w'] ?? null;
                 $sizeY = $wData['h'] ?? null;
                 
+                // Get server_id from session
+                $serverId = Session::get("server_id");
+                
                 // Define the data to be updated or inserted
                 $data = [
                     'staff_id' => $staffId,
+                    'server_id' => $serverId,
+                    'view' => 'dashboard',
                     'dashboard_name' => $dashboardName,
                     'updated_at' => $updated,
                     'widget_type' => $widgetType,
@@ -153,32 +160,46 @@ class DashboardController extends Controller {
                     'size_y' => $sizeY
                 ];
 
-                // Specify the conditions to search for existing records
-                $conditions = [
-                    'widget_id' => $widgetId,
-                    'dashboard_name' => $dashboardName
-                ];
-                $existingWidgetIds[] = $widgetId;
-
-                // Check if the record already exists
-                if (!Layout::where($conditions)->exists()) {
-                    // If the record doesn't exist, set the created_at timestamp
-                    $data['created_at'] = $updated;
-                    $createdWidgets++;
-                } else {
+                // Check if this is a new widget (temporary ID like "new_1") or existing widget
+                if ($layoutId && is_numeric($layoutId)) {
+                    // Existing widget - update it
+                    $conditions = [
+                        'layout_id' => $layoutId,
+                        'dashboard_name' => $dashboardName
+                    ];
+                    $existingWidgetIds[] = $layoutId;
+                    
+                    Layout::updateOrInsert($conditions, $data);
                     $updatedWidgets++;
+                } else {
+                    // New widget - create it
+                    $data['created_at'] = $updated;
+                    Layout::create($data);
+                    $createdWidgets++;
                 }
-                Layout::updateOrInsert($conditions, $data);
             }
             
-            // Need to get widgets for staff that do not exist anymore and delete them...
+            // Need to get layouts for staff that do not exist anymore and delete them...
             $deletedWidgets = 0;
-            if (sizeof($existingWidgetIds)) {
-                $deletedWidgets = Layout::whereNotIn('widget_id', $existingWidgetIds)
-                    ->where('staff_id', $staffId)
-                    ->where('dashboard_name', $dashboardName)
-                    ->delete();
+            if (sizeof($existingWidgetIds) > 0) {
+                // Filter out null values and only delete existing layouts
+                $validLayoutIds = array_filter($existingWidgetIds, function($id) {
+                    return $id !== null;
+                });
+                
+                if (sizeof($validLayoutIds) > 0) {
+                    $deletedWidgets = Layout::whereNotIn('layout_id', $validLayoutIds)
+                        ->where('staff_id', $staffId)
+                        ->where('dashboard_name', $dashboardName)
+                        ->delete();
+                } else {
+                    // No existing layouts, delete all for this dashboard
+                    $deletedWidgets = Layout::where('staff_id', $staffId)
+                        ->where('dashboard_name', $dashboardName)
+                        ->delete();
+                }
             } else {
+                // No widgets in the list, delete all for this dashboard
                 $deletedWidgets = Layout::where('staff_id', $staffId)
                     ->where('dashboard_name', $dashboardName)
                     ->delete();
@@ -293,7 +314,8 @@ class DashboardController extends Controller {
             }
             
             $layout = new Layout();
-            $layout->store($staffId, $view, $dashboardName, $widget_type, $col, $row, $size_x, $size_y);
+            $serverId = Session::get("server_id");
+            $layout->store($staffId, $serverId, $view, $dashboardName, $widget_type, $col, $row, $size_x, $size_y);
             $layout->save();
             
             // Log to Discord webhook
@@ -372,7 +394,8 @@ class DashboardController extends Controller {
                 return response()->json(['error' => 'Dashboard already exists'], 400);
             }
             
-            Layout::createDefaultDashboard($staffId, $dashboardName);
+            $serverId = Session::get("server_id");
+            Layout::createDefaultDashboard($staffId, $serverId, $dashboardName);
             
             // Log to Discord webhook
             $staff = Staff::find($staffId);

@@ -175,6 +175,8 @@ CREATE TABLE `notes` (
 );
 
 CREATE TABLE `layouts` (
+    `layout_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
+    `server_id` INT(128),
     `staff_id` INT(128),
     `view` VARCHAR(128),
     `dashboard_name` VARCHAR(128) DEFAULT 'main',
@@ -184,11 +186,14 @@ CREATE TABLE `layouts` (
     `size_x` INT(128),
     `size_y` INT(128),
     `created_at` DATETIME,
-    `updated_at` DATETIME
+    `updated_at` DATETIME,
+    FOREIGN KEY (`staff_id`) REFERENCES `staff`(`staff_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`server_id`) REFERENCES `servers`(`server_id`) ON DELETE CASCADE
 );
 
 -- Sample layout data for the main dashboard
 INSERT INTO `layouts` (
+    `server_id`,
     `staff_id`,
     `view`,
     `dashboard_name`,
@@ -200,12 +205,13 @@ INSERT INTO `layouts` (
     `created_at`,
     `updated_at`
 ) VALUES 
-(1, 'dashboard', 'main', 'widget_notes', 0, 0, 6, 8, NOW(), NOW()),
-(1, 'dashboard', 'main', 'widget_trust_scores', 6, 0, 6, 8, NOW(), NOW()),
-(1, 'dashboard', 'main', 'widget_recent_activity', 0, 8, 12, 10, NOW(), NOW());
+(1, 1, 'dashboard', 'main', 'widget_notes', 0, 0, 6, 8, NOW(), NOW()),
+(1, 1, 'dashboard', 'main', 'widget_trust_scores', 6, 0, 6, 8, NOW(), NOW()),
+(1, 1, 'dashboard', 'main', 'widget_recent_activity', 0, 8, 12, 10, NOW(), NOW());
 
 -- Sample layout data for a secondary dashboard
 INSERT INTO `layouts` (
+    `server_id`,
     `staff_id`,
     `view`,
     `dashboard_name`,
@@ -217,9 +223,9 @@ INSERT INTO `layouts` (
     `created_at`,
     `updated_at`
 ) VALUES 
-(1, 'dashboard', 'monitoring', 'widget_players', 0, 0, 6, 8, NOW(), NOW()),
-(1, 'dashboard', 'monitoring', 'widget_all_players', 6, 0, 6, 8, NOW(), NOW()),
-(1, 'dashboard', 'monitoring', 'records.widget_records', 0, 8, 12, 10, NOW(), NOW());
+(1, 1, 'dashboard', 'monitoring', 'widget_players', 0, 0, 6, 8, NOW(), NOW()),
+(1, 1, 'dashboard', 'monitoring', 'widget_all_players', 6, 0, 6, 8, NOW(), NOW()),
+(1, 1, 'dashboard', 'monitoring', 'records.widget_records', 0, 8, 12, 10, NOW(), NOW());
 
 -- Sample server data
 INSERT INTO `servers` (
