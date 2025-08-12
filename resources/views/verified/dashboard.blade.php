@@ -87,7 +87,7 @@
                                         </div>
                                     </div>
                                     <div class="widget-content">
-                                        @include('_widgets.' . str_replace('records.widget_', '', str_replace('players.widget_', '', $widget->widget_type)))
+                                        @include('_widgets.' . $widget->widget_type)
                                     </div>
                                 </div>
                             </div>
@@ -990,70 +990,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading indicator
         showNotification('Loading dashboard...', 'info', 0);
         
-        // Load the new dashboard layout
+        // Simple page reload approach - more reliable than complex AJAX widget rendering
         console.log('Switching to dashboard:', dashboardName);
-        console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
         
-        fetch(`${BASE_URL}/verified/dashboard/layout?dashboard=${dashboardName}`, {
-            method: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'include'
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-            
-            if (!response.ok) {
-                if (response.status === 401 || response.status === 419) {
-                    // Authentication error - redirect to login
-                    console.log('Authentication error, redirecting to login');
-                    window.location.href = '/login';
-                    return;
-                }
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            // Check if response is JSON
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                console.error('Response is not JSON:', contentType);
-                // Try to get the text to see what we're actually getting
-                return response.text().then(text => {
-                    console.error('Response text:', text);
-                    throw new Error('Response is not JSON');
-                });
-            }
-            
-            return response.json();
-        })
-        .then(data => {
-            if (!data) return; // Handle redirect case
-            
-            // Clear current grid
-            grid.removeAll();
-            
-            // Load new layout
-            if (data.layout && data.layout.length > 0) {
-                data.layout.forEach(widget => {
-                    addWidgetToGrid(widget);
-                });
-            } else {
-                // Create default layout for new dashboard
-                createDefaultLayout();
-            }
-            
-            currentDashboard = dashboardName;
-            updateDashboardActions();
-            showNotification(`${dashboardName.charAt(0).toUpperCase() + dashboardName.slice(1)} dashboard loaded!`, 'success');
-        })
-        .catch(error => {
-            console.error('Error loading dashboard:', error);
-            showNotification('Error loading dashboard. Please try again.', 'danger');
-        });
+        // Reload the page with the new dashboard parameter
+        window.location.href = `${BASE_URL}/verified/dashboard?dashboard=${dashboardName}`;
     }
 
     function createDashboard(dashboardName) {
@@ -1071,15 +1012,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 showNotification(data.message, 'success');
                 createDashboardModal.hide();
                 
-                // Add new dashboard to selector
-                const option = document.createElement('option');
-                option.value = dashboardName;
-                option.textContent = dashboardName.charAt(0).toUpperCase() + dashboardName.slice(1) + ' Dashboard';
-                dashboardSelect.appendChild(option);
-                
-                // Switch to new dashboard
-                dashboardSelect.value = dashboardName;
-                switchDashboard(dashboardName);
+                // Reload page to show new dashboard
+                window.location.href = `${BASE_URL}/verified/dashboard?dashboard=${dashboardName}`;
             } else {
                 showNotification(data.error || 'Error creating dashboard', 'danger');
             }
@@ -1104,15 +1038,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.message) {
                 showNotification(data.message, 'success');
                 
-                // Remove dashboard from selector
-                const option = dashboardSelect.querySelector(`option[value="${dashboardName}"]`);
-                if (option) {
-                    option.remove();
-                }
-                
-                // Switch to main dashboard
-                dashboardSelect.value = 'main';
-                switchDashboard('main');
+                // Reload page to show main dashboard
+                window.location.href = `${BASE_URL}/verified/dashboard?dashboard=main`;
             } else {
                 showNotification(data.error || 'Error deleting dashboard', 'danger');
             }
@@ -1121,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error deleting dashboard:', error);
             showNotification('Error deleting dashboard. Please try again.', 'danger');
         });
-    }
+        }
 
     function updateDashboardActions() {
         // Update delete button visibility
@@ -1156,7 +1083,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
                     <div class="widget-content">
-                        ${getWidgetContent(widget.widget_type)}
+                        <div class="blank-widget">
+                            <div class="blank-widget-content">
+                                <div class="blank-widget-icon">
+                                    <i class="fas fa-puzzle-piece"></i>
+                                </div>
+                                <h5>${getWidgetTitle(widget.widget_type)}</h5>
+                                <p>Widget content will be loaded here</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -1165,6 +1100,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function createDefaultLayout() {
+        // For default layout, we need to fetch the rendered content from the server
+        // This will be handled by the switchDashboard function when it creates a new dashboard
+        showNotification('Creating default layout...', 'info');
+        
+        // Create a simple placeholder layout
         const defaultWidgets = [
             { widget_type: 'widget_notes', col: 0, row: 0, size_x: 6, size_y: 8 },
             { widget_type: 'widget_trust_scores', col: 6, row: 0, size_x: 6, size_y: 8 },
@@ -1175,6 +1115,8 @@ document.addEventListener('DOMContentLoaded', function() {
             addWidgetToGrid(widget);
         });
     }
+    
+
 
     function getWidgetTitle(widgetType) {
         const titleMap = {
@@ -1194,19 +1136,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return titleMap[widgetType] || widgetType.replace('widget_', '').replace('records.widget_', '').replace('players.widget_', '');
     }
 
-    function getWidgetContent(widgetType) {
-        // For now, return placeholder content
-        // In a real implementation, you'd render the actual widget content
-        return `<div class="blank-widget">
-            <div class="blank-widget-content">
-                <div class="blank-widget-icon">
-                    <i class="fas fa-puzzle-piece"></i>
-                </div>
-                <h5>${getWidgetTitle(widgetType)}</h5>
-                <p>Widget content will be loaded here</p>
-            </div>
-        </div>`;
-    }
+
 
     function enableCustomizeMode() {
         isCustomizeMode = true;
