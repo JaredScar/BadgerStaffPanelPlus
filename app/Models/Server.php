@@ -72,4 +72,16 @@ class Server extends Model
     {
         return $this->isWebhookEnabled() ? $this->discord_webhook_url : null;
     }
+
+    /**
+     * Get server name by ID
+     *
+     * @param int $serverId
+     * @return string|null
+     */
+    public static function getServerNameById($serverId)
+    {
+        $server = self::find($serverId);
+        return $server ? $server->server_name : null;
+    }
 }
