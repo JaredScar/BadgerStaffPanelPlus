@@ -259,7 +259,12 @@ Route::middleware('authWeb:web')->get('/verified/test-auth', function() {
         'authenticated' => auth()->check(),
         'user' => auth()->user() ? auth()->user()->staff_username : null,
         'session_id' => session()->getId(),
-        'staff_id' => session()->get('staff_id')
+        'staff_id' => session()->get('staff_id'),
+        'server_id' => session()->get('server_id'),
+        'server_name' => session()->get('server_name'),
+        'all_session_data' => session()->all(),
+        'auth_user_id' => auth()->id(),
+        'auth_user_data' => auth()->user() ? auth()->user()->toArray() : null
     ]);
 });
 

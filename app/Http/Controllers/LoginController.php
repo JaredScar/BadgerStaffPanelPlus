@@ -110,7 +110,16 @@ class LoginController extends Controller {
                 Session::put('staff_id', $staffId);
                 Session::put("server_id", $serverId);
                 Session::put("server_name", $serverName);
-                
+
+                // Debug: Log session values after setting
+                Log::info('Session values set during login', [
+                    'staff_id' => $staffId,
+                    'server_id' => $serverId,
+                    'server_name' => $serverName,
+                    'session_id' => Session::getId(),
+                    'session_keys' => array_keys(Session::all())
+                ]);
+
                 // Log successful login to Discord webhook
                 $this->webhookService->logAction('staff_login', [
                     'username' => $credentials['username'],
@@ -399,18 +408,38 @@ class LoginController extends Controller {
             if ($staffMemberSelected && $staffMemberSelected->aggregate && sizeof($staffMemberSelected->aggregate) > 0) {
                 // It's a valid staff member, we need to log them in
                 $staffId = $staffMemberSelected->aggregate['staff_id'];
+                $serverId = $staffMemberSelected->server_id;
+                $serverName = $staffMemberSelected->server->server_name ?? 'Unknown';
+
                 Auth::guard('web')->loginUsingId($staffId);
-                
+
+                // Set session values for Discord login
+                Session::put('staff_id', $staffId);
+                Session::put("server_id", $serverId);
+                Session::put("server_name", $serverName);
+
+                // Debug: Log session values after setting for Discord
+                Log::info('Discord session values set', [
+                    'staff_id' => $staffId,
+                    'server_id' => $serverId,
+                    'server_name' => $serverName,
+                    'session_id' => Session::getId(),
+                    'session_keys' => array_keys(Session::all())
+                ]);
+
                 // Log successful Discord authentication
                 Log::info('Discord authentication successful', [
                     'discord_id' => $user['id'],
                     'discord_username' => $user['username'] ?? 'Unknown',
                     'staff_id' => $staffId,
+                    'server_id' => $serverId,
+                    'server_name' => $serverName,
+                    'session_id' => Session::getId(),
                     'login_timestamp' => now()->format('Y-m-d H:i:s'),
                     'ip_address' => request()->ip(),
                     'user_agent' => request()->userAgent()
                 ]);
-                
+
                 return redirect()->intended('DASHBOARD');
             }
             

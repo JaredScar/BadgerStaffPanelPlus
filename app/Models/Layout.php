@@ -101,19 +101,21 @@ class Layout extends Model {
         ];
 
         foreach ($defaultWidgets as $widget) {
-            $layout = new self();
-            $layout->store(
-                $staffId,
-                $serverId,
-                'dashboard',
-                $dashboardName,
-                $widget['widget_type'],
-                $widget['col'],
-                $widget['row'],
-                $widget['size_x'],
-                $widget['size_y']
-            );
-            $layout->save();
+            $data = [
+                'staff_id' => $staffId,
+                'server_id' => $serverId,
+                'view' => 'dashboard',
+                'dashboard_name' => $dashboardName,
+                'widget_type' => $widget['widget_type'],
+                'col' => $widget['col'],
+                'row' => $widget['row'],
+                'size_x' => $widget['size_x'],
+                'size_y' => $widget['size_y'],
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+
+            self::create($data);
         }
     }
 }

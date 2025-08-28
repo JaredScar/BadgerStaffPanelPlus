@@ -108,10 +108,34 @@ class DashboardController extends Controller {
             $widgetDataList = $jsonData['widgets'] ?? [];
             $dashboardName = $jsonData['dashboard'] ?? 'main';
             $staffId = Session::get("staff_id");
-            
+            $serverId = Session::get("server_id");
+
+            // Debug session values
+            Log::info('Session values check', [
+                'staff_id' => $staffId,
+                'server_id' => $serverId,
+                'all_session_keys' => array_keys(Session::all()),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+
+            // Validate required session values
+            if (!$staffId || !$serverId) {
+                Log::error('Missing required session values', [
+                    'staff_id' => $staffId,
+                    'server_id' => $serverId,
+                    'session_data' => Session::all(),
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+
+                return response()->json(['error' => 'Session expired. Please log in again.'], 401);
+            }
+
             // Log dashboard save attempt
             Log::info('Dashboard save attempt', [
                 'staff_id' => $staffId,
+                'server_id' => $serverId,
                 'dashboard_name' => $dashboardName,
                 'widgets_count' => count($widgetDataList),
                 'ip_address' => request()->ip(),
@@ -129,11 +153,10 @@ class DashboardController extends Controller {
                 return response()->json(['error' => 'No widget data provided'], 400);
             }
             
-            $updated = date('Y-m-d H:i:s', time());
             $existingWidgetIds = [];
             $updatedWidgets = 0;
             $createdWidgets = 0;
-            
+
             foreach ($widgetDataList as $wData) {
                 // Extract the data from the JSON payload
                 $widgetType = $wData['widgetType'] ?? null;
@@ -142,23 +165,31 @@ class DashboardController extends Controller {
                 $row = $wData['y'] ?? null;
                 $sizeX = $wData['w'] ?? null;
                 $sizeY = $wData['h'] ?? null;
-                
+
                 // Get server_id from session
                 $serverId = Session::get("server_id");
-                
+
                 // Define the data to be updated or inserted
+                // Note: Laravel automatically manages created_at and updated_at timestamps
                 $data = [
                     'staff_id' => $staffId,
                     'server_id' => $serverId,
                     'view' => 'dashboard',
                     'dashboard_name' => $dashboardName,
-                    'updated_at' => $updated,
                     'widget_type' => $widgetType,
                     'col' => $col,
                     'row' => $row,
                     'size_x' => $sizeX,
                     'size_y' => $sizeY
                 ];
+
+                // Debug the data being saved
+                Log::info('Widget data to be saved', [
+                    'widget_data' => $data,
+                    'widget_type' => $widgetType,
+                    'layout_id' => $layoutId,
+                    'is_new_widget' => is_null($layoutId) || !is_numeric($layoutId)
+                ]);
 
                 // Check if this is a new widget (temporary ID like "new_1") or existing widget
                 if ($layoutId && is_numeric($layoutId)) {
@@ -168,13 +199,19 @@ class DashboardController extends Controller {
                         'dashboard_name' => $dashboardName
                     ];
                     $existingWidgetIds[] = $layoutId;
-                    
-                    Layout::updateOrInsert($conditions, $data);
+
+                    // For updates, don't include timestamps
+                    $updateData = $data;
+                    unset($updateData['created_at'], $updateData['updated_at']);
+                    Layout::updateOrInsert($conditions, $updateData);
                     $updatedWidgets++;
                 } else {
-                    // New widget - create it
-                    $data['created_at'] = $updated;
-                    Layout::create($data);
+                    // New widget - create it with timestamps
+                    $createData = $data;
+                    $createData['created_at'] = now();
+                    $createData['updated_at'] = now();
+
+                    Layout::create($createData);
                     $createdWidgets++;
                 }
             }
@@ -224,12 +261,12 @@ class DashboardController extends Controller {
                 'widgets_updated' => $updatedWidgets,
                 'widgets_deleted' => $deletedWidgets,
                 'total_widgets' => count($widgetDataList),
-                'save_timestamp' => $updated,
+                'save_timestamp' => now()->toDateTimeString(),
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent()
             ]);
             
-            return response()->json(['message' => 'Data saved successfully for staff id: ' . $staffId, 'updated_at' => $updated], 200);
+            return response()->json(['message' => 'Data saved successfully for staff id: ' . $staffId, 'updated_at' => now()->toDateTimeString()], 200);
             
         } catch (Exception $exception) {
             Log::error('Dashboard save failed', [
@@ -313,10 +350,22 @@ class DashboardController extends Controller {
                     break;
             }
             
-            $layout = new Layout();
             $serverId = Session::get("server_id");
-            $layout->store($staffId, $serverId, $view, $dashboardName, $widget_type, $col, $row, $size_x, $size_y);
-            $layout->save();
+            $data = [
+                'staff_id' => $staffId,
+                'server_id' => $serverId,
+                'view' => $view,
+                'dashboard_name' => $dashboardName,
+                'widget_type' => $widget_type,
+                'col' => $col,
+                'row' => $row,
+                'size_x' => $size_x,
+                'size_y' => $size_y,
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+
+            Layout::create($data);
             
             // Log to Discord webhook
             $staff = Staff::find($staffId);
