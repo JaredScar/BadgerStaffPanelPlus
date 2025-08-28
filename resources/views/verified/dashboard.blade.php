@@ -396,7 +396,7 @@
 .content-wrapper {
     padding: 20px;
     min-height: 100vh;
-    width: calc(100vw - 295px) !important;
+    transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
 .dashboard-header {

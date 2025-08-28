@@ -170,13 +170,13 @@ body {
     min-height: calc(100vh - 140px);
     margin-left: 280px;
     margin-right: 20px;
-    transition: margin-left 0.3s ease;
-    width: calc(100vw - 280px);
+    transition: margin-left 0.3s ease, width 0.3s ease;
+    width: calc(100vw - 300px);
 }
 
 .content-wrapper.sidebar-collapsed {
     margin-left: 60px;
-    width: calc(100vw - 60px);
+    width: calc(100vw - 75px);
 }
 
 .master-contain {
