@@ -59,6 +59,8 @@ class Layout extends Model {
         $this->row = $row;
         $this->size_x = $size_x;
         $this->size_y = $size_y;
+
+        return $this->save();
     }
 
     /**

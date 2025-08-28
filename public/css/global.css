@@ -171,7 +171,7 @@ body {
     margin-left: 280px;
     margin-right: 20px;
     transition: margin-left 0.3s ease, width 0.3s ease;
-    width: calc(100vw - 300px);
+    width: calc(100vw - 295px);
 }
 
 .content-wrapper.sidebar-collapsed {
