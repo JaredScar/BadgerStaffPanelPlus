@@ -11,6 +11,13 @@ use Illuminate\Database\Query\Builder;
 class Layout extends Model {
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = true;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -24,9 +31,7 @@ class Layout extends Model {
         'col',
         'row',
         'size_x',
-        'size_y',
-        'created_at',
-        'updated_at'
+        'size_y'
     ];
 
     // Define validation rules
@@ -110,9 +115,7 @@ class Layout extends Model {
                 'col' => $widget['col'],
                 'row' => $widget['row'],
                 'size_x' => $widget['size_x'],
-                'size_y' => $widget['size_y'],
-                'created_at' => now(),
-                'updated_at' => now()
+                'size_y' => $widget['size_y']
             ];
 
             self::create($data);

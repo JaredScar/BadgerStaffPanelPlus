@@ -169,6 +169,19 @@ class DashboardController extends Controller {
                 // Get server_id from session
                 $serverId = Session::get("server_id");
 
+                // Validate required data
+                if (!$widgetType || !is_numeric($col) || !is_numeric($row) || !is_numeric($sizeX) || !is_numeric($sizeY)) {
+                    Log::warning('Invalid widget data', [
+                        'widget_data' => $wData,
+                        'widget_type' => $widgetType,
+                        'col' => $col,
+                        'row' => $row,
+                        'size_x' => $sizeX,
+                        'size_y' => $sizeY
+                    ]);
+                    continue; // Skip this widget
+                }
+
                 // Define the data to be updated or inserted
                 // Note: Laravel automatically manages created_at and updated_at timestamps
                 $data = [
@@ -183,16 +196,19 @@ class DashboardController extends Controller {
                     'size_y' => $sizeY
                 ];
 
+                // Determine if this is a new widget or existing widget
+                $isNewWidget = empty($layoutId) || !is_numeric($layoutId);
+
                 // Debug the data being saved
-                Log::info('Widget data to be saved', [
-                    'widget_data' => $data,
+                Log::info('Processing widget', [
                     'widget_type' => $widgetType,
                     'layout_id' => $layoutId,
-                    'is_new_widget' => is_null($layoutId) || !is_numeric($layoutId)
+                    'is_new_widget' => $isNewWidget,
+                    'widget_data' => $data
                 ]);
 
-                // Check if this is a new widget (temporary ID like "new_1") or existing widget
-                if ($layoutId && is_numeric($layoutId)) {
+                // Check if this is a new widget or existing widget
+                if (!$isNewWidget) {
                     // Existing widget - update it
                     $conditions = [
                         'layout_id' => $layoutId,
@@ -200,19 +216,29 @@ class DashboardController extends Controller {
                     ];
                     $existingWidgetIds[] = $layoutId;
 
-                    // For updates, don't include timestamps
+                    // For updates, create update data without timestamps
                     $updateData = $data;
-                    unset($updateData['created_at'], $updateData['updated_at']);
                     Layout::updateOrInsert($conditions, $updateData);
                     $updatedWidgets++;
                 } else {
-                    // New widget - create it with timestamps
-                    $createData = $data;
-                    $createData['created_at'] = now();
-                    $createData['updated_at'] = now();
-
-                    Layout::create($createData);
-                    $createdWidgets++;
+                    // New widget - create it (Laravel handles timestamps automatically)
+                    try {
+                        $result = Layout::create($data);
+                        Log::info('Widget created successfully', [
+                            'widget_type' => $widgetType,
+                            'layout_id' => $result->layout_id ?? 'unknown',
+                            'create_data' => $data
+                        ]);
+                        $createdWidgets++;
+                    } catch (\Exception $e) {
+                        Log::error('Failed to create widget', [
+                            'widget_type' => $widgetType,
+                            'error' => $e->getMessage(),
+                            'create_data' => $data,
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                        throw $e; // Re-throw to be caught by outer try-catch
+                    }
                 }
             }
             
@@ -360,9 +386,7 @@ class DashboardController extends Controller {
                 'col' => $col,
                 'row' => $row,
                 'size_x' => $size_x,
-                'size_y' => $size_y,
-                'created_at' => now(),
-                'updated_at' => now()
+                'size_y' => $size_y
             ];
 
             Layout::create($data);
