@@ -958,6 +958,74 @@ p.dashboard-subtitle {
     background-color: rgba(253, 126, 20, 0.05);
 }
 
+/* Players Page Styles */
+.players-table {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.players-table thead {
+    background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+    color: white;
+}
+
+.players-table th {
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.players-table td {
+    border: none;
+    padding: 15px;
+    vertical-align: middle;
+    color: #333;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.players-table tbody tr:hover {
+    background-color: rgba(253, 126, 20, 0.05);
+}
+
+/* All Players Page Styles */
+.all-players-table {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.all-players-table thead {
+    background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+    color: white;
+}
+
+.all-players-table th {
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.all-players-table td {
+    border: none;
+    padding: 15px;
+    vertical-align: middle;
+    color: #333;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.all-players-table tbody tr:hover {
+    background-color: rgba(253, 126, 20, 0.05);
+}
+
 /* Commends Page Styles */
 .commends-table {
     background-color: rgba(255, 255, 255, 0.95);

@@ -40,135 +40,108 @@ $data['data'] = $todayPlayers->values()->all();
 ?>
 
 <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card players-stat-card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title text-muted mb-0">Total Players</h5>
-                            <h2 class="players-stat-number"><?php echo $totalPlayers; ?></h2>
-                            <small class="text-muted">Today</small>
-                        </div>
-                        <div class="players-stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                </div>
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-orange">
+                <i class="fas fa-users"></i>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card players-stat-card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title text-muted mb-0">Currently Online</h5>
-                            <h2 class="players-stat-number-online"><?php echo $currentlyOnline; ?></h2>
-                            <small class="text-muted">Active now</small>
-                        </div>
-                        <div class="players-stat-icon-online">
-                            <i class="fas fa-circle"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card players-stat-card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title text-muted mb-0">Total Playtime</h5>
-                            <h2 class="players-stat-number"><?php echo $totalPlaytimeHours; ?>h <?php echo $totalPlaytimeRemainder; ?>m</h2>
-                            <small class="text-muted">Combined today</small>
-                        </div>
-                        <div class="players-stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card players-stat-card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title text-muted mb-0">Avg Trust Score</h5>
-                            <h2 class="players-stat-number-trust"><?php echo $avgTrustScore; ?></h2>
-                            <small class="text-muted">All players</small>
-                        </div>
-                        <div class="players-stat-icon-trust">
-                            <i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                </div>
+            <div class="stat-content">
+                <h3 class="stat-number"><?php echo $totalPlayers; ?></h3>
+                <p class="stat-label">Total Players</p>
+                <small class="text-muted">joined today</small>
             </div>
         </div>
     </div>
-
-    <!-- Search and Filter Section -->
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text">
-                    <i class="fas fa-search"></i>
-                </span>
-                <input type="text" class="form-control" id="playersSearch" placeholder="Search by name or Steam ID...">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-green">
+                <i class="fas fa-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number text-success"><?php echo $currentlyOnline; ?></h3>
+                <p class="stat-label">Currently Online</p>
+                <small class="text-muted">active now</small>
             </div>
         </div>
-        <div class="col-md-3">
-            <select class="form-select" id="playersStatusFilter">
-                <option value="">All Status</option>
-                <option value="online">Online</option>
-                <option value="offline">Offline</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select class="form-select" id="playersJoinTimeFilter">
-                <option value="">Join Time</option>
-                <option value="recent">Last 2 hours</option>
-                <option value="morning">Morning (6-12)</option>
-                <option value="afternoon">Afternoon (12-18)</option>
-                <option value="evening">Evening (18-24)</option>
-            </select>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-orange">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number"><?php echo $totalPlaytimeHours; ?>h <?php echo $totalPlaytimeRemainder; ?>m</h3>
+                <p class="stat-label">Total Playtime</p>
+                <small class="text-muted">combined today</small>
+            </div>
         </div>
     </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-orange">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number"><?php echo $avgTrustScore; ?></h3>
+                <p class="stat-label">Avg Trust Score</p>
+                <small class="text-muted">all players</small>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <!-- Players Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Players (<?php echo $totalPlayers; ?>)</h5>
-                    <div class="table-responsive">
-                        <table id="playersTable" class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Player</th>
-                                    <th>Status</th>
-                                    <th>Join Time</th>
-                                    <th>Playtime</th>
-                                    <th>Location</th>
-                                    <th>Trust Score</th>
-                                    <th>Warnings</th>
-                                    <th>Commends</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (empty($data['data'])): ?>
-                                    <tr>
-                                        <td colspan="9" class="text-center py-4">
-                                            <div class="empty-state">
-                                                <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                                                <h5 class="text-muted">No players found</h5>
-                                                <p class="text-muted">No players have joined today</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php else: ?>
-                                    <?php foreach ($data['data'] as $index => $player): ?>
+<!-- Search and Filter Section -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" class="form-control" placeholder="Search players..." id="playersSearch">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <select class="form-select" id="playersStatusFilter">
+            <option value="">All Status</option>
+            <option value="online">Online</option>
+            <option value="offline">Offline</option>
+        </select>
+    </div>
+</div>
+
+<!-- Players Records Section -->
+<div class="section-header">
+    <h2>Players (<?php echo $totalPlayers; ?>)</h2>
+</div>
+
+<!-- Players Records Table -->
+<div class="table-responsive">
+    <table class="table table-hover players-table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Status</th>
+                <th>Join Time</th>
+                <th>Playtime</th>
+                <th>Location</th>
+                <th>Trust Score</th>
+                <th>Warnings</th>
+                <th>Commends</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (empty($data['data'])): ?>
+                <tr>
+                    <td colspan="9" class="text-center py-4">
+                        <div class="no-data-message">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No players found</h4>
+                            <p class="text-muted">No players have joined today.</p>
+                        </div>
+                    </td>
+                </tr>
+            <?php else: ?>
+                <?php foreach ($data['data'] as $index => $player): ?>
                                         <?php
                                         // Demo data for mockup
                                         $isOnline = $index < 3; // First 3 players are online
@@ -184,79 +157,75 @@ $data['data'] = $todayPlayers->values()->all();
                                         $playerTrustScore = $trustScores[$index] ?? ($player->getPlayerData ? $player->getPlayerData->trust_score : 75);
                                         $playerWarnings = $warnings[$index] ?? $player->warns_count;
                                         $playerCommends = $commends[$index] ?? $player->commends_count;
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="player-avatar me-3">
-                                                        <img src="https://via.placeholder.com/40x40?text=<?php echo substr($player->getPlayerData->last_player_name ?? 'P', 0, 1); ?>" 
-                                                             alt="Player Avatar" class="rounded-circle">
-                                                    </div>
-                                                    <div class="player-info">
-                                                        <div class="player-name"><?php echo $player->getPlayerData->last_player_name ?? 'PlayerName'; ?></div>
-                                                        <div class="player-steam-id"><?php echo $player->player_id; ?></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span class="badge <?php echo $isOnline ? 'status-online' : 'status-offline'; ?>">
-                                                    <?php echo $isOnline ? 'Online' : 'Offline'; ?>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <div class="join-time"><?php echo $playerJoinTime; ?></div>
-                                            </td>
-                                            <td>
-                                                <div class="playtime"><?php echo $playerPlaytime; ?></div>
-                                            </td>
-                                            <td>
-                                                <div class="location"><?php echo $location; ?></div>
-                                            </td>
-                                            <td>
-                                                <div class="trust-score trust-score-<?php echo $playerTrustScore >= 80 ? 'high' : ($playerTrustScore >= 60 ? 'medium' : 'low'); ?>">
-                                                    <?php echo $playerTrustScore; ?>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <?php if ($playerWarnings > 0): ?>
-                                                    <span class="badge warning-badge"><?php echo $playerWarnings; ?></span>
-                                                <?php else: ?>
-                                                    <span class="text-muted">0</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <?php if ($playerCommends > 0): ?>
-                                                    <span class="badge commend-badge"><?php echo $playerCommends; ?></span>
-                                                <?php else: ?>
-                                                    <span class="text-muted">0</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <div class="btn-group action-buttons" role="group">
-                                                    <button type="button" class="btn btn-sm btn-outline-primary" title="View Player">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-info" title="Message">
-                                                        <i class="fas fa-comments"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-warning" title="Warn">
-                                                        <i class="fas fa-exclamation-triangle"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Kick">
-                                                        <i class="fas fa-user-times"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                    ?>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="player-avatar me-3">
+                                    <img src="https://via.placeholder.com/40x40?text=<?php echo substr($player->getPlayerData->last_player_name ?? 'P', 0, 1); ?>"
+                                         alt="Player Avatar" class="rounded-circle">
+                                </div>
+                                <div class="player-info">
+                                    <div class="player-name"><?php echo $player->getPlayerData->last_player_name ?? 'PlayerName'; ?></div>
+                                    <div class="player-steam-id"><?php echo $player->player_id; ?></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge <?php echo $isOnline ? 'status-online' : 'status-offline'; ?>">
+                                <?php echo $isOnline ? 'Online' : 'Offline'; ?>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="join-time"><?php echo $playerJoinTime; ?></div>
+                        </td>
+                        <td>
+                            <div class="playtime"><?php echo $playerPlaytime; ?></div>
+                        </td>
+                        <td>
+                            <div class="location"><?php echo $location; ?></div>
+                        </td>
+                        <td>
+                            <div class="trust-score trust-score-<?php echo $playerTrustScore >= 80 ? 'high' : ($playerTrustScore >= 60 ? 'medium' : 'low'); ?>">
+                                <?php echo $playerTrustScore; ?>
+                            </div>
+                        </td>
+                        <td>
+                            <?php if ($playerWarnings > 0): ?>
+                                <span class="badge warning-badge"><?php echo $playerWarnings; ?></span>
+                            <?php else: ?>
+                                <span class="text-muted">0</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if ($playerCommends > 0): ?>
+                                <span class="badge commend-badge"><?php echo $playerCommends; ?></span>
+                            <?php else: ?>
+                                <span class="text-muted">0</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <div class="btn-group action-buttons" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-primary" title="View Player">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-info" title="Message">
+                                    <i class="fas fa-comments"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-warning" title="Warn">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Kick">
+                                    <i class="fas fa-user-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 
 <style>
 /* Players-specific styles */
@@ -447,65 +416,39 @@ $data['data'] = $todayPlayers->values()->all();
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('playersSearch');
-    const statusFilter = document.getElementById('playersStatusFilter');
-    const joinTimeFilter = document.getElementById('playersJoinTimeFilter');
-    const table = document.getElementById('playersTable');
-    const tbody = table.getElementsByTagName('tbody')[0];
-    const rows = Array.from(tbody.getElementsByTagName('tr'));
+// Search functionality
+document.getElementById('playersSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('.players-table tbody tr');
 
-    function filterTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const statusValue = statusFilter.value;
-        const joinTimeValue = joinTimeFilter.value;
+    rows.forEach(row => {
+        const playerName = row.cells[0].textContent.toLowerCase();
+        const steamId = row.cells[0].textContent.toLowerCase();
+        const status = row.cells[1].textContent.toLowerCase();
+        const location = row.cells[4].textContent.toLowerCase();
 
-        rows.forEach(row => {
-            if (row.cells.length === 1) return; // Skip empty state row
-            
-            const playerName = row.cells[0].textContent.toLowerCase();
-            const status = row.cells[1].textContent.trim().toLowerCase();
-            const joinTime = row.cells[2].textContent.trim();
-            const location = row.cells[4].textContent.toLowerCase();
-            
-            const matchesSearch = playerName.includes(searchTerm) || 
-                                location.includes(searchTerm);
-            const matchesStatus = !statusValue || status.includes(statusValue);
-            
-            let matchesJoinTime = true;
-            if (joinTimeValue) {
-                const hour = parseInt(joinTime.split(':')[0]);
-                const isPM = joinTime.includes('PM');
-                const hour24 = isPM && hour !== 12 ? hour + 12 : (!isPM && hour === 12 ? 0 : hour);
-                
-                switch (joinTimeValue) {
-                    case 'recent':
-                        const now = new Date();
-                        const twoHoursAgo = now.getHours() - 2;
-                        matchesJoinTime = hour24 >= twoHoursAgo;
-                        break;
-                    case 'morning':
-                        matchesJoinTime = hour24 >= 6 && hour24 < 12;
-                        break;
-                    case 'afternoon':
-                        matchesJoinTime = hour24 >= 12 && hour24 < 18;
-                        break;
-                    case 'evening':
-                        matchesJoinTime = hour24 >= 18 || hour24 < 6;
-                        break;
-                }
-            }
-            
-            if (matchesSearch && matchesStatus && matchesJoinTime) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
+        if (playerName.includes(searchTerm) || steamId.includes(searchTerm) ||
+            status.includes(searchTerm) || location.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
 
-    searchInput.addEventListener('input', filterTable);
-    statusFilter.addEventListener('change', filterTable);
-    joinTimeFilter.addEventListener('change', filterTable);
+// Status filter functionality
+document.getElementById('playersStatusFilter').addEventListener('change', function(e) {
+    const selectedStatus = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('.players-table tbody tr');
+
+    rows.forEach(row => {
+        const statusCell = row.cells[1].textContent.toLowerCase();
+
+        if (selectedStatus === '' || statusCell.includes(selectedStatus)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
 });
 </script>
