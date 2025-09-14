@@ -1216,6 +1216,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const node = item.gridstackNode;
             const widgetType = item.getAttribute('data-widget-type');
             const widgetId = item.getAttribute('data-widget-id');
+            const isNew = item.getAttribute('data-is-new');
             
             widgetDataList.push({
                 widgetType: widgetType,
@@ -1225,6 +1226,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 w: node.w,
                 h: node.h
             });
+            
+            console.log(`Saving widget: type=${widgetType}, id=${widgetId}, isNew=${isNew}, position=(${node.x},${node.y},${node.w},${node.h})`);
         });
 
         // Show saving indicator
@@ -1245,6 +1248,20 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.message && data.message.includes('successfully')) {
+                // Update widget IDs for newly created widgets
+                if (data.widget_mappings && data.widget_mappings.length > 0) {
+                    data.widget_mappings.forEach(mapping => {
+                        // Find the widget with the original ID and update it
+                        const widgetElement = document.querySelector(`[data-widget-id="${mapping.original_id}"]`);
+                        if (widgetElement) {
+                            widgetElement.setAttribute('data-widget-id', mapping.new_id);
+                            widgetElement.removeAttribute('data-is-new');
+                            
+                            console.log(`Updated widget ID from ${mapping.original_id} to ${mapping.new_id}`);
+                        }
+                    });
+                }
+                
                 showNotification('Dashboard saved successfully!', 'success');
             } else {
                 showNotification('Error saving dashboard: ' + (data.message || 'Unknown error'), 'danger');

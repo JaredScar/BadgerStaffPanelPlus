@@ -154,6 +154,7 @@ class DashboardController extends Controller {
             $existingWidgetIds = [];
             $updatedWidgets = 0;
             $createdWidgets = 0;
+            $createdWidgetMappings = []; // Track new widget IDs for frontend
             
             Log::info('Starting widget processing', [
                 'staff_id' => $staffId,
@@ -170,6 +171,11 @@ class DashboardController extends Controller {
                 // Clean up layoutId - handle string 'null' and empty strings
                 if ($layoutId === 'null' || $layoutId === '') {
                     $layoutId = null;
+                }
+                
+                // Convert to integer if it's a valid numeric string
+                if ($layoutId !== null && is_numeric($layoutId)) {
+                    $layoutId = (int) $layoutId;
                 }
                 $col = $wData['x'] ?? null;
                 $row = $wData['y'] ?? null;
@@ -213,30 +219,59 @@ class DashboardController extends Controller {
                 Log::info('Processing widget', [
                     'widget_type' => $widgetType,
                     'layout_id' => $layoutId,
+                    'layout_id_type' => gettype($layoutId),
                     'is_new_widget' => $isNewWidget,
-                    'widget_data' => $data
+                    'widget_data' => $data,
+                    'raw_widget_data' => $wData
                 ]);
 
                 // Check if this is a new widget or existing widget
                 if (!$isNewWidget) {
                     // Existing widget - update it
-                    $conditions = [
-                        'layout_id' => $layoutId,
-                        'dashboard_name' => $dashboardName
-                    ];
                     $existingWidgetIds[] = $layoutId;
 
-                    // For updates, create update data without timestamps
-                    $updateData = $data;
-                    Layout::updateOrInsert($conditions, $updateData);
-                    $updatedWidgets++;
+                    // Find the existing widget and update it
+                    $existingWidget = Layout::where('layout_id', $layoutId)
+                        ->where('staff_id', $staffId)
+                        ->where('dashboard_name', $dashboardName)
+                        ->first();
+
+                    if ($existingWidget) {
+                        // Update the existing widget
+                        $existingWidget->update($data);
+                        $updatedWidgets++;
+                        
+                        Log::info('Widget updated successfully', [
+                            'widget_type' => $widgetType,
+                            'layout_id' => $layoutId,
+                            'update_data' => $data
+                        ]);
+                    } else {
+                        Log::warning('Widget not found for update', [
+                            'widget_type' => $widgetType,
+                            'layout_id' => $layoutId,
+                            'staff_id' => $staffId,
+                            'dashboard_name' => $dashboardName
+                        ]);
+                    }
                 } else {
                     // New widget - create it (Laravel handles timestamps automatically)
                     try {
                         $result = Layout::create($data);
+                        $newLayoutId = $result->layout_id ?? 'unknown';
+                        
+                        // Track the mapping for frontend
+                        $createdWidgetMappings[] = [
+                            'original_id' => $layoutId,
+                            'new_id' => $newLayoutId,
+                            'widget_type' => $widgetType,
+                            'position' => ['x' => $col, 'y' => $row, 'w' => $sizeX, 'h' => $sizeY]
+                        ];
+                        
                         Log::info('Widget created successfully', [
                             'widget_type' => $widgetType,
-                            'layout_id' => $result->layout_id ?? 'unknown',
+                            'layout_id' => $newLayoutId,
+                            'original_id' => $layoutId,
                             'create_data' => $data
                         ]);
                         $createdWidgets++;
@@ -306,7 +341,14 @@ class DashboardController extends Controller {
                 'user_agent' => request()->userAgent()
             ]);
             
-            return response()->json(['message' => 'Data saved successfully for staff id: ' . $staffId, 'updated_at' => now()->toDateTimeString()], 200);
+            return response()->json([
+                'message' => 'Data saved successfully for staff id: ' . $staffId, 
+                'updated_at' => now()->toDateTimeString(),
+                'created_widgets' => $createdWidgets,
+                'updated_widgets' => $updatedWidgets,
+                'deleted_widgets' => $deletedWidgets,
+                'widget_mappings' => $createdWidgetMappings
+            ], 200);
             
         } catch (Exception $exception) {
             Log::error('Dashboard save failed', [
