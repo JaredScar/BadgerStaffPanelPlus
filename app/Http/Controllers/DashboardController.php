@@ -35,13 +35,11 @@ class DashboardController extends Controller {
             // Get available dashboards for this staff member
             $availableDashboards = Layout::getDashboardNames($staffId);
             
-            // If no dashboards exist, create the main dashboard
+            // If no dashboards exist, create an empty main dashboard (no default widgets)
             if (empty($availableDashboards)) {
-                $serverId = Session::get("server_id");
-                Layout::createDefaultDashboard($staffId, $serverId, 'main');
                 $availableDashboards = ['main'];
                 
-                Log::info('Default dashboard created for staff', [
+                Log::info('Empty main dashboard initialized for staff', [
                     'staff_id' => $staffId,
                     'dashboard_name' => 'main',
                     'ip_address' => request()->ip(),
@@ -49,17 +47,17 @@ class DashboardController extends Controller {
                 ]);
             }
             
-            // If requested dashboard doesn't exist, create it
+            // If requested dashboard doesn't exist, redirect to main dashboard
             if (!in_array($dashboardName, $availableDashboards)) {
-                $serverId = Session::get("server_id");
-                Layout::createDefaultDashboard($staffId, $serverId, $dashboardName);
-                
-                Log::info('New dashboard created for staff', [
+                Log::info('Requested dashboard does not exist, redirecting to main', [
                     'staff_id' => $staffId,
-                    'dashboard_name' => $dashboardName,
+                    'requested_dashboard' => $dashboardName,
+                    'available_dashboards' => $availableDashboards,
                     'ip_address' => request()->ip(),
                     'user_agent' => request()->userAgent()
                 ]);
+                
+                return redirect()->route('DASHBOARD', ['dashboard' => 'main']);
             }
             
             // Get the layout for the requested dashboard
@@ -156,11 +154,23 @@ class DashboardController extends Controller {
             $existingWidgetIds = [];
             $updatedWidgets = 0;
             $createdWidgets = 0;
+            
+            Log::info('Starting widget processing', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'total_widgets_to_process' => count($widgetDataList),
+                'widget_data_list' => $widgetDataList
+            ]);
 
             foreach ($widgetDataList as $wData) {
                 // Extract the data from the JSON payload
                 $widgetType = $wData['widgetType'] ?? null;
                 $layoutId = $wData['widgetId'] ?? null;
+                
+                // Clean up layoutId - handle string 'null' and empty strings
+                if ($layoutId === 'null' || $layoutId === '') {
+                    $layoutId = null;
+                }
                 $col = $wData['x'] ?? null;
                 $row = $wData['y'] ?? null;
                 $sizeX = $wData['w'] ?? null;
@@ -197,7 +207,7 @@ class DashboardController extends Controller {
                 ];
 
                 // Determine if this is a new widget or existing widget
-                $isNewWidget = empty($layoutId) || !is_numeric($layoutId);
+                $isNewWidget = empty($layoutId) || !is_numeric($layoutId) || $layoutId === 'null' || $layoutId === '';
 
                 // Debug the data being saved
                 Log::info('Processing widget', [
@@ -244,29 +254,33 @@ class DashboardController extends Controller {
             
             // Need to get layouts for staff that do not exist anymore and delete them...
             $deletedWidgets = 0;
+            
+            // Only delete widgets if we have existing widget IDs to preserve
+            // This prevents accidental deletion when new widgets are being added
             if (sizeof($existingWidgetIds) > 0) {
                 // Filter out null values and only delete existing layouts
                 $validLayoutIds = array_filter($existingWidgetIds, function($id) {
-                    return $id !== null;
+                    return $id !== null && $id !== '';
                 });
                 
                 if (sizeof($validLayoutIds) > 0) {
+                    // Only delete widgets that are not in the current widget list
                     $deletedWidgets = Layout::whereNotIn('layout_id', $validLayoutIds)
                         ->where('staff_id', $staffId)
                         ->where('dashboard_name', $dashboardName)
                         ->delete();
-                } else {
-                    // No existing layouts, delete all for this dashboard
-                    $deletedWidgets = Layout::where('staff_id', $staffId)
-                        ->where('dashboard_name', $dashboardName)
-                        ->delete();
+                        
+                    Log::info('Deleted orphaned widgets', [
+                        'staff_id' => $staffId,
+                        'dashboard_name' => $dashboardName,
+                        'preserved_widget_ids' => $validLayoutIds,
+                        'deleted_count' => $deletedWidgets
+                    ]);
                 }
-            } else {
-                // No widgets in the list, delete all for this dashboard
-                $deletedWidgets = Layout::where('staff_id', $staffId)
-                    ->where('dashboard_name', $dashboardName)
-                    ->delete();
             }
+            
+            // Note: We don't delete all widgets if no existing widgets are found
+            // This prevents accidental deletion when new widgets are being added
             
             // Log dashboard save action to Discord webhook
             $staff = Staff::find($staffId);
@@ -468,7 +482,8 @@ class DashboardController extends Controller {
             }
             
             $serverId = Session::get("server_id");
-            Layout::createDefaultDashboard($staffId, $serverId, $dashboardName);
+            // Create empty dashboard (no default widgets)
+            // Users can add widgets manually through the customize mode
             
             // Log to Discord webhook
             $staff = Staff::find($staffId);
