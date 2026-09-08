@@ -5,6 +5,42 @@
 
 *Password:* `password`
 
+## Run with Docker
+
+Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine + Compose).
+
+```bash
+# Optional: copy env if you do not already have one
+cp .env.example .env
+
+# Build and start the app + MySQL
+docker compose up -d --build
+```
+
+Open **http://localhost:8080/web** and sign in with `badger` / `password`.
+
+| Service | Host port | Notes |
+|---------|-----------|--------|
+| App (Apache/PHP 8.2) | `8080` | Override with `APP_PORT=3000 docker compose up -d` |
+| MySQL 8 | `3306` | User `staffpanel` / password `secret`, DB `staffpanel_db` |
+
+The MySQL volume is seeded once from `create_DB.sql` (default admin + schema). To reset the database:
+
+```bash
+docker compose down -v
+docker compose up -d --build
+```
+
+Useful commands:
+
+```bash
+docker compose logs -f app
+docker compose exec app php artisan about
+docker compose down
+```
+
+Discord / captcha / API keys can be set in your shell or a project `.env`; Compose forwards `MASTER_*`, `DISCORD_*`, and `GOOGLE_CAPTCHA_*` into the app container.
+
 ## Features
 * Warning System
 * Kick System

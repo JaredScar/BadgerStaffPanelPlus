@@ -27,6 +27,8 @@ class RouteServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
 
         $this->routes(function () {
+            Route::redirect('/', '/web');
+
             Route::prefix('api')
                 ->group(base_path('routes/api.php'));
 
