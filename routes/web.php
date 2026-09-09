@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InstallController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\TokenController;
@@ -22,6 +23,10 @@ use Illuminate\Support\Facades\Route;
 /**
  * @mixin Builder
  */
+Route::get('/install/{step?}', [InstallController::class, 'show'])->name('install.show');
+Route::post('/install/{step}', [InstallController::class, 'save'])->name('install.save');
+Route::post('/install/database/test', [InstallController::class, 'testDatabase'])->name('install.database.test');
+
 Route::get('/', function () {
     $data = [];
     $data['css_path'] = 'login/start';

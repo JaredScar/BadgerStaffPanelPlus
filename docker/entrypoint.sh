@@ -27,6 +27,9 @@ mkdir -p \
 
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R ug+rwx storage bootstrap/cache
+if [ -f .env ]; then
+    chmod ug+rw .env || true
+fi
 
 DB_HOST="${DB_HOST:-mysql}"
 DB_PORT="${DB_PORT:-3306}"

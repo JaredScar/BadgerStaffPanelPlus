@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('layouts') || Schema::hasColumn('layouts', 'dashboard_name')) {
+            return;
+        }
+
         Schema::table('layouts', function (Blueprint $table) {
             $table->string('dashboard_name', 128)->default('main')->after('view');
         });

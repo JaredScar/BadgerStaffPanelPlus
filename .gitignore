@@ -17,3 +17,6 @@ yarn-error.log
 /.idea
 /.vscode
 configuration.php
+
+# Paid FiveM in-game staff panel (sold separately — do not commit)
+/fivem/

@@ -4,6 +4,11 @@
 
     <body>
         <section class="min-vh-100 pt-5 background-sizing gta-bg@php echo rand(1, 3); @endphp">
+            @if (session('status'))
+                <div class="alert alert-success text-center mx-auto" style="max-width: 560px;">
+                    {{ session('status') }}
+                </div>
+            @endif
             @if (count($errors) > 0)
                 <div class="alert alert-danger">
                     <ul>
@@ -28,7 +33,11 @@
                                             <select required id="server_id" name="server_id" class="form-control form-select form-control-lg">
                                                 @php
                                                 use App\Models\Server as servers;
-                                                $servers = servers::all();
+                                                try {
+                                                    $servers = servers::all();
+                                                } catch (\Throwable $e) {
+                                                    $servers = collect();
+                                                }
                                                 if (sizeof($servers) > 1)
                                                     echo '<option value="" disabled selected hidden>Server Selection</option>';
 
@@ -47,7 +56,7 @@
                                             <input required type="password" id="typePasswordX" name="password" placeholder="Password" class="form-control form-control-lg" />
                                         </div>
 
-                                        <p class="small pb-lg-2"><a class="text-white" href="/forgot_password">Forgot password?</a></p>
+                                        <p class="small pb-lg-2"><a class="text-white" href="{{ route('FORGOT_PASSWORD') }}">Forgot password?</a></p>
 
                                         <div class="g-recaptcha" data-sitekey="{{env('GOOGLE_CAPTCHA_KEY')}}" data-size="invisible" data-callback="onSubmit"></div>
 

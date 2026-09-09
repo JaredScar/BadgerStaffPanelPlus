@@ -55,7 +55,6 @@ services:
       MYSQL_ROOT_PASSWORD: rootsecret
     volumes:
       - staffpanel_mysql:/var/lib/mysql
-      - ./create_DB.sql:/docker-entrypoint-initdb.d/01-create_DB.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-prootsecret"]
       interval: 5s

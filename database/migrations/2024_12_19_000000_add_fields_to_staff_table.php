@@ -11,13 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('staff')) {
+            return;
+        }
+
         Schema::table('staff', function (Blueprint $table) {
-            // Add new fields for staff management
-            $table->enum('role', ['admin', 'moderator', 'helper'])->default('helper')->after('staff_discord');
-            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active')->after('role');
-            $table->date('join_date')->nullable()->after('status');
-            $table->text('notes')->nullable()->after('join_date');
-            $table->timestamp('last_active')->nullable()->after('notes');
+            if (!Schema::hasColumn('staff', 'role')) {
+                $table->enum('role', ['admin', 'moderator', 'helper'])->default('helper')->after('staff_discord');
+            }
+            if (!Schema::hasColumn('staff', 'status')) {
+                $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
+            }
+            if (!Schema::hasColumn('staff', 'join_date')) {
+                $table->date('join_date')->nullable();
+            }
+            if (!Schema::hasColumn('staff', 'notes')) {
+                $table->text('notes')->nullable();
+            }
+            if (!Schema::hasColumn('staff', 'last_active')) {
+                $table->timestamp('last_active')->nullable();
+            }
         });
     }
 
@@ -26,8 +39,18 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (!Schema::hasTable('staff')) {
+            return;
+        }
+
         Schema::table('staff', function (Blueprint $table) {
-            $table->dropColumn(['role', 'status', 'join_date', 'notes', 'last_active']);
+            $columns = array_filter(['role', 'status', 'join_date', 'notes', 'last_active'], function ($column) {
+                return Schema::hasColumn('staff', $column);
+            });
+
+            if ($columns) {
+                $table->dropColumn($columns);
+            }
         });
     }
-}; 
+};

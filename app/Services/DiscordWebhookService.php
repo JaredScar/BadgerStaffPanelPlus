@@ -19,12 +19,17 @@ class DiscordWebhookService
 
     protected function loadWebhookUrl()
     {
-        $server = Server::find($this->serverId);
-        if ($server && $server->webhook_enabled && $server->discord_webhook_url) {
-            $this->webhookUrl = $server->discord_webhook_url;
-        } else {
-            $this->webhookUrl = null;
+        try {
+            $server = Server::find($this->serverId);
+            if ($server && $server->webhook_enabled && $server->discord_webhook_url) {
+                $this->webhookUrl = $server->discord_webhook_url;
+                return;
+            }
+        } catch (\Throwable $e) {
+            // Database may not be ready during first-run install.
         }
+
+        $this->webhookUrl = null;
     }
 
     public function logAction($action, $data = [], $color = 0x00ff00)

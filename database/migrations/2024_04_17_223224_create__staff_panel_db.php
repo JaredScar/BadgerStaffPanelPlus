@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -16,37 +15,22 @@ return new class extends Migration
             $table->bigIncrements('server_id')->autoIncrement();
             $table->string('server_name');
             $table->string('server_slug', 128);
+            $table->string('discord_webhook_url', 500)->nullable();
+            $table->boolean('webhook_enabled')->default(false);
             $table->timestamps();
         });
-
-        DB::table('servers')->insert([
-            [
-                'server_name' => 'CollectiveM',
-                'server_slug' => 'collectivem'
-            ]
-        ]);
 
         Schema::create('staff', function (Blueprint $table) {
             $table->bigIncrements('staff_id')->autoIncrement();
             $table->string('staff_username')->unique();
-            $table->string('staff_password');
+            $table->string('password');
             $table->string('staff_email')->unique();
-            $table->bigInteger('staff_discord');
+            $table->bigInteger('staff_discord')->nullable();
             $table->unsignedBigInteger('server_id');
             $table->timestamps();
 
             $table->foreign('server_id')->references('server_id')->on('servers');
         });
-
-        DB::table('staff')->insert([
-            [
-                'staff_username' => 'badger',
-                'staff_password' => '$2a$15$ONynqN.bUe7SvpYhVksoqegQTCviThdqzCSsmoN/KmGwR61bmRQ5q',
-                'staff_email' => 'thewolfbadger@gmail.com',
-                'staff_discord' => 394446211341615104,
-                'server_id' => 1
-            ]
-        ]);
 
         Schema::create('staff_perms', function (Blueprint $table) {
             $table->unsignedBigInteger('staff_id');

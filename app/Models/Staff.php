@@ -58,6 +58,11 @@ class Staff extends Authenticatable {
         'last_active' => 'datetime',
     ];
 
+    public function getAuthPassword()
+    {
+        return $this->password ?? $this->staff_password;
+    }
+
     public static function getIdByUsername($username) {
         $staff = self::where('staff_username', $username)->first();
 
