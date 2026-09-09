@@ -15,6 +15,14 @@ A fresh panel opens the web installer at `/web/install/welcome` instead of the l
 
 Existing databases that already have staff accounts are detected and skip the wizard.
 
+## Demo login
+
+Docker and `php artisan db:seed` create a dummy server and admin you can use immediately:
+
+* **Server:** Demo Server
+* **Username:** `admin`
+* **Password:** `password`
+
 ## Run with Docker
 
 Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine + Compose).

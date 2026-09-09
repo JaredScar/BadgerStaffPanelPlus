@@ -1,74 +1,89 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     @include('_partials._html_header', $data)
-
-    <body>
-        <section class="min-vh-100 pt-5 background-sizing gta-bg@php echo rand(1, 3); @endphp">
-            @if (session('status'))
-                <div class="alert alert-success text-center mx-auto" style="max-width: 560px;">
-                    {{ session('status') }}
-                </div>
-            @endif
-            @if (count($errors) > 0)
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            <form name="login-form" class="login-form" id="form" method="post" action="{{ route('LOGIN_SUBMIT') }}">
-                @csrf
-                <div class="container h-100">
-                    <div class="row d-flex justify-content-center align-items-center h-100">
-                        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                            <div class="card bg-custom-dark text-white" style="border-radius: 1rem;">
-                                <div class="card-body p-5 text-center">
-                                    <div>
-                                        <img src="img/badgerstaffpanel-logo.png" />
-                                        <p class="text-white-50 mb-5"></p>
-
-                                        <div class="form-outline form-white mb-4">
-                                            <select required id="server_id" name="server_id" class="form-control form-select form-control-lg">
-                                                @php
-                                                use App\Models\Server as servers;
-                                                try {
-                                                    $servers = servers::all();
-                                                } catch (\Throwable $e) {
-                                                    $servers = collect();
-                                                }
-                                                if (sizeof($servers) > 1)
-                                                    echo '<option value="" disabled selected hidden>Server Selection</option>';
-
-                                                foreach ($servers as $server) {
-                                                    echo "<option value='" . $server['server_id'] . "'>" . $server['server_slug'] . "</option>";
-                                                }
-                                                @endphp
-                                            </select>
-                                        </div>
-
-                                        <div class="form-outline form-white mb-4">
-                                            <input required type="text" id="typeUsernameX" name="username" placeholder="Username" class="form-control form-control-lg" />
-                                        </div>
-
-                                        <div class="form-outline form-white mb-4">
-                                            <input required type="password" id="typePasswordX" name="password" placeholder="Password" class="form-control form-control-lg" />
-                                        </div>
-
-                                        <p class="small pb-lg-2"><a class="text-white" href="{{ route('FORGOT_PASSWORD') }}">Forgot password?</a></p>
-
-                                        <div class="g-recaptcha" data-sitekey="{{env('GOOGLE_CAPTCHA_KEY')}}" data-size="invisible" data-callback="onSubmit"></div>
-
-                                        <button class="btn d-block mx-auto mb-5 btn-outline-light btn-lg px-5" type="submit"><i class="fa fa-right-to-bracket"></i> Login</button>
-                                        <button href="" class="btn d-block mx-auto mt-5 bg-blurple btn-lg px-5 g-recaptcha" data-sitekey="{{env('GOOGLE_CAPTCHA_KEY')}}" data-callback="onSubmit" type="submit"><i class="fa-brands fa-discord"></i> Login via Discord</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <body class="login-page">
+        <section class="login-shell background-sizing gta-bg1">
+            <div class="login-overlay"></div>
+            <div class="container login-container">
+                @if (session('status'))
+                    <div class="alert alert-success login-alert">{{ session('status') }}</div>
+                @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger login-alert">
+                        <ul class="mb-0 text-start">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
+                @endif
+
+                <div class="login-card">
+                    <div class="login-brand">
+                        <img src="{{ asset('img/badgerstaffpanel-logo.png') }}" alt="Badger Staff Panel">
+                        <h1>BadgerStaffPanel+</h1>
+                        <p>Staff tools for your FiveM server</p>
+                    </div>
+
+                    <form name="login-form" class="login-form" id="form" method="post" action="{{ route('LOGIN_SUBMIT') }}">
+                        @csrf
+                        <label class="login-label" for="server_id">Server</label>
+                        <div class="login-field">
+                            <i class="fa-solid fa-server"></i>
+                            <select required id="server_id" name="server_id" class="form-select">
+                                @if ($servers->isEmpty())
+                                    <option value="" disabled selected>No servers available</option>
+                                @else
+                                    @if ($servers->count() > 1)
+                                        <option value="" disabled selected>Select a server</option>
+                                    @endif
+                                    @foreach ($servers as $server)
+                                        <option value="{{ $server->server_id }}">{{ $server->server_name }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+
+                        <label class="login-label" for="typeUsernameX">Username</label>
+                        <div class="login-field">
+                            <i class="fa-solid fa-user"></i>
+                            <input required type="text" id="typeUsernameX" name="username" placeholder="admin" autocomplete="username">
+                        </div>
+
+                        <label class="login-label" for="typePasswordX">Password</label>
+                        <div class="login-field">
+                            <i class="fa-solid fa-lock"></i>
+                            <input required type="password" id="typePasswordX" name="password" placeholder="••••••••" autocomplete="current-password">
+                        </div>
+
+                        <div class="login-meta">
+                            <a href="{{ route('FORGOT_PASSWORD') }}">Forgot password?</a>
+                        </div>
+
+                        <div class="g-recaptcha" data-sitekey="{{ env('GOOGLE_CAPTCHA_KEY') }}" data-size="invisible" data-callback="onSubmit"></div>
+
+                        <button class="btn login-btn login-btn-primary" type="submit">
+                            <i class="fa-solid fa-right-to-bracket"></i> Sign in
+                        </button>
+                    </form>
+
+                    @if (env('DISCORD_REDIRECT_AUTH'))
+                        <a class="btn login-btn login-btn-discord" href="{{ env('DISCORD_REDIRECT_AUTH') }}">
+                            <i class="fa-brands fa-discord"></i> Continue with Discord
+                        </a>
+                    @else
+                        <button class="btn login-btn login-btn-discord" type="button" disabled title="Discord login is not configured">
+                            <i class="fa-brands fa-discord"></i> Continue with Discord
+                        </button>
+                    @endif
+
+                    @if (config('app.debug'))
+                        <div class="login-demo">
+                            Demo login: <strong>admin</strong> / <strong>password</strong>
+                        </div>
+                    @endif
                 </div>
-            </form>
+            </div>
         </section>
         @include('_partials._html_footer')
     </body>

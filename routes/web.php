@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\TokenController;
 use App\Models\Layout;
+use App\Models\Server;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,16 +30,24 @@ Route::post('/install/database/test', [InstallController::class, 'testDatabase']
 
 Route::get('/', function () {
     $data = [];
-    $data['css_path'] = 'login/start';
+    $data['css_path'] = 'login/auth';
     $data['view_name'] = 'START';
     $data['customize'] = false;
     $data['captcha'] = env('USE_CAPTCHA', false);
-    return view('login/start', array('data' => $data));
+    try {
+        $servers = Server::query()->orderBy('server_name')->get();
+    } catch (\Throwable $e) {
+        $servers = collect();
+    }
+    return view('login/start', [
+        'data' => $data,
+        'servers' => $servers,
+    ]);
 })->name('START');
 
 Route::get('/forgot_password', function () {
     $data = [];
-    $data['css_path'] = 'login/forgot_password';
+    $data['css_path'] = 'login/auth';
     $data['view_name'] = 'FORGOT_PASSWORD';
     $data['customize'] = false;
     $data['captcha'] = env('USE_CAPTCHA', false);

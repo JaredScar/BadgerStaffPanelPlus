@@ -64,4 +64,7 @@ php artisan config:clear >/dev/null 2>&1 || true
 php artisan route:clear >/dev/null 2>&1 || true
 php artisan view:clear >/dev/null 2>&1 || true
 
+php artisan migrate --force >/dev/null 2>&1 || true
+php artisan db:seed --force --class=DemoDataSeeder >/dev/null 2>&1 || true
+
 exec "$@"
