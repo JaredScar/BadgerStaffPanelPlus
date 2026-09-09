@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InstallController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\TokenController;
@@ -22,6 +23,10 @@ use Illuminate\Support\Facades\Route;
 /**
  * @mixin Builder
  */
+Route::get('/install/{step?}', [InstallController::class, 'show'])->name('install.show');
+Route::post('/install/{step}', [InstallController::class, 'save'])->name('install.save');
+Route::post('/install/database/test', [InstallController::class, 'testDatabase'])->name('install.database.test');
+
 Route::get('/', function () {
     $data = [];
     $data['css_path'] = 'login/start';
@@ -226,30 +231,47 @@ Route::middleware('authWeb:web')->get('/verified/management/manage_staff', funct
     $data['css_path'] = 'verified/management';
     $data['view_name'] = 'STAFF_MANAGEMENT';
     $data['customize'] = false;
+    
+    // Get staff statistics and data
+    $staffController = new \App\Http\Controllers\StaffController();
+    $data['staff_statistics'] = $staffController->getStaffStatistics();
+    $data['staff_members'] = $staffController->getStaff();
+    
     return view('verified/management/manage_staff', array('data' => $data));
 })->name("STAFF_MANAGEMENT");
+Route::middleware('authWeb:web')->get('/verified/management/manage_roles', function () {
+    $data = [];
+    $data['css_path'] = 'verified/management';
+    $data['view_name'] = 'ROLE_MANAGEMENT';
+    $data['customize'] = false;
+    return view('verified/management/manage_roles', array('data' => $data));
+})->name("ROLE_MANAGEMENT");
 Route::middleware('authWeb:web')->get('/verified/signout', [LogoutController::class, 'logout'])->name("SIGN_OUT");
 
 /**
  * DASHBOARD
  */
-Route::middleware('authWeb:web')->get('/verified/dashboard', function () {
-    $data = [];
-    $data['css_path'] = 'verified/dashboard';
-    $data['view_name'] = 'DASHBOARD';
-    $data['customize'] = true;
-    $layoutData = Layout::where("staff_id", Auth::user()->staff_id)->get();
-    $data['widgetData'] = $layoutData;
-    return view('verified/dashboard', array('data' => $data), );
-})->name("DASHBOARD");
-
-/**
- * PUT methods
- */
+Route::middleware('authWeb:web')->get('/verified/dashboard', [DashboardController::class, 'index'])->name("DASHBOARD");
 Route::middleware('authWeb:web')->put('/verified/dashboard/save', [DashboardController::class, 'save']);
-/**
- * POST methods
- */
 Route::middleware('authWeb:web')->post('/verified/dashboard/add_widget', [DashboardController::class, 'add_widget']);
+Route::middleware('authWeb:web')->post('/verified/dashboard/create', [DashboardController::class, 'createDashboard']);
+Route::middleware('authWeb:web')->delete('/verified/dashboard/delete', [DashboardController::class, 'deleteDashboard']);
+Route::middleware('authWeb:web')->get('/verified/dashboard/layout', [DashboardController::class, 'getDashboardLayout']);
+
+// Test route for debugging
+Route::middleware('authWeb:web')->get('/verified/test-auth', function() {
+    return response()->json([
+        'authenticated' => auth()->check(),
+        'user' => auth()->user() ? auth()->user()->staff_username : null,
+        'session_id' => session()->getId(),
+        'staff_id' => session()->get('staff_id'),
+        'server_id' => session()->get('server_id'),
+        'server_name' => session()->get('server_name'),
+        'all_session_data' => session()->all(),
+        'auth_user_id' => auth()->id(),
+        'auth_user_data' => auth()->user() ? auth()->user()->toArray() : null
+    ]);
+});
+
 Route::middleware('authWeb:web')->post('/verified/management/tokens', [TokenController::class, 'doCreateToken']);
 Route::middleware('authWeb:web')->delete('/verified/management/tokens/{tokenId}', [TokenController::class, 'doDeleteToken']);

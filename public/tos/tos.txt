@@ -1,0 +1,92 @@
+END USER LICENSE AGREEMENT AND TERMS OF SERVICE
+
+Last Updated: 2/20/2023
+
+This End User License Agreement and Terms of Service (the "Agreement") is entered into between Badgers Dev Collective, a duly registered entity in the United States of America ("Badgers Dev" or "We"), and you, the user ("User" or "You"). By accessing or using our web control panel, open-source GitHub repository, plugins, and API (collectively referred to as the "Service"), you agree to comply with and be bound by the terms and conditions outlined in this Agreement.
+
+1. LICENSE AND USE
+
+1.1 Web Control Panel:
+Badgers Dev grants you a limited, non-exclusive, non-transferable license to use the web control panel, including any updates or modifications provided by Badgers Dev ("Licensor"). This license is granted for your personal or internal business use only.
+
+1.2 Open Source GitHub Repository:
+The source code for the web control panel is available on GitHub under the [applicable open-source license]. You agree to adhere to the terms of the open-source license when using, modifying, or distributing the open-source components.
+
+2. PLUGIN LICENSE
+
+The plugins running on the FiveM server are proprietary to Badgers Dev. You are granted a limited, non-exclusive, non-transferable license to use the plugins solely in connection with the web control panel and the associated FiveM server. Reverse engineering, decompiling, or disassembling the plugins is strictly prohibited.
+
+3. API USAGE
+
+3.1 Data Sharing:
+The API allows servers to share information about bans, kicks, commands, warnings, etc. Badgers Dev reserves the right to collect, use, and disclose this information to improve the Service and prevent abuse.
+
+3.2 Abuse of API:
+If Badgers Dev determines, at its sole discretion, that a user is abusing the API, Badgers Dev reserves the right to suspend or terminate access to the API without notice.
+
+4. INTELLECTUAL PROPERTY
+
+4.1 Ownership:
+All intellectual property rights in and to the Service, including the web control panel, plugins, and API, are exclusively owned by Badgers Dev.
+
+4.2 User Contributions:
+By submitting content or information to the Service, you grant Badgers Dev a worldwide, royalty-free, perpetual, irrevocable, non-exclusive license to use, reproduce, modify, adapt, publish, translate, distribute, and display such content.
+
+5. USER OBLIGATIONS
+
+5.1 Compliance:
+Users must comply with all applicable laws and regulations when using the Service. Any use of the Service for illegal or unauthorized purposes is strictly prohibited.
+
+5.2 Security:
+Users are responsible for maintaining the security of their accounts and passwords. Any unauthorized use or access must be reported to Badgers Dev immediately.
+
+6. INDEMNIFICATION
+
+Users agree to indemnify and hold Badgers Dev harmless from any claims, damages, losses, liabilities, and expenses (including attorney's fees) arising out of or in connection with their use of the Service or violation of this Agreement.
+
+7. MODIFICATIONS
+
+7.1 Service Modifications:
+Badgers Dev reserves the right to modify, suspend, or discontinue any aspect of the Service at any time, including features, availability, or API access, with or without notice.
+
+7.2 Software Updates:
+Badgers Dev may provide updates, modifications, or enhancements to the Service ("Software Updates"). These Software Updates may be provided automatically or require manual installation. By using the Service, you agree to permit Badgers Dev to deliver Software Updates, which may include bug fixes, patches, new features, or other improvements.
+
+7.3 Modification of Functionality:
+Badgers Dev reserves the right to modify or discontinue any feature or functionality of the Service at any time, including through the release of Software Updates. You acknowledge and agree that Badgers Dev has no obligation to maintain or support any particular feature or functionality of the Service.
+
+7.4 User Responsibility:
+It is the responsibility of the User to ensure their systems are compatible with the latest Software Updates. Badgers Dev shall not be held liable for any failure or inability to use the Service resulting from the User's failure to install or apply Software Updates.
+
+7.5 Company Protections:
+Badgers Dev reserves the right to update or modify the Service, including the Terms of Service, to address any security, legal, or regulatory concerns. Users are required to reaccept the updated Terms of Service as outlined in Section 10 ("Reacceptance of Terms").
+
+7.6 Termination of Support:
+Badgers Dev may, at its sole discretion, discontinue support or updates for older versions of the Service. Users are encouraged to use the latest version of the Service to ensure optimal performance, security, and access to new features.
+
+7.7 Interruptions and Delays:
+Badgers Dev shall not be liable for any interruptions, delays, or errors caused by the installation or application of Software Updates or for any failure to update the Service.
+
+8. UPDATES TO TERMS OF SERVICE
+
+Badgers Dev reserves the right to update or modify this Agreement at any time without prior notice. Any changes to the Terms of Service will be effective immediately upon posting the revised version on the website. Your continued use of the Service after any such changes constitutes your acceptance of the new Terms of Service.
+
+9. REACCEPTANCE OF TERMS
+
+Upon each update or modification of the Terms of Service, users are required to reaccept the revised terms before continuing to use the Service. Failure to reaccept the updated Terms of Service may result in the suspension or termination of your access to the Service.
+
+10. NOTICES
+
+All notices required or permitted by this Agreement shall be in writing and delivered to the contact information provided by each party.
+
+11. DISPUTE RESOLUTION
+
+Any disputes arising out of or in connection with this Agreement shall be resolved through arbitration in accordance with the rules of the [Arbitration Association/Arbitration Institution]. The decision of the arbitrator shall be final and binding.
+
+12. ENTIRE AGREEMENT
+
+This Agreement constitutes the entire understanding between the parties and supersedes all prior agreements, whether oral or written, relating to the subject matter herein.
+
+13. WAIVER
+
+The failure of Badgers Dev to enforce any provision of this Agreement shall not constitute a waiver of that provision or any other provisions.

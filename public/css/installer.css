@@ -1,0 +1,197 @@
+.installer-sidebar.sidebar-container {
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    width: 280px;
+    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+    border-right: 1px solid #dee2e6;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.installer-sidebar .sidebar-header {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    min-height: 70px;
+}
+
+.installer-sidebar .sidebar-brand {
+    display: flex;
+    align-items: center;
+    color: #495057;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
+.installer-sidebar .sidebar-brand img {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+}
+
+.installer-sidebar .sidebar-nav {
+    padding: 1rem 0;
+}
+
+.installer-sidebar .nav-item {
+    margin-bottom: 0.25rem;
+}
+
+.installer-sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #6c757d;
+    text-decoration: none;
+    margin: 0 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.installer-sidebar .nav-link:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+.installer-sidebar .nav-link.active {
+    background-color: #fd7e14;
+    color: white;
+}
+
+.installer-sidebar .nav-icon {
+    width: 20px;
+    margin-right: 0.75rem;
+    text-align: center;
+}
+
+.installer-content.content-wrapper {
+    margin-left: 280px;
+    width: calc(100vw - 295px);
+    min-height: 100vh;
+}
+
+.installer-sidebar .nav-link.disabled {
+    opacity: 0.55;
+    cursor: default;
+    pointer-events: none;
+}
+
+.installer-content {
+    padding-bottom: 90px;
+}
+
+.installer-card {
+    background-color: rgba(52, 52, 52, 0.86);
+    border-radius: 10px;
+    padding: 30px;
+    color: #fff;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.installer-card h2,
+.installer-card h3,
+.installer-card h4 {
+    color: #fd7e14;
+    font-weight: 600;
+}
+
+.installer-card p,
+.installer-card li,
+.installer-card label,
+.installer-card .form-label,
+.installer-card .form-check-label {
+    color: #e9ecef;
+}
+
+.installer-card .text-muted,
+.installer-card .form-text {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+
+.installer-card .form-control,
+.installer-card .form-select {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #333;
+}
+
+.installer-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(253, 126, 20, 0.3);
+}
+
+.req-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.req-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.req-ok {
+    color: #28a745;
+}
+
+.req-bad {
+    color: #dc3545;
+}
+
+.tos-box {
+    width: 100%;
+    min-height: 280px;
+    background: rgba(0, 0, 0, 0.35);
+    color: #f8f9fa;
+    border: 1px solid rgba(253, 126, 20, 0.35);
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 0.9rem;
+}
+
+.installer-alert {
+    background-color: rgba(220, 53, 69, 0.92);
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+}
+
+.install-summary {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 16px 20px;
+}
+
+.install-summary dt {
+    color: #fd7e14;
+    font-weight: 600;
+}
+
+.install-summary dd {
+    margin-bottom: 12px;
+}
+
+#db-test-result {
+    min-height: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .installer-sidebar {
+        display: none;
+    }
+
+    .installer-content.content-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+}

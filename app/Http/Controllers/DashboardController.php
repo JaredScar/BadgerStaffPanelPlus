@@ -3,31 +3,208 @@
 namespace App\Http\Controllers;
 
 use App\Models\Layout;
+use App\Models\Staff;
+use App\Services\DiscordWebhookService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller {
-    public function save(Request $request) {
-        // Retrieve the JSON data from the request body
-        try {
-            $widgetDataList = $request->json()->all();
-            $staffId = Session::get("staff_id");
+    
+    protected $webhookService;
 
-            $updated = date('Y-m-d H:i:s', time());
+    public function __construct()
+    {
+        $this->webhookService = new DiscordWebhookService();
+    }
+    
+    public function index(Request $request) {
+        try {
+            $staffId = Session::get("staff_id");
+            $dashboardName = $request->get('dashboard', 'main');
+            
+            // Log dashboard access attempt
+            Log::info('Dashboard access attempt', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            // Get available dashboards for this staff member
+            $availableDashboards = Layout::getDashboardNames($staffId);
+            
+            // If no dashboards exist, create an empty main dashboard (no default widgets)
+            if (empty($availableDashboards)) {
+                $availableDashboards = ['main'];
+                
+                Log::info('Empty main dashboard initialized for staff', [
+                    'staff_id' => $staffId,
+                    'dashboard_name' => 'main',
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+            }
+            
+            // If requested dashboard doesn't exist, redirect to main dashboard
+            if (!in_array($dashboardName, $availableDashboards)) {
+                Log::info('Requested dashboard does not exist, redirecting to main', [
+                    'staff_id' => $staffId,
+                    'requested_dashboard' => $dashboardName,
+                    'available_dashboards' => $availableDashboards,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+                
+                return redirect()->route('DASHBOARD', ['dashboard' => 'main']);
+            }
+            
+            // Get the layout for the requested dashboard
+            $layout = Layout::getDashboardLayout($staffId, $dashboardName);
+            
+            $data = [
+                'css_path' => 'verified/dashboard',
+                'view_name' => 'DASHBOARD',
+                'customize' => false,
+                'current_dashboard' => $dashboardName,
+                'available_dashboards' => $availableDashboards,
+                'layout' => $layout
+            ];
+            
+            // Log successful dashboard access
+            Log::info('Dashboard accessed successfully', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'available_dashboards_count' => count($availableDashboards),
+                'widgets_count' => count($layout),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return view('verified/dashboard', array('data' => $data));
+            
+        } catch (Exception $e) {
+            Log::error('Failed to access dashboard', [
+                'staff_id' => Session::get("staff_id"),
+                'dashboard_name' => $request->get('dashboard', 'main'),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            // Return error view or redirect
+            return response()->json(['error' => 'Failed to load dashboard'], 500);
+        }
+    }
+
+    public function save(Request $request) {
+        try {
+            // Retrieve the JSON data from the request body
+            $jsonData = $request->json()->all();
+            $widgetDataList = $jsonData['widgets'] ?? [];
+            $dashboardName = $jsonData['dashboard'] ?? 'main';
+            $staffId = Session::get("staff_id");
+            $serverId = Session::get("server_id");
+
+            // Debug session values
+            Log::info('Session values check', [
+                'staff_id' => $staffId,
+                'server_id' => $serverId,
+                'all_session_keys' => array_keys(Session::all()),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+
+            // Validate required session values
+            if (!$staffId || !$serverId) {
+                Log::error('Missing required session values', [
+                    'staff_id' => $staffId,
+                    'server_id' => $serverId,
+                    'session_data' => Session::all(),
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+
+                return response()->json(['error' => 'Session expired. Please log in again.'], 401);
+            }
+
+            // Log dashboard save attempt
+            Log::info('Dashboard save attempt', [
+                'staff_id' => $staffId,
+                'server_id' => $serverId,
+                'dashboard_name' => $dashboardName,
+                'widgets_count' => count($widgetDataList),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            if (empty($widgetDataList)) {
+                Log::warning('Dashboard save failed - no widget data provided', [
+                    'staff_id' => $staffId,
+                    'dashboard_name' => $dashboardName,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+                
+                return response()->json(['error' => 'No widget data provided'], 400);
+            }
+            
             $existingWidgetIds = [];
+            $updatedWidgets = 0;
+            $createdWidgets = 0;
+            $createdWidgetMappings = []; // Track new widget IDs for frontend
+            
+            Log::info('Starting widget processing', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'total_widgets_to_process' => count($widgetDataList),
+                'widget_data_list' => $widgetDataList
+            ]);
+
             foreach ($widgetDataList as $wData) {
                 // Extract the data from the JSON payload
                 $widgetType = $wData['widgetType'] ?? null;
-                $widgetId = $wData['widgetId'] ?? null;
+                $layoutId = $wData['widgetId'] ?? null;
+                
+                // Clean up layoutId - handle string 'null' and empty strings
+                if ($layoutId === 'null' || $layoutId === '') {
+                    $layoutId = null;
+                }
+                
+                // Convert to integer if it's a valid numeric string
+                if ($layoutId !== null && is_numeric($layoutId)) {
+                    $layoutId = (int) $layoutId;
+                }
                 $col = $wData['x'] ?? null;
                 $row = $wData['y'] ?? null;
                 $sizeX = $wData['w'] ?? null;
                 $sizeY = $wData['h'] ?? null;
+
+                // Get server_id from session
+                $serverId = Session::get("server_id");
+
+                // Validate required data
+                if (!$widgetType || !is_numeric($col) || !is_numeric($row) || !is_numeric($sizeX) || !is_numeric($sizeY)) {
+                    Log::warning('Invalid widget data', [
+                        'widget_data' => $wData,
+                        'widget_type' => $widgetType,
+                        'col' => $col,
+                        'row' => $row,
+                        'size_x' => $sizeX,
+                        'size_y' => $sizeY
+                    ]);
+                    continue; // Skip this widget
+                }
+
                 // Define the data to be updated or inserted
+                // Note: Laravel automatically manages created_at and updated_at timestamps
                 $data = [
-                    'updated_at' => $updated,
+                    'staff_id' => $staffId,
+                    'server_id' => $serverId,
+                    'view' => 'dashboard',
+                    'dashboard_name' => $dashboardName,
                     'widget_type' => $widgetType,
                     'col' => $col,
                     'row' => $row,
@@ -35,68 +212,467 @@ class DashboardController extends Controller {
                     'size_y' => $sizeY
                 ];
 
-                // Specify the conditions to search for existing records
-                $conditions = [
-                    'widget_id' => $widgetId
-                ];
-                $existingWidgetIds[] = $widgetId;
+                // Determine if this is a new widget or existing widget
+                $isNewWidget = empty($layoutId) || !is_numeric($layoutId) || $layoutId === 'null' || $layoutId === '';
 
-                // Check if the record already exists
-                if (!Layout::where($conditions)->exists()) {
-                    // If the record doesn't exist, set the created_at timestamp
-                    $data['created_at'] = $updated;
+                // Debug the data being saved
+                Log::info('Processing widget', [
+                    'widget_type' => $widgetType,
+                    'layout_id' => $layoutId,
+                    'layout_id_type' => gettype($layoutId),
+                    'is_new_widget' => $isNewWidget,
+                    'widget_data' => $data,
+                    'raw_widget_data' => $wData
+                ]);
+
+                // Check if this is a new widget or existing widget
+                if (!$isNewWidget) {
+                    // Existing widget - update it
+                    $existingWidgetIds[] = $layoutId;
+
+                    // Find the existing widget and update it
+                    $existingWidget = Layout::where('layout_id', $layoutId)
+                        ->where('staff_id', $staffId)
+                        ->where('dashboard_name', $dashboardName)
+                        ->first();
+
+                    if ($existingWidget) {
+                        // Update the existing widget
+                        $existingWidget->update($data);
+                        $updatedWidgets++;
+                        
+                        Log::info('Widget updated successfully', [
+                            'widget_type' => $widgetType,
+                            'layout_id' => $layoutId,
+                            'update_data' => $data
+                        ]);
+                    } else {
+                        Log::warning('Widget not found for update', [
+                            'widget_type' => $widgetType,
+                            'layout_id' => $layoutId,
+                            'staff_id' => $staffId,
+                            'dashboard_name' => $dashboardName
+                        ]);
+                    }
+                } else {
+                    // New widget - create it (Laravel handles timestamps automatically)
+                    try {
+                        $result = Layout::create($data);
+                        $newLayoutId = $result->layout_id ?? 'unknown';
+                        
+                        // Track the mapping for frontend
+                        $createdWidgetMappings[] = [
+                            'original_id' => $layoutId,
+                            'new_id' => $newLayoutId,
+                            'widget_type' => $widgetType,
+                            'position' => ['x' => $col, 'y' => $row, 'w' => $sizeX, 'h' => $sizeY]
+                        ];
+                        
+                        Log::info('Widget created successfully', [
+                            'widget_type' => $widgetType,
+                            'layout_id' => $newLayoutId,
+                            'original_id' => $layoutId,
+                            'create_data' => $data
+                        ]);
+                        $createdWidgets++;
+                    } catch (\Exception $e) {
+                        Log::error('Failed to create widget', [
+                            'widget_type' => $widgetType,
+                            'error' => $e->getMessage(),
+                            'create_data' => $data,
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                        throw $e; // Re-throw to be caught by outer try-catch
+                    }
                 }
-                Layout::updateOrInsert($conditions, $data);
             }
-            // Need to get widgets for staff that do not exist anymore and delete them...
-            if (sizeof($existingWidgetIds))
-                Layout::whereNotIn('widget_id', $existingWidgetIds)
-                    ->where('staff_id', $staffId)->delete();
-            else
-                Layout::where('staff_id', $staffId)->delete();
+            
+            // Need to get layouts for staff that do not exist anymore and delete them...
+            $deletedWidgets = 0;
+            
+            // Only delete widgets if we have existing widget IDs to preserve
+            // This prevents accidental deletion when new widgets are being added
+            if (sizeof($existingWidgetIds) > 0) {
+                // Filter out null values and only delete existing layouts
+                $validLayoutIds = array_filter($existingWidgetIds, function($id) {
+                    return $id !== null && $id !== '';
+                });
+                
+                if (sizeof($validLayoutIds) > 0) {
+                    // Only delete widgets that are not in the current widget list
+                    $deletedWidgets = Layout::whereNotIn('layout_id', $validLayoutIds)
+                        ->where('staff_id', $staffId)
+                        ->where('dashboard_name', $dashboardName)
+                        ->delete();
+                        
+                    Log::info('Deleted orphaned widgets', [
+                        'staff_id' => $staffId,
+                        'dashboard_name' => $dashboardName,
+                        'preserved_widget_ids' => $validLayoutIds,
+                        'deleted_count' => $deletedWidgets
+                    ]);
+                }
+            }
+            
+            // Note: We don't delete all widgets if no existing widgets are found
+            // This prevents accidental deletion when new widgets are being added
+            
+            // Log dashboard save action to Discord webhook
+            $staff = Staff::find($staffId);
+            if ($staff) {
+                $this->webhookService->logAction('dashboard_save', [
+                    'dashboard_name' => $dashboardName,
+                    'staff_username' => $staff->staff_username,
+                    'server_name' => $staff->server->server_name ?? null,
+                    'timestamp' => now()->format('Y-m-d H:i:s')
+                ], 0x00bfff); // Deep sky blue for dashboard actions
+            }
+            
+            // Log successful dashboard save
+            Log::info('Dashboard saved successfully', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'widgets_created' => $createdWidgets,
+                'widgets_updated' => $updatedWidgets,
+                'widgets_deleted' => $deletedWidgets,
+                'total_widgets' => count($widgetDataList),
+                'save_timestamp' => now()->toDateTimeString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return response()->json([
+                'message' => 'Data saved successfully for staff id: ' . $staffId, 
+                'updated_at' => now()->toDateTimeString(),
+                'created_widgets' => $createdWidgets,
+                'updated_widgets' => $updatedWidgets,
+                'deleted_widgets' => $deletedWidgets,
+                'widget_mappings' => $createdWidgetMappings
+            ], 200);
+            
         } catch (Exception $exception) {
-            return $exception->getMessage();
+            Log::error('Dashboard save failed', [
+                'staff_id' => Session::get("staff_id"),
+                'dashboard_name' => $request->json()->get('dashboard', 'main'),
+                'error' => $exception->getMessage(),
+                'trace' => $exception->getTraceAsString(),
+                'request_data' => $request->json()->all(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return response()->json(['error' => 'Failed to save dashboard: ' . $exception->getMessage()], 500);
         }
-        return response()->json(['message' => 'Data saved successfully for staff id: ' . $staffId, 'updated_at' => $updated], 200);
     }
 
     public function add_widget(Request $request) {
-        $datas = $request->all();
-        $wt = $datas['widget_type'];
-        $staffId = Session::get("staff_id");
-        $layout = new Layout();
-        $col = 1;
-        $row = 1;
-        $size_x = 12;
-        $size_y = 3;
-        $staff_id = $staffId;
-        $view = 'dashboard';
-        $widget_type = 'records.widget_bans';
-        switch ($wt) {
-            case "widget_bans":
-                $widget_type = 'records.widget_bans';
-                break;
-            case "widget_kicks":
-                $widget_type = 'records.widget_kicks';
-                break;
-            case "widget_notes":
-                $widget_type = 'records.widget_notes';
-                break;
-            case "widget_warns":
-                $widget_type = 'records.widget_warns';
-                break;
-            case "widget_commends":
-                $widget_type = 'records.widget_commends';
-                break;
-            case "widget_trustscores":
-                $widget_type = 'records.widget_trustscores';
-                break;
-            case "widget_records":
-                $widget_type = 'records.widget_records';
-                break;
+        try {
+            $datas = $request->all();
+            $wt = $datas['widget_type'];
+            $dashboardName = $datas['dashboard'] ?? 'main';
+            $staffId = Session::get("staff_id");
+            
+            // Log widget addition attempt
+            Log::info('Widget addition attempt', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'widget_type' => $wt,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            $col = 1;
+            $row = 1;
+            $size_x = 12;
+            $size_y = 3;
+            $view = 'dashboard';
+            $widget_type = 'records.widget_bans';
+            
+            switch ($wt) {
+                case "widget_bans":
+                    $widget_type = 'records.widget_bans';
+                    break;
+                case "widget_kicks":
+                    $widget_type = 'records.widget_kicks';
+                    break;
+                case "widget_notes":
+                    $widget_type = 'widget_notes';
+                    break;
+                case "widget_warns":
+                    $widget_type = 'records.widget_warns';
+                    break;
+                case "widget_commends":
+                    $widget_type = 'records.widget_commends';
+                    break;
+                case "widget_trustscores":
+                    $widget_type = 'records.widget_trustscores';
+                    break;
+                case "widget_records":
+                    $widget_type = 'records.widget_records';
+                    break;
+                case "widget_trust_scores":
+                    $widget_type = 'widget_trust_scores';
+                    break;
+                case "widget_recent_activity":
+                    $widget_type = 'widget_recent_activity';
+                    break;
+                case "widget_players":
+                    $widget_type = 'players.widget_players';
+                    break;
+                case "widget_all_players":
+                    $widget_type = 'players.widget_all_players';
+                    break;
+                default:
+                    Log::warning('Unknown widget type requested', [
+                        'staff_id' => $staffId,
+                        'widget_type' => $wt,
+                        'ip_address' => request()->ip(),
+                        'user_agent' => request()->userAgent()
+                    ]);
+                    break;
+            }
+            
+            $serverId = Session::get("server_id");
+            $data = [
+                'staff_id' => $staffId,
+                'server_id' => $serverId,
+                'view' => $view,
+                'dashboard_name' => $dashboardName,
+                'widget_type' => $widget_type,
+                'col' => $col,
+                'row' => $row,
+                'size_x' => $size_x,
+                'size_y' => $size_y
+            ];
+
+            Layout::create($data);
+            
+            // Log to Discord webhook
+            $staff = Staff::find($staffId);
+            if ($staff) {
+                $this->webhookService->logWidgetAdd(
+                    $widget_type,
+                    $staff->staff_username,
+                    $staff->server->server_name ?? null
+                );
+            }
+            
+            // Log successful widget addition
+            Log::info('Widget added successfully', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'widget_type' => $widget_type,
+                'widget_short_type' => $wt,
+                'position' => ['col' => $col, 'row' => $row],
+                'size' => ['x' => $size_x, 'y' => $size_y],
+                'addition_timestamp' => now()->format('Y-m-d H:i:s'),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return redirect()->route("DASHBOARD", ['dashboard' => $dashboardName]);
+            
+        } catch (Exception $e) {
+            Log::error('Widget addition failed', [
+                'staff_id' => Session::get("staff_id"),
+                'widget_type' => $request->get('widget_type'),
+                'dashboard_name' => $request->get('dashboard', 'main'),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            // Redirect with error or show error message
+            return redirect()->back()->withErrors(['error' => 'Failed to add widget']);
         }
-        $layout->store($staff_id, $view, $widget_type, $col, $row, $size_x, $size_y);
-        $layout->save();
-        return redirect()->route("DASHBOARD");
     }
+
+    public function createDashboard(Request $request) {
+        try {
+            $staffId = Session::get("staff_id");
+            $dashboardName = $request->get('dashboard_name');
+            
+            // Log dashboard creation attempt
+            Log::info('Dashboard creation attempt', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            if (empty($dashboardName)) {
+                Log::warning('Dashboard creation failed - name is required', [
+                    'staff_id' => $staffId,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+                
+                return response()->json(['error' => 'Dashboard name is required'], 400);
+            }
+            
+            if (Layout::dashboardExists($staffId, $dashboardName)) {
+                Log::warning('Dashboard creation failed - already exists', [
+                    'staff_id' => $staffId,
+                    'dashboard_name' => $dashboardName,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+                
+                return response()->json(['error' => 'Dashboard already exists'], 400);
+            }
+            
+            $serverId = Session::get("server_id");
+            // Create empty dashboard (no default widgets)
+            // Users can add widgets manually through the customize mode
+            
+            // Log to Discord webhook
+            $staff = Staff::find($staffId);
+            if ($staff) {
+                $this->webhookService->logDashboardCreate(
+                    $dashboardName,
+                    $staff->staff_username,
+                    $staff->server->server_name ?? null
+                );
+            }
+            
+            // Log successful dashboard creation
+            Log::info('Dashboard created successfully', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'creation_timestamp' => now()->format('Y-m-d H:i:s'),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return response()->json(['message' => 'Dashboard created successfully', 'dashboard_name' => $dashboardName]);
+            
+        } catch (Exception $e) {
+            Log::error('Dashboard creation failed', [
+                'staff_id' => Session::get("staff_id"),
+                'dashboard_name' => $request->get('dashboard_name'),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return response()->json(['error' => 'Failed to create dashboard: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteDashboard(Request $request) {
+        try {
+            $staffId = Session::get("staff_id");
+            $dashboardName = $request->get('dashboard_name');
+            
+            // Log dashboard deletion attempt
+            Log::info('Dashboard deletion attempt', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            if ($dashboardName === 'main') {
+                Log::warning('Dashboard deletion failed - cannot delete main dashboard', [
+                    'staff_id' => $staffId,
+                    'dashboard_name' => $dashboardName,
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent()
+                ]);
+                
+                return response()->json(['error' => 'Cannot delete main dashboard'], 400);
+            }
+            
+            // Get dashboard info before deletion for logging
+            $dashboardInfo = Layout::where('staff_id', $staffId)
+                ->where('dashboard_name', $dashboardName)
+                ->get(['widget_type', 'created_at', 'updated_at']);
+            
+            $widgetsCount = $dashboardInfo->count();
+            
+            // Log to Discord webhook before deletion
+            $staff = Staff::find($staffId);
+            if ($staff) {
+                $this->webhookService->logAction('dashboard_delete', [
+                    'dashboard_name' => $dashboardName,
+                    'staff_username' => $staff->staff_username,
+                    'server_name' => $staff->server->server_name ?? null,
+                    'timestamp' => now()->format('Y-m-d H:i:s')
+                ], 0x00bfff); // Deep sky blue for dashboard actions
+            }
+            
+            $deletedRows = Layout::where('staff_id', $staffId)
+                ->where('dashboard_name', $dashboardName)
+                ->delete();
+            
+            // Log successful dashboard deletion
+            Log::info('Dashboard deleted successfully', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'widgets_deleted' => $widgetsCount,
+                'deletion_timestamp' => now()->format('Y-m-d H:i:s'),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return response()->json(['message' => 'Dashboard deleted successfully']);
+            
+        } catch (Exception $e) {
+            Log::error('Dashboard deletion failed', [
+                'staff_id' => Session::get("staff_id"),
+                'dashboard_name' => $request->get('dashboard_name'),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return response()->json(['error' => 'Failed to delete dashboard: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function getDashboardLayout(Request $request) {
+        try {
+            $staffId = Session::get("staff_id");
+            $dashboardName = $request->get('dashboard', 'main');
+            
+            // Log dashboard layout retrieval attempt
+            Log::info('Dashboard layout retrieval attempt', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            $layout = Layout::getDashboardLayout($staffId, $dashboardName);
+            
+            // Log successful layout retrieval
+            Log::info('Dashboard layout retrieved successfully', [
+                'staff_id' => $staffId,
+                'dashboard_name' => $dashboardName,
+                'widgets_count' => count($layout),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return response()->json(['layout' => $layout]);
+            
+        } catch (Exception $e) {
+            Log::error('Dashboard layout retrieval failed', [
+                'staff_id' => Session::get("staff_id"),
+                'dashboard_name' => $request->get('dashboard', 'main'),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+            
+            return response()->json(['error' => 'Failed to retrieve dashboard layout'], 500);
+        }
+    }
+    
+
 }

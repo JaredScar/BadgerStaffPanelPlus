@@ -4,48 +4,45 @@
     <body class="background-sizing gta-bg1">
         <div class="container-fluid master-contain">
             @include('_partials._toast')
-            <div class="row">
-                <div class="col col-auto px-0">
-                    @include('_partials._sidebar')
-                </div>
-                <div class="col col-auto flex-fill page-contain">
-                    <div class="content-wrapper">
-                        <!-- Header Section -->
-                        <div class="page-header d-flex justify-content-between align-items-center mb-4">
-                            <div>
-                                <h1 class="page-title">
-                                    <i class="fas fa-database me-2"></i>
-                                    All Players
-                                </h1>
-                                <p class="page-description">Complete database of all registered players</p>
-                            </div>
-                        </div>
-
-                        <!-- Search and Filter Section -->
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="search-container">
-                                    <input type="text" class="form-control" id="allPlayersSearch" placeholder="Search players...">
-                                    <i class="fas fa-search search-icon"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <select class="form-select" id="allPlayersFilter">
-                                    <option value="">All Players</option>
-                                    <option value="online">Online</option>
-                                    <option value="offline">Offline</option>
-                                    <option value="high_trust">High Trust (80+)</option>
-                                    <option value="low_trust">Low Trust (<50)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Include the all players widget -->
-                        @include('_widgets.players.widget_all_players')
+            @include('_partials._sidebar')
+            <div class="content-wrapper">
+                <!-- Header Section -->
+                <div class="page-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-database me-2"></i>
+                            All Players
+                        </h1>
+                        <p class="page-description">Complete database of all registered players</p>
                     </div>
                 </div>
+
+                <!-- Search and Filter Section -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="search-section flex-grow-1 me-3">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="allPlayersSearch" placeholder="Search by name, Steam ID, or Discord...">
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <select class="form-select" id="allPlayersFilter">
+                            <option value="">All Players</option>
+                            <option value="online">Online</option>
+                            <option value="offline">Offline</option>
+                            <option value="high_trust">High Trust (80+)</option>
+                            <option value="low_trust">Low Trust (<50)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Include the all players widget -->
+                @include('_widgets.players.widget_all_players')
             </div>
         </div>
+
         @include('_partials._html_footer')
     </body>
 </html>

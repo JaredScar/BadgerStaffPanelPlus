@@ -1,7 +1,25 @@
+-- Drop existing tables if they exist (in reverse dependency order)
+DROP TABLE IF EXISTS `layouts`;
+DROP TABLE IF EXISTS `notes`;
+DROP TABLE IF EXISTS `commends`;
+DROP TABLE IF EXISTS `bans`;
+DROP TABLE IF EXISTS `kicks`;
+DROP TABLE IF EXISTS `warns`;
+DROP TABLE IF EXISTS `player_data`;
+DROP TABLE IF EXISTS `players`;
+DROP TABLE IF EXISTS `token_perms`;
+DROP TABLE IF EXISTS `tokens`;
+DROP TABLE IF EXISTS `staff_perms`;
+DROP TABLE IF EXISTS `staff`;
+DROP TABLE IF EXISTS `servers`;
+
+-- Create tables
 CREATE TABLE `servers` (
     `server_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
     `server_name` VARCHAR(255),
     `server_slug` VARCHAR(128),
+    `discord_webhook_url` VARCHAR(500),
+    `webhook_enabled` BOOLEAN DEFAULT TRUE,
     `created_at` DATETIME,
     `updated_at` DATETIME
 );
@@ -9,10 +27,15 @@ CREATE TABLE `servers` (
 CREATE TABLE `staff` (
     `staff_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
     `staff_username` VARCHAR(128) UNIQUE KEY,
-    `staff_password` VARCHAR(255),
+    `password` VARCHAR(255),
     `staff_email` VARCHAR(255) UNIQUE KEY,
     `staff_discord` BIGINT(128),
     `server_id` INT(128),
+    `role` VARCHAR(128) DEFAULT 'staff',
+    `status` ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
+    `join_date` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `notes` TEXT,
+    `last_active` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `created_at` DATETIME,
     `updated_at` DATETIME
 );
@@ -50,17 +73,27 @@ CREATE TABLE `token_perms` (
 INSERT INTO `staff` (
                      `staff_id`,
                      `staff_username`,
-                     `staff_password`,
+                     `password`,
                      `staff_email`,
                      `staff_discord`,
-                     `server_id`
+                     `server_id`,
+                     `role`,
+                     `status`,
+                     `join_date`,
+                     `notes`,
+                     `last_active`
                      ) VALUES (
                      1, -- Staff ID
                      'badger', -- Username
-                     '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', -- This is just "password" lol
+                     '$2a$15$ONynqN.bUe7SvpYhVksoqegQTCviThdqzCSsmoN/KmGwR61bmRQ5q', -- This is just "password" lol
                      'thewolfbadger@gmail.com', -- Email
                      394446211341615104, -- Discord ID
-                     1
+                     1, -- Server ID
+                     'admin', -- Role
+                     'active', -- Status
+                     NOW(), -- Join Date
+                     'System Administrator', -- Notes
+                     NOW() -- Last Active
                      );
 
 CREATE TABLE `players` (
@@ -142,13 +175,66 @@ CREATE TABLE `notes` (
 );
 
 CREATE TABLE `layouts` (
+    `layout_id` INT(128) AUTO_INCREMENT PRIMARY KEY,
+    `server_id` INT(128),
     `staff_id` INT(128),
     `view` VARCHAR(128),
+    `dashboard_name` VARCHAR(128) DEFAULT 'main',
     `widget_type` VARCHAR(128),
     `col` INT(128),
     `row` INT(128),
     `size_x` INT(128),
     `size_y` INT(128),
     `created_at` DATETIME,
-    `updated_at` DATETIME
+    `updated_at` DATETIME,
+    FOREIGN KEY (`staff_id`) REFERENCES `staff`(`staff_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`server_id`) REFERENCES `servers`(`server_id`) ON DELETE CASCADE
 );
+
+-- Sample layout data for the main dashboard
+INSERT INTO `layouts` (
+    `server_id`,
+    `staff_id`,
+    `view`,
+    `dashboard_name`,
+    `widget_type`,
+    `col`,
+    `row`,
+    `size_x`,
+    `size_y`,
+    `created_at`,
+    `updated_at`
+) VALUES 
+(1, 1, 'dashboard', 'main', 'widget_notes', 0, 0, 6, 8, NOW(), NOW()),
+(1, 1, 'dashboard', 'main', 'widget_trust_scores', 6, 0, 6, 8, NOW(), NOW()),
+(1, 1, 'dashboard', 'main', 'widget_recent_activity', 0, 8, 12, 10, NOW(), NOW());
+
+-- Sample layout data for a secondary dashboard
+INSERT INTO `layouts` (
+    `server_id`,
+    `staff_id`,
+    `view`,
+    `dashboard_name`,
+    `widget_type`,
+    `col`,
+    `row`,
+    `size_x`,
+    `size_y`,
+    `created_at`,
+    `updated_at`
+) VALUES 
+(1, 1, 'dashboard', 'monitoring', 'widget_players', 0, 0, 6, 8, NOW(), NOW()),
+(1, 1, 'dashboard', 'monitoring', 'widget_all_players', 6, 0, 6, 8, NOW(), NOW()),
+(1, 1, 'dashboard', 'monitoring', 'records.widget_records', 0, 8, 12, 10, NOW(), NOW());
+
+-- Sample server data
+INSERT INTO `servers` (
+    `server_id`,
+    `server_name`,
+    `server_slug`,
+    `discord_webhook_url`,
+    `webhook_enabled`,
+    `created_at`,
+    `updated_at`
+) VALUES 
+(1, 'Badger Server', 'badger-server', 'https://discord.com/api/webhooks/your-webhook-url-here', TRUE, NOW(), NOW());
