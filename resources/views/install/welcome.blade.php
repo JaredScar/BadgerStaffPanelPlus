@@ -10,6 +10,11 @@
         environment settings, database schema, your first server, and the admin account.
         The FiveM resource can be connected after this panel is installed.
     </p>
+    @if ($alreadyInstalled)
+        <div class="alert alert-warning">
+            Demo data is already seeded. You can review every setup step from this portal without leaving the panel.
+        </div>
+    @endif
 
     <div class="row g-4 mt-1">
         <div class="col-lg-6">

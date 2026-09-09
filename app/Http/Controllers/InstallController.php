@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -326,6 +327,10 @@ class InstallController extends Controller
         Artisan::call('view:clear');
         session()->forget('install');
 
+        if (Auth::guard('web')->check()) {
+            return redirect()->route('DASHBOARD')->with('status', 'Installer settings saved.');
+        }
+
         return redirect()->route('START')->with('status', 'Installation complete. Sign in with the admin account you created.');
     }
 
@@ -346,6 +351,8 @@ class InstallController extends Controller
             'requirements' => Installer::requirements(),
             'tosContent' => $this->tosContent(),
             'defaults' => $this->formDefaults(),
+            'alreadyInstalled' => Installer::isInstalled() || Installer::detectLegacyInstall(),
+            'authenticated' => Auth::guard('web')->check(),
         ];
     }
 
@@ -399,6 +406,10 @@ class InstallController extends Controller
             'discord' => 'admin',
             'complete' => 'discord',
         ];
+
+        if (Installer::isInstalled() || Installer::detectLegacyInstall() || Auth::guard('web')->check()) {
+            return null;
+        }
 
         $needed = $required[$step] ?? null;
         if ($needed && !session('install.' . $needed)) {

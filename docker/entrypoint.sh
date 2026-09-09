@@ -25,10 +25,20 @@ mkdir -p \
     storage/logs \
     bootstrap/cache
 
-chown -R www-data:www-data storage bootstrap/cache
-chmod -R ug+rwx storage bootstrap/cache
+fix_writable_dirs() {
+    mkdir -p \
+        storage/framework/cache/data \
+        storage/framework/sessions \
+        storage/framework/views \
+        storage/logs \
+        bootstrap/cache
+    chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+    chmod -R a+rwX storage bootstrap/cache 2>/dev/null || true
+}
+
+fix_writable_dirs
 if [ -f .env ]; then
-    chmod ug+rw .env || true
+    chmod a+rw .env || true
 fi
 
 DB_HOST="${DB_HOST:-mysql}"
@@ -66,5 +76,8 @@ php artisan view:clear >/dev/null 2>&1 || true
 
 php artisan migrate --force >/dev/null 2>&1 || true
 php artisan db:seed --force --class=DemoDataSeeder >/dev/null 2>&1 || true
+
+# Artisan ran as root and may have compiled views that Apache cannot overwrite
+fix_writable_dirs
 
 exec "$@"

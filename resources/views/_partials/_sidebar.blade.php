@@ -478,6 +478,7 @@
                     <a href="/web/verified/management/manage_roles" class="flyover-item {{ request()->is('web/verified/management/manage_roles') ? 'active' : '' }}">Manage Roles</a>
                     <a href="/web/verified/management/manage_tokens" class="flyover-item {{ request()->is('web/verified/management/manage_tokens') ? 'active' : '' }}">Manage Tokens</a>
                     <a href="/web/verified/management/settings" class="flyover-item {{ request()->is('web/verified/management/settings') ? 'active' : '' }}">Settings</a>
+                    <a href="{{ route('install.show', ['step' => 'welcome']) }}" class="flyover-item {{ request()->is('web/install*') ? 'active' : '' }}">Installer</a>
                 </div>
                 <div class="collapse nav-submenu" id="managementSubmenu">
                     <ul class="nav flex-column">
@@ -499,6 +500,11 @@
                         <li class="nav-item">
                             <a href="/web/verified/management/settings" class="nav-link {{ request()->is('web/verified/management/settings') ? 'active' : '' }}">
                                 Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('install.show', ['step' => 'welcome']) }}" class="nav-link {{ request()->is('web/install*') ? 'active' : '' }}">
+                                Installer
                             </a>
                         </li>
                     </ul>

@@ -25,7 +25,7 @@
                 @php
                     $done = $index < $stepIndex;
                     $active = $name === $step;
-                    $reachable = $done || $active || session('install.' . $name);
+                    $reachable = $alreadyInstalled || $done || $active || session('install.' . $name);
                 @endphp
                 <div class="nav-item">
                     @if ($reachable)
@@ -41,6 +41,14 @@
                     @endif
                 </div>
             @endforeach
+            @if ($authenticated)
+                <div class="nav-item mt-3">
+                    <a href="{{ route('DASHBOARD') }}" class="nav-link">
+                        <i class="nav-icon fa-solid fa-arrow-left"></i>
+                        <span class="nav-text">Back to panel</span>
+                    </a>
+                </div>
+            @endif
         </nav>
     </div>
 
