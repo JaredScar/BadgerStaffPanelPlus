@@ -1,5 +1,5 @@
 # BadgerStaffPanel+
-![BadgerStaffPanel+](https://i.gyazo.com/fc8c1b844657e0aae8d9a890ad9cffda.png)
+![Dashboard](docs/screenshots/dashboard.png)
 
 ## First-run installer
 
@@ -141,8 +141,21 @@ Coming Soon
   * Reset
 
 ## Screenshots
-### Login Related
-![Login Page](https://i.gyazo.com/6a400575d5ce1445664b25f201b834aa.jpg)
-![Forgot Password](https://i.gyazo.com/495f729e93d9f8014f0487909bd318f9.jpg)
-### Dashboard Related
-![Editable Dashboard](https://i.gyazo.com/dabfa19de0c9df75696d442e83d3efae.jpg)
+### Sign in
+![Login](docs/screenshots/login.png)
+![Forgot password](docs/screenshots/forgot-password.png)
+
+### Overview
+![Overview](docs/screenshots/overview.png)
+
+### Players
+![Players today](docs/screenshots/players.png)
+![Player profile](docs/screenshots/player-profile.png)
+![Low trust](docs/screenshots/low-trust.png)
+
+### Records
+![Active bans](docs/screenshots/active-bans.png)
+![Bans ending soon](docs/screenshots/expiring-bans.png)
+
+### Staff
+![Staff profile](docs/screenshots/staff.png)
