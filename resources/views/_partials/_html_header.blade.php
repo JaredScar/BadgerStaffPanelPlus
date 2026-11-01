@@ -3,6 +3,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ \Illuminate\Support\Facades\Session::get("server_name") ?: config('app.name', 'BadgerStaffPanel+') }}</title>
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('bsp-theme');
+                var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {}
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -23,6 +32,7 @@
     @if (file_exists(public_path('css/tailwind.css')))
         <link rel="stylesheet" href="{{ asset('css/tailwind.css') }}?v={{ filemtime(public_path('css/tailwind.css')) }}" />
     @endif
+    <link rel="stylesheet" href="{{ asset('css/theme.css') }}?v={{ filemtime(public_path('css/theme.css')) }}" />
     @if (!empty($data['css_path']) && $data['css_path'] !== 'players')
         <link rel="stylesheet" href="{{ asset('/css/' . $data['css_path'] . '.css') }}" />
     @endif

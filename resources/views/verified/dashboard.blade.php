@@ -744,9 +744,12 @@
 }
 
 .widget-wrapper {
-    border-radius: 12px;
-    overflow: auto;
+    border-radius: 16px;
+    overflow: hidden;
     height: 100%;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
 }
 
 .widget-header {
@@ -787,8 +790,11 @@
 .widget-content {
     height: 100%;
     overflow: auto;
-    background: white;
-    border-radius: 0 0 12px 12px;
+    box-sizing: border-box;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    border-radius: 16px;
 }
 
 /* Customize mode styles */

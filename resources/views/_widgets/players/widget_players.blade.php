@@ -286,22 +286,16 @@ $data['data'] = $todayPlayers->values()->all();
     font-size: 1.5rem;
 }
 
-.status-online {
-    background: #28a745;
-    color: white;
-    padding: 0.4rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.status-offline {
-    background: #ffc107;
-    color: #212529;
-    padding: 0.4rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 500;
+.status-online,
+.status-offline,
+.trust-score,
+.warning-badge,
+.commend-badge {
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    padding: 0.28rem 0.6rem;
 }
 
 .player-avatar img {

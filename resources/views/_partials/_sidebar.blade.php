@@ -6,8 +6,8 @@
         top: 0;
         z-index: 1000;
         transition: width 0.3s ease;
-        background: #11141b;
-        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        background: var(--bsp-sidebar, #12151c);
+        border-right: 1px solid var(--bsp-sidebar-border, rgba(255, 255, 255, 0.06));
         box-shadow: none;
     }
 
@@ -16,7 +16,7 @@
         font-size: 0.68rem;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: #6b7280;
+        color: var(--bsp-sidebar-muted, #6b7280);
         font-weight: 700;
     }
 
@@ -34,7 +34,7 @@
 
     .sidebar-header {
         padding: 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        border-bottom: 1px solid var(--bsp-sidebar-border, rgba(255, 255, 255, 0.06));
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -44,7 +44,7 @@
     .sidebar-brand {
         display: flex;
         align-items: center;
-        color: #f3f4f6;
+        color: var(--bsp-sidebar-text-strong, #f3f4f6);
         font-weight: 600;
         font-size: 1.05rem;
         text-decoration: none;
@@ -60,7 +60,7 @@
     .sidebar-toggle {
         background: none;
         border: none;
-        color: #9ca3af;
+        color: var(--bsp-sidebar-text, #9ca3af);
         font-size: 1.2rem;
         cursor: pointer;
         padding: 0.5rem;
@@ -87,7 +87,7 @@
         display: flex;
         align-items: center;
         padding: 0.65rem 0.9rem;
-        color: #9ca3af;
+        color: var(--bsp-sidebar-text, #9ca3af);
         text-decoration: none;
         border-radius: 0;
         transition: all 0.2s ease;
@@ -98,19 +98,21 @@
     }
 
     .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.06);
-        color: #f3f4f6;
+        background-color: var(--bsp-sidebar-hover, rgba(255, 255, 255, 0.05));
+        color: var(--bsp-sidebar-text-strong, #f3f4f6);
     }
 
-    .nav-link.active {
-        background: rgba(253, 126, 20, 0.16);
-        color: #fd7e14;
+    .nav-link.active,
+    .nav-submenu .nav-link.active {
+        background: var(--bsp-sidebar-active-bg, rgba(249, 115, 22, 0.14));
+        color: var(--bsp-sidebar-active, #fdba74);
         box-shadow: none;
     }
 
-    .nav-link.active:hover {
-        background: rgba(253, 126, 20, 0.22);
-        color: #fd7e14;
+    .nav-link.active:hover,
+    .nav-submenu .nav-link.active:hover {
+        background: var(--bsp-sidebar-active-bg, rgba(249, 115, 22, 0.14));
+        color: var(--bsp-sidebar-active, #fdba74);
     }
 
     .nav-icon {
@@ -155,18 +157,19 @@
     .nav-submenu .nav-link {
         padding: 0.45rem 1rem 0.45rem 2.75rem;
         font-size: 0.88rem;
-        color: #9ca3af;
+        color: var(--bsp-sidebar-text, #9ca3af);
         margin: 0 0.5rem;
     }
 
     .nav-submenu .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.06);
-        color: #f3f4f6;
+        background-color: var(--bsp-sidebar-hover, rgba(255, 255, 255, 0.05));
+        color: var(--bsp-sidebar-text-strong, #f3f4f6);
     }
 
     .nav-submenu .nav-link.active {
-        background: rgba(253, 126, 20, 0.16);
-        color: #fd7e14;
+        background: var(--bsp-sidebar-active-bg, rgba(249, 115, 22, 0.14));
+        color: var(--bsp-sidebar-active, #fdba74);
+        box-shadow: none;
     }
 
     .sidebar-collapsed .nav-text,
@@ -603,6 +606,12 @@
             <div class="nav-divider"></div>
 
             <li class="nav-item">
+                <button type="button" class="nav-link theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon nav-icon" id="themeIcon"></i>
+                    <span class="nav-text" id="themeLabel">Dark mode</span>
+                </button>
+            </li>
+            <li class="nav-item">
                 <a href="/web/verified/signout" class="nav-link">
                     <i class="fas fa-sign-out-alt nav-icon"></i>
                     <span class="nav-text">Sign out</span>
@@ -617,6 +626,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
     const contentWrapper = document.querySelector('.content-wrapper');
+
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+
+    function syncThemeButton(theme) {
+        const dark = theme === 'dark';
+        if (themeIcon) {
+            themeIcon.className = 'fas nav-icon ' + (dark ? 'fa-sun' : 'fa-moon');
+        }
+        if (themeLabel) {
+            themeLabel.textContent = dark ? 'Light mode' : 'Dark mode';
+        }
+    }
+
+    syncThemeButton(document.documentElement.getAttribute('data-theme') || 'light');
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function () {
+            const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('bsp-theme', next);
+            syncThemeButton(next);
+        });
+    }
 
     // Toggle sidebar
     sidebarToggle.addEventListener('click', function() {
