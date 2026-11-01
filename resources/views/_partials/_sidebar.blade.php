@@ -443,6 +443,7 @@
                     <a href="/web/verified/players" class="flyover-item {{ request()->is('web/verified/players') ? 'active' : '' }}">All Players</a>
                     <a href="{{ route('RECENT_JOINS') }}" class="flyover-item {{ request()->is('web/verified/players/joins') ? 'active' : '' }}">Recent Joins</a>
                     <a href="{{ route('PLAYERS_ONLINE') }}" class="flyover-item {{ request()->is('web/verified/players/online') ? 'active' : '' }}">Online</a>
+                    <a href="{{ route('LOW_TRUST') }}" class="flyover-item {{ request()->is('web/verified/players/low-trust') ? 'active' : '' }}">Low Trust</a>
                     <a href="{{ route('WATCHLIST') }}" class="flyover-item {{ request()->is('web/verified/watchlist') ? 'active' : '' }}">Watchlist</a>
                 </div>
                 <div class="collapse nav-submenu" id="playersSubmenu">
@@ -478,6 +479,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('LOW_TRUST') }}" class="nav-link {{ request()->is('web/verified/players/low-trust') ? 'active' : '' }}">
+                                Low Trust
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('WATCHLIST') }}" class="nav-link {{ request()->is('web/verified/watchlist') ? 'active' : '' }}">
                                 Watchlist
                             </a>
@@ -496,6 +502,7 @@
                 <div class="nav-flyover" id="recordsFlyover">
                     <div class="flyover-header">Records</div>
                     <a href="{{ route('ACTIVE_BANS') }}" class="flyover-item {{ request()->is('web/verified/records/active-bans') ? 'active' : '' }}">Active Bans</a>
+                    <a href="{{ route('EXPIRING_BANS') }}" class="flyover-item {{ request()->is('web/verified/records/expiring-bans') ? 'active' : '' }}">Ending Soon</a>
                     <a href="/web/verified/records/bans" class="flyover-item {{ request()->is('web/verified/records/bans') ? 'active' : '' }}">Bans</a>
                     <a href="/web/verified/records/warns" class="flyover-item {{ request()->is('web/verified/records/warns') ? 'active' : '' }}">Warns</a>
                     <a href="/web/verified/records/kicks" class="flyover-item {{ request()->is('web/verified/records/kicks') ? 'active' : '' }}">Kicks</a>
@@ -511,6 +518,11 @@
                         <li class="nav-item">
                             <a href="{{ route('ACTIVE_BANS') }}" class="nav-link {{ request()->is('web/verified/records/active-bans') ? 'active' : '' }}">
                                 Active Bans
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('EXPIRING_BANS') }}" class="nav-link {{ request()->is('web/verified/records/expiring-bans') ? 'active' : '' }}">
+                                Ending Soon
                             </a>
                         </li>
                         <li class="nav-item">

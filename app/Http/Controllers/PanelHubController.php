@@ -142,6 +142,98 @@ class PanelHubController extends Controller
         ]);
     }
 
+    public function expiringBans(): View
+    {
+        $serverId = Session::get('server_id');
+        $bans = Ban::query()
+            ->when($serverId, fn ($q) => $q->where('server_id', $serverId))
+            ->where('expires', 1)
+            ->whereNotNull('expiredDate')
+            ->where('expiredDate', '>', now())
+            ->where('expiredDate', '<=', now()->copy()->addDays(7))
+            ->orderBy('expiredDate')
+            ->get();
+
+        $dayEnd = now()->copy()->addDay();
+        $withinDay = $bans->filter(fn ($ban) => Carbon::parse($ban->expiredDate)->lte($dayEnd))->values();
+        $withinWeek = $bans->reject(fn ($ban) => Carbon::parse($ban->expiredDate)->lte($dayEnd))->values();
+        $playerIds = $bans->pluck('player_id');
+
+        return view('verified.hub.expiring_bans', [
+            'data' => $this->page('EXPIRING_BANS'),
+            'withinDay' => $withinDay,
+            'withinWeek' => $withinWeek,
+            'players' => Player::query()->whereIn('player_id', $playerIds)->get()->keyBy('player_id'),
+            'staff' => Staff::query()->whereIn('staff_id', $bans->pluck('staff_id'))->get()->keyBy('staff_id'),
+        ]);
+    }
+
+    public function lowTrust(): View
+    {
+        $serverId = Session::get('server_id');
+        $players = Player::query()->when($serverId, fn ($q) => $q->where('server_id', $serverId))->get();
+        $dataRows = PlayerData::query()
+            ->whereIn('player_id', $players->pluck('player_id'))
+            ->get()
+            ->keyBy('player_id');
+
+        $low = $players->filter(function ($player) use ($dataRows) {
+            $score = optional($dataRows[$player->player_id] ?? null)->trust_score;
+            return $score !== null && (int) $score < 50;
+        })->sortBy(function ($player) use ($dataRows) {
+            return (int) optional($dataRows[$player->player_id] ?? null)->trust_score;
+        })->values();
+
+        $lastWarns = Warn::query()
+            ->whereIn('player_id', $low->pluck('player_id'))
+            ->orderByDesc('created_at')
+            ->get()
+            ->unique('player_id')
+            ->keyBy('player_id');
+
+        return view('verified.hub.low_trust', [
+            'data' => $this->page('LOW_TRUST'),
+            'players' => $low,
+            'playerData' => $dataRows,
+            'lastWarns' => $lastWarns,
+        ]);
+    }
+
+    public function staffShow(int $staffId): View
+    {
+        $serverId = Session::get('server_id');
+        $member = Staff::query()
+            ->when($serverId, fn ($q) => $q->where('server_id', $serverId))
+            ->where('staff_id', $staffId)
+            ->firstOrFail();
+
+        $bans = Ban::query()->where('staff_id', $member->staff_id)->orderByDesc('created_at')->get();
+        $warns = Warn::query()->where('staff_id', $member->staff_id)->orderByDesc('created_at')->get();
+        $kicks = Kick::query()->where('staff_id', $member->staff_id)->orderByDesc('created_at')->get();
+        $notes = Note::query()->where('staff_id', $member->staff_id)->orderByDesc('created_at')->get();
+        $commends = Commend::query()->where('staff_id', $member->staff_id)->orderByDesc('created_at')->get();
+
+        $playerIds = $bans->pluck('player_id')
+            ->merge($warns->pluck('player_id'))
+            ->merge($kicks->pluck('player_id'))
+            ->merge($notes->pluck('player_id'))
+            ->merge($commends->pluck('player_id'))
+            ->unique();
+
+        return view('verified.hub.staff_profile', [
+            'data' => $this->page('STAFF_PROFILE'),
+            'member' => $member,
+            'players' => Player::query()->whereIn('player_id', $playerIds)->get()->keyBy('player_id'),
+            'records' => [
+                'Bans' => $bans,
+                'Warns' => $warns,
+                'Kicks' => $kicks,
+                'Notes' => $notes,
+                'Commends' => $commends,
+            ],
+        ]);
+    }
+
     public function server(): View
     {
         $serverId = Session::get('server_id');

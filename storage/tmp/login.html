@@ -3,8 +3,20 @@
     <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">
+    <meta name="csrf-token" content="WF5LlIvTLtPt7D0yGhQSgppy4gamVJt0LyEj1uhR">
     <title>BadgerStaffPanel+</title>
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('bsp-theme');
+                var theme = stored || 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link
@@ -18,7 +30,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" />
 
     <link rel="stylesheet" href="http://localhost:8080/css/global.css" />
-    <link rel="stylesheet" href="http://localhost:8080/css/players.css?v=1793499860" />
+    <link rel="stylesheet" href="http://localhost:8080/css/players.css?v=1793501679" />
+            <link rel="stylesheet" href="http://localhost:8080/css/tailwind.css?v=1793502667" />
+        <link rel="stylesheet" href="http://localhost:8080/css/theme.css?v=1793502303" />
             <link rel="stylesheet" href="http://localhost:8080/css/login/auth.css" />
     </head>
     <body class="login-page">
@@ -34,7 +48,7 @@
                     </div>
 
                     <form name="login-form" class="login-form" id="form" method="post" action="http://localhost:8080/web/auth/login">
-                        <input type="hidden" name="_token" value="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">                        <label class="login-label" for="server_id">Server</label>
+                        <input type="hidden" name="_token" value="WF5LlIvTLtPt7D0yGhQSgppy4gamVJt0LyEj1uhR">                        <label class="login-label" for="server_id">Server</label>
                         <div class="login-field">
                             <i class="fa-solid fa-server"></i>
                             <select required id="server_id" name="server_id" class="form-select">
@@ -81,8 +95,6 @@
     }
 </style>
 <footer class="text-center text-white fixed-bottom" style="background-color: black;">
-
-    <!-- Copyright -->
     <div class="container-fluid max-height-70">
         <a href="https://zap-hosting.com/badger" target="_blank">
             <div class="row max-height-70">
@@ -97,7 +109,6 @@
             </div>
         </a>
     </div>
-    <!-- Copyright -->
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js" integrity="sha512-EKWWs1ZcA2ZY9lbLISPz8aGR2+L7JVYqBAYTq5AXgBkSjRSuQEGqWx8R1zAX16KdXPaCjOCaKE8MCpU0wcHlHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -105,9 +116,7 @@
 <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
-<!-- Include GridStack JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.0/gridstack-all.min.js" integrity="sha512-HrBVB/mAEb1KuouvSb7sE9dR43ziTePw/IibQWjK34nl5Mdqj2Dy7tfh2yiNLjyDGEJK4hXTrjlk7myXERaOsA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!-- Include air-datepicker -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/i18n/datepicker.en.js"></script>
         </body>

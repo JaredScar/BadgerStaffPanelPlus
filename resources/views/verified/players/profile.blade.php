@@ -135,22 +135,29 @@
     </div>
 
     @foreach ([
-        ['Warnings', $warns, 'reason'],
-        ['Kicks', $kicks, 'reason'],
-        ['Bans', $bans, 'reason'],
-        ['Commends', $commends, 'reason'],
-        ['Notes', $notes, 'note'],
-    ] as [$title, $rows, $textKey])
+        ['Warnings', $warns, 'reason', 'warn', 'Remove'],
+        ['Kicks', $kicks, 'reason', 'kick', 'Remove'],
+        ['Bans', $bans, 'reason', 'ban', 'Unban'],
+        ['Commends', $commends, 'reason', 'commend', 'Remove'],
+        ['Notes', $notes, 'note', 'note', 'Remove'],
+    ] as [$title, $rows, $textKey, $type, $actionLabel])
         <x-card :title="$title.' ('.$rows->count().')'" class="mb-4">
-            <x-panel-table :headers="['Detail', 'Staff', 'When']">
+            <x-panel-table :headers="['Detail', 'Staff', 'When', '']">
                 @forelse ($rows as $row)
                     <tr>
                         <td>{{ $row->{$textKey} ?: '—' }}@if($title === 'Bans') · {{ $row->expires ? ($row->expiredDate ?: 'Temporary') : 'Permanent' }}@endif</td>
-                        <td>{{ $staffNames[$row->staff_id] ?? 'Staff' }}</td>
+                        <td>
+                            @if (!empty($staffNames[$row->staff_id]))
+                                <a href="{{ route('STAFF_PROFILE', ['staffId' => $row->staff_id]) }}">{{ $staffNames[$row->staff_id] }}</a>
+                            @else
+                                Staff
+                            @endif
+                        </td>
                         <td>{{ PanelActivity::when($row->created_at) }}</td>
+                        <td>@include('verified._partials.revoke_form', ['type' => $type, 'id' => $row->id, 'label' => $actionLabel])</td>
                     </tr>
                 @empty
-                    <tr><td colspan="3" class="text-muted">No {{ strtolower($title) }} yet.</td></tr>
+                    <tr><td colspan="4" class="text-muted">No {{ strtolower($title) }} yet.</td></tr>
                 @endforelse
             </x-panel-table>
         </x-card>

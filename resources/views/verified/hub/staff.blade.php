@@ -14,7 +14,7 @@
             @forelse ($staff as $member)
                 <tr>
                     <td>
-                        <strong>{{ $member->staff_username }}</strong>
+                        <a href="{{ route('STAFF_PROFILE', ['staffId' => $member->staff_id]) }}"><strong>{{ $member->staff_username }}</strong></a>
                         @if ($member->staff_discord)
                             <div class="text-muted small">{{ $member->staff_discord }}</div>
                         @endif

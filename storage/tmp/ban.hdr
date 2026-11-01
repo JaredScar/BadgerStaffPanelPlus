@@ -1,0 +1,11 @@
+HTTP/1.1 302 Found
+Date: Sun, 01 Nov 2026 03:18:47 GMT
+Server: Apache/2.4.69 (Debian)
+X-Powered-By: PHP/8.2.35
+Cache-Control: no-cache, private
+Location: http://localhost:8080/web/verified/players/2
+Set-Cookie: XSRF-TOKEN=eyJpdiI6ImxCZHNmYlZBUDFObmxWaTQ2cXZVQUE9PSIsInZhbHVlIjoiOXkxTHFRVFY5Tm95TERTeEJHck9nWVViRHFReFh5L3pvaTdwZXVDcDdMTVVEeTNPejFrVUR0OU9BMmxhVkFrRGJJUUVDejB1Qmh5RTJudlQrZndTNjRLR0l5bGtQODVzUWNMSUdUV1BTSEE5Mk82SjZuaDY3RWEralJTTS9ldEMiLCJtYWMiOiIzZmUxZDg1ODJhYmY3MGE1ZTY3MzVlZDc3YjQ2NDUxZjVjZmYwOGU2NmY3NDJhMWVjZTExMDJlYjhkOWRhZGRhIiwidGFnIjoiIn0%3D; expires=Sun, 01 Nov 2026 13:18:47 GMT; Max-Age=36000; path=/; samesite=lax
+Set-Cookie: badgerstaffpanel_session=eyJpdiI6InlraDlydEQ3UnlmNjZTN3hoNUVNMEE9PSIsInZhbHVlIjoiKzlZdXN2WUk3N3hObGhVcDUzQVFDdElRTzJCWFYwZjJnOGZwbHlHaGp0a2pmTDIvRnlqbnZGMXJIQkV6bTVMKzFiV2Z6YjYwd0t0QUFYZFRwK2JlbE5yMm03aW5nZXpoS2Y3aGRzNndyekxESWdER1dGU3dBVjd5eTZvejkybUwiLCJtYWMiOiIwYjg1MjliOTNkMjlkNjZkYmNmMmRjYTUyNjNiY2QwMmEwNjU5ZDc1MWNiYjkyNTE0ZjkwOWE1ZmY2MmVhM2UyIiwidGFnIjoiIn0%3D; path=/; httponly; samesite=lax
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=UTF-8
+

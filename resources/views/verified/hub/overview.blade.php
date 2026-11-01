@@ -20,6 +20,8 @@
         <x-pill :href="route('SERVER_INFO')" icon="server">Server</x-pill>
         <x-pill :href="route('PLAYERS_ONLINE')" icon="circle">Online</x-pill>
         <x-pill :href="route('LOOKUP')" icon="search">Lookup</x-pill>
+        <x-pill :href="route('LOW_TRUST')" icon="user-shield">Low trust</x-pill>
+        <x-pill :href="route('EXPIRING_BANS')" icon="hourglass-half">Ending soon</x-pill>
         <x-pill :href="route('WATCHLIST')" icon="eye">Watchlist</x-pill>
         <x-pill :href="route('RECENT_JOINS')" icon="sign-in-alt">Recent joins</x-pill>
         <x-pill :href="route('ACTIVITY')" icon="stream">Activity</x-pill>
@@ -62,6 +64,7 @@
     </div>
 
     <x-card title="Low trust players" icon="user-shield">
+        <div class="px-3 pt-3"><a href="{{ route('LOW_TRUST') }}">Open the full queue</a></div>
         <x-panel-table :headers="['Player', 'Trust', '']">
             @forelse ($lowTrust as $player)
                 <tr>

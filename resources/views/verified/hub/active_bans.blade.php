@@ -10,7 +10,7 @@
     </div>
 
     <x-card title="Active bans" icon="gavel">
-        <x-panel-table :headers="['Player', 'Reason', 'Duration', 'Staff', 'When']">
+        <x-panel-table :headers="['Player', 'Reason', 'Duration', 'Staff', 'When', '']">
             @forelse ($bans as $ban)
                 <tr>
                     <td>
@@ -20,11 +20,18 @@
                     </td>
                     <td>{{ $ban->reason ?: '—' }}</td>
                     <td>{{ $ban->expires ? ($ban->expiredDate ?: 'Temporary') : 'Permanent' }}</td>
-                    <td>{{ optional($staff[$ban->staff_id] ?? null)->staff_username ?? 'Staff' }}</td>
+                    <td>
+                        @if ($member = ($staff[$ban->staff_id] ?? null))
+                            <a href="{{ route('STAFF_PROFILE', ['staffId' => $member->staff_id]) }}">{{ $member->staff_username }}</a>
+                        @else
+                            Staff
+                        @endif
+                    </td>
                     <td>{{ \App\Support\PanelActivity::when($ban->created_at) }}</td>
+                    <td>@include('verified._partials.revoke_form', ['type' => 'ban', 'id' => $ban->id, 'label' => 'Unban'])</td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="text-muted">No active bans on this server.</td></tr>
+                <tr><td colspan="6" class="text-muted">No active bans on this server.</td></tr>
             @endforelse
         </x-panel-table>
     </x-card>

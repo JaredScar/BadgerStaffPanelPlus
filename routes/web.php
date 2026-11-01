@@ -223,8 +223,10 @@ Route::middleware('authWeb:web')->get('/verified/players', function () {
 Route::middleware('authWeb:web')->get('/verified/players/search', [PlayerProfileController::class, 'search'])->name("PLAYER_SEARCH");
 Route::middleware('authWeb:web')->get('/verified/players/joins', [PanelHubController::class, 'joins'])->name('RECENT_JOINS');
 Route::middleware('authWeb:web')->get('/verified/players/online', [PanelHubController::class, 'online'])->name('PLAYERS_ONLINE');
+Route::middleware('authWeb:web')->get('/verified/players/low-trust', [PanelHubController::class, 'lowTrust'])->name('LOW_TRUST');
 Route::middleware('authWeb:web')->get('/verified/players/{playerId}', [PlayerProfileController::class, 'show'])->name("PLAYER_PROFILE");
 Route::middleware('authWeb:web')->post('/verified/players/action', [WebActionController::class, 'store'])->name("PLAYER_ACTION");
+Route::middleware('authWeb:web')->post('/verified/players/revoke', [WebActionController::class, 'revoke'])->name('PLAYER_REVOKE');
 
 /**
  * MANAGEMENT
@@ -232,7 +234,9 @@ Route::middleware('authWeb:web')->post('/verified/players/action', [WebActionCon
 Route::middleware('authWeb:web')->get('/verified/overview', [PanelHubController::class, 'overview'])->name('OVERVIEW');
 Route::middleware('authWeb:web')->get('/verified/server', [PanelHubController::class, 'server'])->name('SERVER_INFO');
 Route::middleware('authWeb:web')->get('/verified/records/active-bans', [PanelHubController::class, 'activeBans'])->name('ACTIVE_BANS');
+Route::middleware('authWeb:web')->get('/verified/records/expiring-bans', [PanelHubController::class, 'expiringBans'])->name('EXPIRING_BANS');
 Route::middleware('authWeb:web')->get('/verified/management/staff', [PanelHubController::class, 'staffDirectory'])->name('STAFF_DIRECTORY');
+Route::middleware('authWeb:web')->get('/verified/management/staff/{staffId}', [PanelHubController::class, 'staffShow'])->whereNumber('staffId')->name('STAFF_PROFILE');
 Route::middleware('authWeb:web')->get('/verified/lookup', [PanelHubController::class, 'lookup'])->name('LOOKUP');
 Route::middleware('authWeb:web')->get('/verified/watchlist', [PanelHubController::class, 'watchlist'])->name('WATCHLIST');
 Route::middleware('authWeb:web')->post('/verified/watchlist', [PanelHubController::class, 'addWatch'])->name('WATCHLIST_ADD');

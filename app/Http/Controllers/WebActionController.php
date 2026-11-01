@@ -79,6 +79,54 @@ class WebActionController extends Controller
             ->with('status', $labels[$validated['action']] . ' for ' . ($player->last_player_name ?: 'player') . '.');
     }
 
+    public function revoke(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'type' => 'required|in:ban,warn,kick,commend,note',
+            'id' => 'required|integer|min:1',
+        ]);
+
+        $tables = [
+            'ban' => 'bans',
+            'warn' => 'warns',
+            'kick' => 'kicks',
+            'commend' => 'commends',
+            'note' => 'notes',
+        ];
+        $labels = [
+            'ban' => 'Ban lifted',
+            'warn' => 'Warning removed',
+            'kick' => 'Kick removed',
+            'commend' => 'Commend removed',
+            'note' => 'Note removed',
+        ];
+
+        $serverId = Session::get('server_id');
+        if (!$serverId) {
+            return back()->with('error', 'No server is selected.');
+        }
+
+        $table = $tables[$validated['type']];
+        $row = DB::table($table)
+            ->where('id', $validated['id'])
+            ->where('server_id', $serverId)
+            ->first();
+
+        if (!$row) {
+            return back()->with('error', 'That record is no longer on this server.');
+        }
+
+        DB::table($table)->where('id', $row->id)->where('server_id', $serverId)->delete();
+
+        $player = Player::find($row->player_id);
+        $staff = Staff::find(Auth::id());
+        $this->notifyRemoved($validated['type'], $player, $staff);
+
+        $name = $player->last_player_name ?? 'player';
+
+        return back()->with('status', $labels[$validated['type']] . ' for ' . $name . '.');
+    }
+
     private function insertRecord(string $table, Player $player, Staff $staff, mixed $serverId, string $reason, $now): void
     {
         DB::table($table)->insert([
@@ -147,6 +195,21 @@ class WebActionController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+    }
+
+    private function notifyRemoved(string $type, ?Player $player, ?Staff $staff): void
+    {
+        try {
+            $webhook = new DiscordWebhookService(Session::get('server_id') ?: 1);
+            $webhook->logAction($type . '_delete', [
+                'player_name' => $player->last_player_name ?? 'Unknown',
+                'staff_username' => $staff->staff_username ?? 'Staff',
+                'server_name' => optional($staff?->server)->server_name ?? Session::get('server_name'),
+                'timestamp' => now()->format('Y-m-d H:i:s'),
+            ], 0x22c55e);
+        } catch (Throwable $e) {
+            // Webhooks are optional; the record is already gone.
+        }
     }
 
     private function notify(string $action, Player $player, Staff $staff, string $reason, ?string $duration): void
