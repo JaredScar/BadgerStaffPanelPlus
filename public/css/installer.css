@@ -69,7 +69,7 @@
 
 .installer-content.content-wrapper {
     margin-left: 280px;
-    width: calc(100vw - 295px);
+    width: auto;
     min-height: 100vh;
 }
 

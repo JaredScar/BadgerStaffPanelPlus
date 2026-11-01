@@ -314,7 +314,7 @@
 .hub-quick-links a:hover { color: #fd7e14; transform: translateY(-1px); }
 .hub-quick-links i { color: #fd7e14; }
 
-.content-wrapper-public { margin-left: 0 !important; width: 100vw !important; }
+.content-wrapper-public { margin-left: 0 !important; width: 100% !important; max-width: 100% !important; }
 .font-monospace { font-family: "Courier New", monospace; }
 .clickable-row { cursor: pointer; }
 

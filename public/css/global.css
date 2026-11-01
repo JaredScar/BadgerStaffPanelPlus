@@ -1,8 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+html, body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    overflow-x: clip;
+    scrollbar-gutter: auto;
+}
+
 body {
     font-family: 'Inter', Roboto, sans-serif;
     background: #0b0d12;
     color: #111827;
+    padding-right: 0 !important;
+    --bs-scrollbar-width: 0px;
 }
 
 .bg-blurple {
@@ -173,21 +183,27 @@ body {
     margin-left: 280px;
     margin-right: 0;
     transition: margin-left 0.3s ease, width 0.3s ease;
-    width: calc(100vw - 280px);
+    width: calc(100% - 280px);
+    max-width: calc(100% - 280px);
+    box-sizing: border-box;
     box-shadow: none;
 }
 
 .content-wrapper.sidebar-collapsed {
     margin-left: 60px;
-    width: calc(100vw - 60px);
+    width: calc(100% - 60px);
+    max-width: calc(100% - 60px);
 }
 
+.master-contain.container-fluid,
 .master-contain {
-    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 !important;
     margin: 0;
     min-height: 100vh;
     height: auto;
-    overflow: visible;
+    overflow-x: clip;
 }
 
 .grid-stack-item {
@@ -211,8 +227,9 @@ body {
     .content-wrapper {
         padding: 15px;
         margin-left: 0;
-        margin-right: 10px;
-        width: calc(100vw - 10px);
+        margin-right: 0;
+        width: 100%;
+        max-width: 100%;
     }
     
     .full-page-header {

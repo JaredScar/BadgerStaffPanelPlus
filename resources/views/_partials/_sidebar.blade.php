@@ -226,12 +226,17 @@
 
     .content-wrapper {
         margin-left: 280px;
-        transition: margin-left 0.3s ease;
+        width: calc(100% - 280px);
+        max-width: calc(100% - 280px);
+        transition: margin-left 0.3s ease, width 0.3s ease;
         min-height: 100vh;
+        box-sizing: border-box;
     }
 
     .content-wrapper.sidebar-collapsed {
         margin-left: 60px;
+        width: calc(100% - 60px);
+        max-width: calc(100% - 60px);
     }
 
     .nav-divider {
@@ -364,6 +369,8 @@
         
         .content-wrapper {
             margin-left: 0;
+            width: 100%;
+            max-width: 100%;
         }
 
         .nav-flyover {
