@@ -103,6 +103,83 @@ class PanelHubController extends Controller
         ]);
     }
 
+    public function online(): View
+    {
+        $serverId = Session::get('server_id');
+        $players = Player::query()->when($serverId, fn ($q) => $q->where('server_id', $serverId))->get();
+        $dataRows = PlayerData::query()
+            ->whereIn('player_id', $players->pluck('player_id'))
+            ->get()
+            ->keyBy('player_id');
+
+        $online = $players->filter(function ($player) use ($dataRows) {
+            $date = optional($dataRows[$player->player_id] ?? null)->last_join_date;
+            return $date && Carbon::parse($date)->gt(now()->subMinutes(15));
+        })->values();
+
+        return view('verified.hub.online', [
+            'data' => $this->page('PLAYERS_ONLINE'),
+            'players' => $online,
+            'playerData' => $dataRows,
+        ]);
+    }
+
+    public function activeBans(): View
+    {
+        $serverId = Session::get('server_id');
+        $bans = Ban::query()
+            ->when($serverId, fn ($q) => $q->where('server_id', $serverId))
+            ->orderByDesc('created_at')
+            ->get()
+            ->filter(fn ($ban) => $this->banIsActive($ban))
+            ->values();
+
+        return view('verified.hub.active_bans', [
+            'data' => $this->page('ACTIVE_BANS'),
+            'bans' => $bans,
+            'players' => Player::query()->whereIn('player_id', $bans->pluck('player_id'))->get()->keyBy('player_id'),
+            'staff' => Staff::query()->whereIn('staff_id', $bans->pluck('staff_id'))->get()->keyBy('staff_id'),
+        ]);
+    }
+
+    public function server(): View
+    {
+        $serverId = Session::get('server_id');
+        $server = Server::query()->find($serverId);
+        $players = Player::query()->when($serverId, fn ($q) => $q->where('server_id', $serverId))->get();
+        $dataRows = PlayerData::query()->whereIn('player_id', $players->pluck('player_id'))->get();
+        $online = $dataRows->filter(fn ($row) => $row->last_join_date && Carbon::parse($row->last_join_date)->gt(now()->subMinutes(15)))->count();
+
+        return view('verified.hub.server', [
+            'data' => $this->page('SERVER'),
+            'server' => $server,
+            'stats' => [
+                'players' => $players->count(),
+                'online' => $online,
+                'staff' => Staff::query()->when($serverId, fn ($q) => $q->where('server_id', $serverId))->count(),
+                'bans' => $this->countFor(Ban::class, $serverId),
+                'warns' => $this->countFor(Warn::class, $serverId),
+                'watchlist' => Schema::hasTable('watchlist')
+                    ? Watchlist::query()->when($serverId, fn ($q) => $q->where('server_id', $serverId))->count()
+                    : 0,
+            ],
+        ]);
+    }
+
+    public function staffDirectory(): View
+    {
+        $serverId = Session::get('server_id');
+        $staff = Staff::query()
+            ->when($serverId, fn ($q) => $q->where('server_id', $serverId))
+            ->orderBy('staff_username')
+            ->get();
+
+        return view('verified.hub.staff', [
+            'data' => $this->page('STAFF_DIRECTORY'),
+            'staff' => $staff,
+        ]);
+    }
+
     public function joins(): View
     {
         $serverId = Session::get('server_id');
@@ -287,6 +364,18 @@ class PanelHubController extends Controller
             'view_name' => $viewName,
             'customize' => false,
         ];
+    }
+
+    private function banIsActive(Ban $ban): bool
+    {
+        $expires = $ban->expires;
+        $permanent = $expires === 0 || $expires === '0' || $expires === false || $expires === 'false' || $expires === null;
+        if ($permanent) {
+            return true;
+        }
+
+        $end = $ban->expiredDate ?? null;
+        return $end && Carbon::parse($end)->isFuture();
     }
 
     private function countFor(string $model, mixed $serverId): int

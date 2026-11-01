@@ -106,14 +106,14 @@ $notes = [
 }
 
 .note-item {
-    background: #f8f9fa;
-    border-radius: 8px;
+    background: var(--bsp-surface-2, #12171f);
+    border-radius: 10px;
     padding: 12px;
-    border-left: 3px solid #fd7e14;
+    border-left: 3px solid var(--bsp-accent, #fb923c);
 }
 
 .note-content {
-    color: #2c3e50;
+    color: var(--bsp-text, #f3f4f6);
     font-size: 0.9rem;
     line-height: 1.4;
 }

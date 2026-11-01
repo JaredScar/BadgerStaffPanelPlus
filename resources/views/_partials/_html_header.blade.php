@@ -7,7 +7,7 @@
         (function () {
             try {
                 var stored = localStorage.getItem('bsp-theme');
-                var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                var theme = stored || 'dark';
                 document.documentElement.setAttribute('data-theme', theme);
             } catch (e) {}
         })();

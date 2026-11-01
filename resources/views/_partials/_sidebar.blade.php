@@ -86,7 +86,7 @@
     .nav-link {
         display: flex;
         align-items: center;
-        padding: 0.65rem 0.9rem;
+        padding: 0.55rem 0.85rem;
         color: var(--bsp-sidebar-text, #9ca3af);
         text-decoration: none;
         border-radius: 0;
@@ -152,6 +152,12 @@
         padding-left: 0;
         margin-top: 0.25rem;
         margin-bottom: 0.25rem;
+    }
+
+    /* Tailwind's .collapse utility sets visibility:collapse and hides these links. */
+    .nav-submenu.collapse,
+    .nav-submenu.collapsing {
+        visibility: visible;
     }
 
     .nav-submenu .nav-link {
@@ -436,6 +442,7 @@
                     <a href="/web/verified/players/month" class="flyover-item {{ request()->is('web/verified/players/month') ? 'active' : '' }}">Monthly</a>
                     <a href="/web/verified/players" class="flyover-item {{ request()->is('web/verified/players') ? 'active' : '' }}">All Players</a>
                     <a href="{{ route('RECENT_JOINS') }}" class="flyover-item {{ request()->is('web/verified/players/joins') ? 'active' : '' }}">Recent Joins</a>
+                    <a href="{{ route('PLAYERS_ONLINE') }}" class="flyover-item {{ request()->is('web/verified/players/online') ? 'active' : '' }}">Online</a>
                     <a href="{{ route('WATCHLIST') }}" class="flyover-item {{ request()->is('web/verified/watchlist') ? 'active' : '' }}">Watchlist</a>
                 </div>
                 <div class="collapse nav-submenu" id="playersSubmenu">
@@ -466,6 +473,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('PLAYERS_ONLINE') }}" class="nav-link {{ request()->is('web/verified/players/online') ? 'active' : '' }}">
+                                Online
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('WATCHLIST') }}" class="nav-link {{ request()->is('web/verified/watchlist') ? 'active' : '' }}">
                                 Watchlist
                             </a>
@@ -483,6 +495,7 @@
                 </a>
                 <div class="nav-flyover" id="recordsFlyover">
                     <div class="flyover-header">Records</div>
+                    <a href="{{ route('ACTIVE_BANS') }}" class="flyover-item {{ request()->is('web/verified/records/active-bans') ? 'active' : '' }}">Active Bans</a>
                     <a href="/web/verified/records/bans" class="flyover-item {{ request()->is('web/verified/records/bans') ? 'active' : '' }}">Bans</a>
                     <a href="/web/verified/records/warns" class="flyover-item {{ request()->is('web/verified/records/warns') ? 'active' : '' }}">Warns</a>
                     <a href="/web/verified/records/kicks" class="flyover-item {{ request()->is('web/verified/records/kicks') ? 'active' : '' }}">Kicks</a>
@@ -495,6 +508,11 @@
                 </div>
                 <div class="collapse nav-submenu" id="recordsSubmenu">
                     <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{{ route('ACTIVE_BANS') }}" class="nav-link {{ request()->is('web/verified/records/active-bans') ? 'active' : '' }}">
+                                Active Bans
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a href="/web/verified/records/bans" class="nav-link {{ request()->is('web/verified/records/bans') ? 'active' : '' }}">
                                 Bans
@@ -554,6 +572,8 @@
                 </a>
                 <div class="nav-flyover" id="managementFlyover">
                     <div class="flyover-header">Management</div>
+                    <a href="{{ route('SERVER_INFO') }}" class="flyover-item {{ request()->is('web/verified/server') ? 'active' : '' }}">Server</a>
+                    <a href="{{ route('STAFF_DIRECTORY') }}" class="flyover-item {{ request()->is('web/verified/management/staff') ? 'active' : '' }}">Staff Directory</a>
                     <a href="{{ route('SHOW_PROFILE') }}" class="flyover-item {{ request()->is('web/profile') ? 'active' : '' }}">My Profile</a>
                     <a href="{{ route('STAFF_PERFORMANCE') }}" class="flyover-item {{ request()->is('web/verified/management/performance') ? 'active' : '' }}">Staff Performance</a>
                     <a href="/web/verified/management/manage_staff" class="flyover-item {{ request()->is('web/verified/management/manage_staff') ? 'active' : '' }}">Manage Staff</a>
@@ -564,6 +584,16 @@
                 </div>
                 <div class="collapse nav-submenu" id="managementSubmenu">
                     <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{{ route('SERVER_INFO') }}" class="nav-link {{ request()->is('web/verified/server') ? 'active' : '' }}">
+                                Server
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('STAFF_DIRECTORY') }}" class="nav-link {{ request()->is('web/verified/management/staff') ? 'active' : '' }}">
+                                Staff Directory
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a href="{{ route('SHOW_PROFILE') }}" class="nav-link {{ request()->is('web/profile') ? 'active' : '' }}">
                                 My Profile

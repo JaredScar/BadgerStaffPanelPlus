@@ -38,4 +38,5 @@ module.exports = {
         },
     },
     plugins: [],
+    blocklist: ['collapse'],
 };

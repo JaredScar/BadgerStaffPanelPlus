@@ -17,6 +17,8 @@
     </div>
 
     <div class="hub-quick-links">
+        <x-pill :href="route('SERVER_INFO')" icon="server">Server</x-pill>
+        <x-pill :href="route('PLAYERS_ONLINE')" icon="circle">Online</x-pill>
         <x-pill :href="route('LOOKUP')" icon="search">Lookup</x-pill>
         <x-pill :href="route('WATCHLIST')" icon="eye">Watchlist</x-pill>
         <x-pill :href="route('RECENT_JOINS')" icon="sign-in-alt">Recent joins</x-pill>

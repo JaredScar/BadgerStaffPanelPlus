@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">
     <title>Demo Server</title>
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('bsp-theme');
+                var theme = stored || 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {}
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,9 +30,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" />
 
     <link rel="stylesheet" href="http://localhost:8080/css/global.css" />
-    <link rel="stylesheet" href="http://localhost:8080/css/players.css?v=1793501218" />
-            <link rel="stylesheet" href="http://localhost:8080/css/tailwind.css?v=1793501220" />
-        </head>
+    <link rel="stylesheet" href="http://localhost:8080/css/players.css?v=1793501679" />
+            <link rel="stylesheet" href="http://localhost:8080/css/tailwind.css?v=1793501445" />
+        <link rel="stylesheet" href="http://localhost:8080/css/theme.css?v=1793502303" />
+    </head>
 <body class="background-sizing gta-bg1">
     <div class="container-fluid master-contain">
         <div class="toast-container position-absolute end-0 mt-3 mx-3" id="toast_container">
@@ -80,7 +90,7 @@
         }
     }
 </script>
-                    <style>
+        <style>
     .sidebar-container {
         height: 100vh;
         position: fixed;
@@ -88,8 +98,8 @@
         top: 0;
         z-index: 1000;
         transition: width 0.3s ease;
-        background: #11141b;
-        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        background: var(--bsp-sidebar, #12151c);
+        border-right: 1px solid var(--bsp-sidebar-border, rgba(255, 255, 255, 0.06));
         box-shadow: none;
     }
 
@@ -98,7 +108,7 @@
         font-size: 0.68rem;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: #6b7280;
+        color: var(--bsp-sidebar-muted, #6b7280);
         font-weight: 700;
     }
 
@@ -116,7 +126,7 @@
 
     .sidebar-header {
         padding: 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        border-bottom: 1px solid var(--bsp-sidebar-border, rgba(255, 255, 255, 0.06));
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -126,7 +136,7 @@
     .sidebar-brand {
         display: flex;
         align-items: center;
-        color: #f3f4f6;
+        color: var(--bsp-sidebar-text-strong, #f3f4f6);
         font-weight: 600;
         font-size: 1.05rem;
         text-decoration: none;
@@ -142,7 +152,7 @@
     .sidebar-toggle {
         background: none;
         border: none;
-        color: #9ca3af;
+        color: var(--bsp-sidebar-text, #9ca3af);
         font-size: 1.2rem;
         cursor: pointer;
         padding: 0.5rem;
@@ -168,8 +178,8 @@
     .nav-link {
         display: flex;
         align-items: center;
-        padding: 0.65rem 0.9rem;
-        color: #9ca3af;
+        padding: 0.55rem 0.85rem;
+        color: var(--bsp-sidebar-text, #9ca3af);
         text-decoration: none;
         border-radius: 0;
         transition: all 0.2s ease;
@@ -180,19 +190,21 @@
     }
 
     .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.06);
-        color: #f3f4f6;
+        background-color: var(--bsp-sidebar-hover, rgba(255, 255, 255, 0.05));
+        color: var(--bsp-sidebar-text-strong, #f3f4f6);
     }
 
-    .nav-link.active {
-        background: rgba(253, 126, 20, 0.16);
-        color: #fd7e14;
+    .nav-link.active,
+    .nav-submenu .nav-link.active {
+        background: var(--bsp-sidebar-active-bg, rgba(249, 115, 22, 0.14));
+        color: var(--bsp-sidebar-active, #fdba74);
         box-shadow: none;
     }
 
-    .nav-link.active:hover {
-        background: rgba(253, 126, 20, 0.22);
-        color: #fd7e14;
+    .nav-link.active:hover,
+    .nav-submenu .nav-link.active:hover {
+        background: var(--bsp-sidebar-active-bg, rgba(249, 115, 22, 0.14));
+        color: var(--bsp-sidebar-active, #fdba74);
     }
 
     .nav-icon {
@@ -237,18 +249,19 @@
     .nav-submenu .nav-link {
         padding: 0.45rem 1rem 0.45rem 2.75rem;
         font-size: 0.88rem;
-        color: #9ca3af;
+        color: var(--bsp-sidebar-text, #9ca3af);
         margin: 0 0.5rem;
     }
 
     .nav-submenu .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.06);
-        color: #f3f4f6;
+        background-color: var(--bsp-sidebar-hover, rgba(255, 255, 255, 0.05));
+        color: var(--bsp-sidebar-text-strong, #f3f4f6);
     }
 
     .nav-submenu .nav-link.active {
-        background: rgba(253, 126, 20, 0.16);
-        color: #fd7e14;
+        background: var(--bsp-sidebar-active-bg, rgba(249, 115, 22, 0.14));
+        color: var(--bsp-sidebar-active, #fdba74);
+        box-shadow: none;
     }
 
     .sidebar-collapsed .nav-text,
@@ -308,12 +321,17 @@
 
     .content-wrapper {
         margin-left: 280px;
-        transition: margin-left 0.3s ease;
+        width: calc(100% - 280px);
+        max-width: calc(100% - 280px);
+        transition: margin-left 0.3s ease, width 0.3s ease;
         min-height: 100vh;
+        box-sizing: border-box;
     }
 
     .content-wrapper.sidebar-collapsed {
         margin-left: 60px;
+        width: calc(100% - 60px);
+        max-width: calc(100% - 60px);
     }
 
     .nav-divider {
@@ -446,6 +464,8 @@
         
         .content-wrapper {
             margin-left: 0;
+            width: 100%;
+            max-width: 100%;
         }
 
         .nav-flyover {
@@ -482,7 +502,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="http://localhost:8080/web/verified/overview" class="nav-link ">
+                <a href="http://localhost:8080/web/verified/overview" class="nav-link active">
                     <i class="fas fa-chart-line nav-icon"></i>
                     <span class="nav-text">Overview</span>
                 </a>
@@ -508,6 +528,7 @@
                     <a href="/web/verified/players/month" class="flyover-item ">Monthly</a>
                     <a href="/web/verified/players" class="flyover-item ">All Players</a>
                     <a href="http://localhost:8080/web/verified/players/joins" class="flyover-item ">Recent Joins</a>
+                    <a href="http://localhost:8080/web/verified/players/online" class="flyover-item ">Online</a>
                     <a href="http://localhost:8080/web/verified/watchlist" class="flyover-item ">Watchlist</a>
                 </div>
                 <div class="collapse nav-submenu" id="playersSubmenu">
@@ -538,6 +559,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/players/online" class="nav-link ">
+                                Online
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="http://localhost:8080/web/verified/watchlist" class="nav-link ">
                                 Watchlist
                             </a>
@@ -555,6 +581,7 @@
                 </a>
                 <div class="nav-flyover" id="recordsFlyover">
                     <div class="flyover-header">Records</div>
+                    <a href="http://localhost:8080/web/verified/records/active-bans" class="flyover-item ">Active Bans</a>
                     <a href="/web/verified/records/bans" class="flyover-item ">Bans</a>
                     <a href="/web/verified/records/warns" class="flyover-item ">Warns</a>
                     <a href="/web/verified/records/kicks" class="flyover-item ">Kicks</a>
@@ -563,10 +590,15 @@
                     <a href="/web/verified/records/notes" class="flyover-item ">Notes</a>
                     <a href="/web/verified/records/activity" class="flyover-item ">Activity</a>
                     <a href="/web/verified/records" class="flyover-item ">All Records</a>
-                    <a href="http://localhost:8080/web/bans" class="flyover-item active">Public Bans</a>
+                    <a href="http://localhost:8080/web/bans" class="flyover-item ">Public Bans</a>
                 </div>
                 <div class="collapse nav-submenu" id="recordsSubmenu">
                     <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/records/active-bans" class="nav-link ">
+                                Active Bans
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a href="/web/verified/records/bans" class="nav-link ">
                                 Bans
@@ -608,7 +640,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="http://localhost:8080/web/bans" class="nav-link active">
+                            <a href="http://localhost:8080/web/bans" class="nav-link ">
                                 Public Bans
                             </a>
                         </li>
@@ -626,6 +658,8 @@
                 </a>
                 <div class="nav-flyover" id="managementFlyover">
                     <div class="flyover-header">Management</div>
+                    <a href="http://localhost:8080/web/verified/server" class="flyover-item ">Server</a>
+                    <a href="http://localhost:8080/web/verified/management/staff" class="flyover-item ">Staff Directory</a>
                     <a href="http://localhost:8080/web/profile" class="flyover-item ">My Profile</a>
                     <a href="http://localhost:8080/web/verified/management/performance" class="flyover-item ">Staff Performance</a>
                     <a href="/web/verified/management/manage_staff" class="flyover-item ">Manage Staff</a>
@@ -636,6 +670,16 @@
                 </div>
                 <div class="collapse nav-submenu" id="managementSubmenu">
                     <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/server" class="nav-link ">
+                                Server
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/management/staff" class="nav-link ">
+                                Staff Directory
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a href="http://localhost:8080/web/profile" class="nav-link ">
                                 My Profile
@@ -678,6 +722,12 @@
             <div class="nav-divider"></div>
 
             <li class="nav-item">
+                <button type="button" class="nav-link theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon nav-icon" id="themeIcon"></i>
+                    <span class="nav-text" id="themeLabel">Dark mode</span>
+                </button>
+            </li>
+            <li class="nav-item">
                 <a href="/web/verified/signout" class="nav-link">
                     <i class="fas fa-sign-out-alt nav-icon"></i>
                     <span class="nav-text">Sign out</span>
@@ -692,6 +742,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
     const contentWrapper = document.querySelector('.content-wrapper');
+
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+
+    function syncThemeButton(theme) {
+        const dark = theme === 'dark';
+        if (themeIcon) {
+            themeIcon.className = 'fas nav-icon ' + (dark ? 'fa-sun' : 'fa-moon');
+        }
+        if (themeLabel) {
+            themeLabel.textContent = dark ? 'Light mode' : 'Dark mode';
+        }
+    }
+
+    syncThemeButton(document.documentElement.getAttribute('data-theme') || 'light');
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function () {
+            const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('bsp-theme', next);
+            syncThemeButton(next);
+        });
+    }
 
     // Toggle sidebar
     sidebarToggle.addEventListener('click', function() {
@@ -854,75 +930,324 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-                <div class="content-wrapper ">
-            <div class="page-header mb-4">
-                <h1 class="page-title"><i class="fas fa-gavel me-2"></i>Public Bans</h1>
-                <p class="page-description">Active and recent bans visible to the community</p>
+        <div class="content-wrapper">
+                                    
+                            <div class="page-header d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Overview                        </h1>
+                        <p class="page-description">Server snapshot, recent joins, and staff activity</p>
+                    </div>
+                    <div></div>
+                </div>
+            
+                <div class="bsp-stat-grid">
+        <div class="stat-card">
+    <div class="stat-icon stat-icon-orange">
+        <i class="fas fa-users"></i>
+    </div>
+    <div class="stat-content">
+        <h3 class="stat-number">5</h3>
+        <p class="stat-label">Players</p>
             </div>
+</div>
+        <div class="stat-card">
+    <div class="stat-icon stat-icon-green">
+        <i class="fas fa-circle"></i>
+    </div>
+    <div class="stat-content">
+        <h3 class="stat-number">0</h3>
+        <p class="stat-label">Seen recently</p>
+            </div>
+</div>
+        <div class="stat-card">
+    <div class="stat-icon stat-icon-blue">
+        <i class="fas fa-calendar-day"></i>
+    </div>
+    <div class="stat-content">
+        <h3 class="stat-number">3</h3>
+        <p class="stat-label">Joined today</p>
+            </div>
+</div>
+        <div class="stat-card">
+    <div class="stat-icon stat-icon-orange">
+        <i class="fas fa-star"></i>
+    </div>
+    <div class="stat-content">
+        <h3 class="stat-number">70</h3>
+        <p class="stat-label">Avg trust</p>
+            </div>
+</div>
+        <div class="stat-card">
+    <div class="stat-icon stat-icon-blue">
+        <i class="fas fa-clock"></i>
+    </div>
+    <div class="stat-content">
+        <h3 class="stat-number">93h 35m</h3>
+        <p class="stat-label">Playtime</p>
+            </div>
+</div>
+        <div class="stat-card">
+    <div class="stat-icon stat-icon-orange">
+        <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="stat-content">
+        <h3 class="stat-number">4</h3>
+        <p class="stat-label">Warns</p>
+            </div>
+</div>
+        <div class="stat-card">
+    <div class="stat-icon stat-icon-red">
+        <i class="fas fa-ban"></i>
+    </div>
+    <div class="stat-content">
+        <h3 class="stat-number">1</h3>
+        <p class="stat-label">Bans</p>
+            </div>
+</div>
+        <div class="stat-card">
+    <div class="stat-icon stat-icon-blue">
+        <i class="fas fa-eye"></i>
+    </div>
+    <div class="stat-content">
+        <h3 class="stat-number">1</h3>
+        <p class="stat-label">Watchlist</p>
+            </div>
+</div>
+    </div>
+
+    <div class="hub-quick-links">
+        <a href="http://localhost:8080/web/verified/server" class="bsp-pill">
+            <i class="fas fa-server"></i>
+        Server
+</a>
+        <a href="http://localhost:8080/web/verified/players/online" class="bsp-pill">
+            <i class="fas fa-circle"></i>
+        Online
+</a>
+        <a href="http://localhost:8080/web/verified/lookup" class="bsp-pill">
+            <i class="fas fa-search"></i>
+        Lookup
+</a>
+        <a href="http://localhost:8080/web/verified/watchlist" class="bsp-pill">
+            <i class="fas fa-eye"></i>
+        Watchlist
+</a>
+        <a href="http://localhost:8080/web/verified/players/joins" class="bsp-pill">
+            <i class="fas fa-sign-in-alt"></i>
+        Recent joins
+</a>
+        <a href="http://localhost:8080/web/verified/records/activity" class="bsp-pill">
+            <i class="fas fa-stream"></i>
+        Activity
+</a>
+        <a href="http://localhost:8080/web/verified/management/performance" class="bsp-pill">
+            <i class="fas fa-trophy"></i>
+        Staff stats
+</a>
+        <a href="http://localhost:8080/web/verified/records/bans" class="bsp-pill">
+            <i class="fas fa-gavel"></i>
+        Bans
+</a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
             <div class="panel-card">
             <div class="panel-card-header">
-                            <i class="fas fa-gavel me-2"></i>
-                        Published bans
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                        Recent joins
         </div>
         <div class="table-responsive">
     <table class="table table-hover mb-0 profile-table">
                     <thead>
                 <tr>
                                             <th>Player</th>
-                                            <th>Reason</th>
-                                            <th>Duration</th>
-                                            <th>Staff</th>
-                                            <th>When</th>
+                                            <th>Trust</th>
+                                            <th>Last seen</th>
                                     </tr>
             </thead>
                 <tbody>
             <tr>
-                            <td>
-                                                                    <a href="http://localhost:8080/web/verified/players/2">
-                                        NightHawk
-                                    </a>
-                                                            </td>
-                            <td>Exploiting</td>
-                            <td>2026-11-02 22:13:07</td>
-                            <td>admin</td>
-                            <td>3 days ago</td>
+                            <td><a href="http://localhost:8080/web/verified/players/1">WolfBadger</a></td>
+                            <td>92</td>
+                            <td>52 minutes ago</td>
+                        </tr>
+                                                                    <tr>
+                            <td><a href="http://localhost:8080/web/verified/players/4">GhostMedic</a></td>
+                            <td>88</td>
+                            <td>56 minutes ago</td>
+                        </tr>
+                                                                    <tr>
+                            <td><a href="http://localhost:8080/web/verified/players/2">NightHawk</a></td>
+                            <td>41</td>
+                            <td>2 hours ago</td>
+                        </tr>
+                                                                    <tr>
+                            <td><a href="http://localhost:8080/web/verified/players/3">RileyV</a></td>
+                            <td>78</td>
+                            <td>2 days ago</td>
+                        </tr>
+                                                                    <tr>
+                            <td><a href="http://localhost:8080/web/verified/players/5">NewJoin_91</a></td>
+                            <td>50</td>
+                            <td>1 week ago</td>
                         </tr>
         </tbody>
     </table>
 </div>
 </div>
         </div>
+        <div class="col-lg-6 mb-4">
+            <div class="panel-card">
+            <div class="panel-card-header">
+                            <i class="fas fa-stream me-2"></i>
+                        Latest staff actions
+        </div>
+        <div class="activity-feed">
+                                            <div class="activity-row">
+    <span class="badge bg-warning text-dark">Warn</span>
+    <div>
+        <strong>admin</strong> warned
+                            <a href="http://localhost:8080/web/verified/players/1">WolfBadger</a>
+                            <div class="activity-reason">Test warning from web panel</div>
+                    <small>53 minutes ago</small>
+            </div>
+</div>
+                                            <div class="activity-row">
+    <span class="badge bg-orange">Kick</span>
+    <div>
+        <strong>admin</strong> kicked
+                            <a href="http://localhost:8080/web/verified/players/2">NightHawk</a>
+                            <div class="activity-reason">Combat logging</div>
+                    <small>4 hours ago</small>
+            </div>
+</div>
+                                            <div class="activity-row">
+    <span class="badge bg-success">Commend</span>
+    <div>
+        <strong>admin</strong> commended
+                            <a href="http://localhost:8080/web/verified/players/4">GhostMedic</a>
+                            <div class="activity-reason">Mass casualty response</div>
+                    <small>8 hours ago</small>
+            </div>
+</div>
+                                            <div class="activity-row">
+    <span class="badge bg-warning text-dark">Warn</span>
+    <div>
+        <strong>admin</strong> warned
+                            <a href="http://localhost:8080/web/verified/players/2">NightHawk</a>
+                            <div class="activity-reason">Metagame</div>
+                    <small>15 hours ago</small>
+            </div>
+</div>
+                                            <div class="activity-row">
+    <span class="badge bg-success">Commend</span>
+    <div>
+        <strong>admin</strong> commended
+                            <a href="http://localhost:8080/web/verified/players/1">WolfBadger</a>
+                            <div class="activity-reason">Helped a new player</div>
+                    <small>17 hours ago</small>
+            </div>
+</div>
+                                            <div class="activity-row">
+    <span class="badge bg-info">Note</span>
+    <div>
+        <strong>admin</strong> noted
+                            <a href="http://localhost:8080/web/verified/players/2">NightHawk</a>
+                            <div class="activity-reason">Watch for vehicle spam</div>
+                    <small>1 day ago</small>
+            </div>
+</div>
+                                            <div class="activity-row">
+    <span class="badge bg-info">Note</span>
+    <div>
+        <strong>admin</strong> noted
+                            <a href="http://localhost:8080/web/verified/players/1">WolfBadger</a>
+                            <div class="activity-reason">Trusted community member</div>
+                    <small>1 day ago</small>
+            </div>
+</div>
+                                            <div class="activity-row">
+    <span class="badge bg-success">Commend</span>
+    <div>
+        <strong>admin</strong> commended
+                            <a href="http://localhost:8080/web/verified/players/3">RileyV</a>
+                            <div class="activity-reason">Great scene</div>
+                    <small>1 day ago</small>
+            </div>
+</div>
+                                            <div class="activity-row">
+    <span class="badge bg-info">Note</span>
+    <div>
+        <strong>admin</strong> noted
+                            <a href="http://localhost:8080/web/verified/players/4">GhostMedic</a>
+                            <div class="activity-reason">EMS lead on weekends</div>
+                    <small>1 day ago</small>
+            </div>
+</div>
+                                            <div class="activity-row">
+    <span class="badge bg-warning text-dark">Warn</span>
+    <div>
+        <strong>admin</strong> warned
+                            <a href="http://localhost:8080/web/verified/players/2">NightHawk</a>
+                            <div class="activity-reason">Fail RP</div>
+                    <small>1 day ago</small>
+            </div>
+</div>
+                                    </div>
+</div>
+        </div>
     </div>
-    <footer class="app-footer">
-    <a href="https://zap-hosting.com/badger" target="_blank" rel="noopener">
-        Partnership with ZAP-Hosting
-    </a>
-</footer>
-<style>
-    .app-footer {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 900;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 40px;
-        background: #0b0d12;
-        border-top: 1px solid rgba(255,255,255,0.06);
+
+    <div class="panel-card">
+            <div class="panel-card-header">
+                            <i class="fas fa-user-shield me-2"></i>
+                        Low trust players
+        </div>
+        <div class="table-responsive">
+    <table class="table table-hover mb-0 profile-table">
+                    <thead>
+                <tr>
+                                            <th>Player</th>
+                                            <th>Trust</th>
+                                            <th></th>
+                                    </tr>
+            </thead>
+                <tbody>
+            <tr>
+                    <td>NightHawk</td>
+                    <td>41</td>
+                    <td><a href="http://localhost:8080/web/verified/players/2">Open profile</a></td>
+                </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+        </div>
+    </div>
+        <style>
+    .max-height-70 {
+        max-height: 70px;
     }
-    .app-footer a {
-        color: #9ca3af;
-        font-size: 0.78rem;
-        font-weight: 600;
-        text-decoration: none;
-        letter-spacing: 0.02em;
-    }
-    .app-footer a:hover { color: #fd7e14; }
-    .sidebar-expanded ~ * .app-footer,
-    body .app-footer { padding-left: 0; }
 </style>
+<footer class="text-center text-white fixed-bottom" style="background-color: black;">
+    <div class="container-fluid max-height-70">
+        <a href="https://zap-hosting.com/badger" target="_blank">
+            <div class="row max-height-70">
+                <div class="col-4 max-height-70" style="background-color: #57BC54;">
+                </div>
+                <div class="col-4 px-0 max-height-70 d-flex">
+                    <div class="flex-grow-1" style="background-color: #57BC54"></div>
+                    <img src="/img/badger-partnership-zap-banner.png" style="height: 100%" />
+                </div>
+                <div class="col-4 max-height-70">
+                </div>
+            </div>
+        </a>
+    </div>
+</footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js" integrity="sha512-EKWWs1ZcA2ZY9lbLISPz8aGR2+L7JVYqBAYTq5AXgBkSjRSuQEGqWx8R1zAX16KdXPaCjOCaKE8MCpU0wcHlHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.jquery.min.js"></script>
@@ -932,5 +1257,5 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.0/gridstack-all.min.js" integrity="sha512-HrBVB/mAEb1KuouvSb7sE9dR43ziTePw/IibQWjK34nl5Mdqj2Dy7tfh2yiNLjyDGEJK4hXTrjlk7myXERaOsA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/i18n/datepicker.en.js"></script>
-</body>
+            </body>
 </html>

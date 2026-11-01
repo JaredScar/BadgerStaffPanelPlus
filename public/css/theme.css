@@ -24,9 +24,9 @@
 
 [data-theme="dark"] {
     color-scheme: dark;
-    --bsp-canvas: #0f1218;
-    --bsp-surface: #171b22;
-    --bsp-surface-2: #12161d;
+    --bsp-canvas: #0c0f14;
+    --bsp-surface: #171c26;
+    --bsp-surface-2: #12171f;
     --bsp-text: #f3f4f6;
     --bsp-muted: #9ca3af;
     --bsp-border: rgba(255, 255, 255, 0.08);
@@ -35,7 +35,7 @@
     --bsp-accent: #fb923c;
     --bsp-accent-strong: #f97316;
     --bsp-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px rgba(0, 0, 0, 0.22);
-    --bsp-sidebar: #12151c;
+    --bsp-sidebar: #090b10;
     --bsp-sidebar-border: rgba(255, 255, 255, 0.06);
     --bsp-sidebar-text: #9ca3af;
     --bsp-sidebar-text-strong: #f3f4f6;
@@ -503,3 +503,60 @@ button.nav-link.theme-toggle {
 [data-theme="dark"] .stat-icon-green { color: #34d399 !important; }
 [data-theme="dark"] .stat-icon-blue { color: #93c5fd !important; }
 [data-theme="dark"] .stat-icon-red { color: #fca5a5 !important; }
+
+.note-item {
+    background: var(--bsp-surface-2) !important;
+    color: var(--bsp-text) !important;
+    border-left: 3px solid var(--bsp-accent) !important;
+    border-radius: 10px !important;
+}
+
+.note-content,
+.user-info span,
+.permission-category-title {
+    color: var(--bsp-text) !important;
+}
+
+.roles-table,
+.staff-table,
+.no-data-message,
+.permissions-section,
+.permission-category {
+    background: var(--bsp-surface) !important;
+    color: var(--bsp-text) !important;
+    border-color: var(--bsp-border) !important;
+}
+
+.roles-table thead th,
+.staff-table thead th {
+    background: var(--bsp-surface-2) !important;
+    color: var(--bsp-muted) !important;
+    border-color: var(--bsp-border) !important;
+}
+
+.roles-table tbody td,
+.staff-table tbody td {
+    color: var(--bsp-text) !important;
+    border-color: var(--bsp-border) !important;
+    background: transparent !important;
+}
+
+.roles-table tbody tr:hover,
+.staff-table tbody tr:hover {
+    background: var(--bsp-hover) !important;
+}
+
+.dataTables_wrapper,
+.dataTables_info,
+.dataTables_length,
+.dataTables_filter {
+    color: var(--bsp-muted) !important;
+}
+
+.dataTables_filter input,
+.dataTables_length select {
+    background: var(--bsp-input) !important;
+    color: var(--bsp-text) !important;
+    border: 1px solid var(--bsp-border) !important;
+    border-radius: 8px;
+}
