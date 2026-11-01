@@ -1,12 +1,114 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="refresh" content="0;url='http://localhost:8080/web/verified/dashboard'" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">
+    <title>BadgerStaffPanel+</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.0/css/fixedHeader.dataTables.min.css" />
+    <!-- Include GridStack CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.0/gridstack.min.css" integrity="sha512-GEMqAs1Ai2iirp6QhD4N5Qt7tDn1RGgF1CY2xp57LrX3vqTDehSC88IOFewV/L84htjbN7aazcK10FyzH+eXSA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Include air-datepicker CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" />
 
-        <title>Redirecting to http://localhost:8080/web/verified/dashboard</title>
+    <link rel="stylesheet" href="http://localhost:8080/css/global.css" />
+    <link rel="stylesheet" href="http://localhost:8080/css/players.css?v=1793499860" />
+            <link rel="stylesheet" href="http://localhost:8080/css/login/auth.css" />
     </head>
-    <body>
-        Redirecting to <a href="http://localhost:8080/web/verified/dashboard">http://localhost:8080/web/verified/dashboard</a>.
-    </body>
+    <body class="login-page">
+        <section class="login-shell background-sizing gta-bg1">
+            <div class="login-overlay"></div>
+            <div class="container login-container">
+                                
+                <div class="login-card">
+                    <div class="login-brand">
+                        <img src="http://localhost:8080/img/badgerstaffpanel-logo.png" alt="Badger Staff Panel">
+                        <h1>BadgerStaffPanel+</h1>
+                        <p>Staff tools for your FiveM server</p>
+                    </div>
+
+                    <form name="login-form" class="login-form" id="form" method="post" action="http://localhost:8080/web/auth/login">
+                        <input type="hidden" name="_token" value="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">                        <label class="login-label" for="server_id">Server</label>
+                        <div class="login-field">
+                            <i class="fa-solid fa-server"></i>
+                            <select required id="server_id" name="server_id" class="form-select">
+                                                                                                                                                <option value="1">Demo Server</option>
+                                                                                                </select>
+                        </div>
+
+                        <label class="login-label" for="typeUsernameX">Username</label>
+                        <div class="login-field">
+                            <i class="fa-solid fa-user"></i>
+                            <input required type="text" id="typeUsernameX" name="username" placeholder="admin" autocomplete="username">
+                        </div>
+
+                        <label class="login-label" for="typePasswordX">Password</label>
+                        <div class="login-field">
+                            <i class="fa-solid fa-lock"></i>
+                            <input required type="password" id="typePasswordX" name="password" placeholder="••••••••" autocomplete="current-password">
+                        </div>
+
+                        <div class="login-meta">
+                            <a href="http://localhost:8080/web/forgot_password">Forgot password?</a>
+                        </div>
+
+                        <div class="g-recaptcha" data-sitekey="6LeuAlYUAAAAAIiWbqk5EosWoFN3UyCS0XC_GYqB" data-size="invisible" data-callback="onSubmit"></div>
+
+                        <button class="btn login-btn login-btn-primary" type="submit">
+                            <i class="fa-solid fa-right-to-bracket"></i> Sign in
+                        </button>
+                    </form>
+
+                                            <button class="btn login-btn login-btn-discord" type="button" disabled title="Discord login is not configured">
+                            <i class="fa-brands fa-discord"></i> Continue with Discord
+                        </button>
+                    
+                                            <div class="login-demo">
+                            Demo login: <strong>admin</strong> / <strong>password</strong>
+                        </div>
+                                    </div>
+            </div>
+        </section>
+        <style>
+    .max-height-70 {
+        max-height: 70px;
+    }
+</style>
+<footer class="text-center text-white fixed-bottom" style="background-color: black;">
+
+    <!-- Copyright -->
+    <div class="container-fluid max-height-70">
+        <a href="https://zap-hosting.com/badger" target="_blank">
+            <div class="row max-height-70">
+                <div class="col-4 max-height-70" style="background-color: #57BC54;">
+                </div>
+                <div class="col-4 px-0 max-height-70 d-flex">
+                    <div class="flex-grow-1" style="background-color: #57BC54"></div>
+                    <img src="/img/badger-partnership-zap-banner.png" style="height: 100%" />
+                </div>
+                <div class="col-4 max-height-70">
+                </div>
+            </div>
+        </a>
+    </div>
+    <!-- Copyright -->
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js" integrity="sha512-EKWWs1ZcA2ZY9lbLISPz8aGR2+L7JVYqBAYTq5AXgBkSjRSuQEGqWx8R1zAX16KdXPaCjOCaKE8MCpU0wcHlHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
+<!-- Include GridStack JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.0/gridstack-all.min.js" integrity="sha512-HrBVB/mAEb1KuouvSb7sE9dR43ziTePw/IibQWjK34nl5Mdqj2Dy7tfh2yiNLjyDGEJK4hXTrjlk7myXERaOsA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- Include air-datepicker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/i18n/datepicker.en.js"></script>
+        </body>
 </html>

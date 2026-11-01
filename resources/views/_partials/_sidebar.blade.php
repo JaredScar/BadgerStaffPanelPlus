@@ -6,9 +6,22 @@
         top: 0;
         z-index: 1000;
         transition: width 0.3s ease;
-        background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
-        border-right: 1px solid #dee2e6;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        background: #11141b;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: none;
+    }
+
+    .nav-section-label {
+        padding: 0.85rem 1.25rem 0.3rem;
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #6b7280;
+        font-weight: 700;
+    }
+
+    .sidebar-collapsed .nav-section-label {
+        display: none;
     }
 
     .sidebar-expanded {
@@ -21,7 +34,7 @@
 
     .sidebar-header {
         padding: 1rem;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -31,9 +44,9 @@
     .sidebar-brand {
         display: flex;
         align-items: center;
-        color: #495057;
+        color: #f3f4f6;
         font-weight: 600;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         text-decoration: none;
         transition: opacity 0.3s ease;
     }
@@ -47,7 +60,7 @@
     .sidebar-toggle {
         background: none;
         border: none;
-        color: #6c757d;
+        color: #9ca3af;
         font-size: 1.2rem;
         cursor: pointer;
         padding: 0.5rem;
@@ -56,13 +69,13 @@
     }
 
     .sidebar-toggle:hover {
-        background-color: #f8f9fa;
-        color: #495057;
+        background-color: rgba(255, 255, 255, 0.06);
+        color: #f3f4f6;
     }
 
     .sidebar-nav {
-        padding: 1rem 0;
-        height: calc(100vh - 70px);
+        padding: 0.75rem 0 1.25rem;
+        height: calc(100vh - 132px);
         overflow-y: auto;
     }
 
@@ -73,29 +86,31 @@
     .nav-link {
         display: flex;
         align-items: center;
-        padding: 0.75rem 1rem;
-        color: #6c757d;
+        padding: 0.65rem 0.9rem;
+        color: #9ca3af;
         text-decoration: none;
         border-radius: 0;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         position: relative;
         margin: 0 0.5rem;
-        border-radius: 0.5rem;
+        border-radius: 0.6rem;
+        font-weight: 500;
     }
 
     .nav-link:hover {
-        background-color: #f8f9fa;
-        color: #495057;
+        background-color: rgba(255, 255, 255, 0.06);
+        color: #f3f4f6;
     }
 
     .nav-link.active {
-        background-color: #fd7e14;
-        color: white;
+        background: rgba(253, 126, 20, 0.16);
+        color: #fd7e14;
+        box-shadow: none;
     }
 
     .nav-link.active:hover {
-        background-color: #e8590c;
-        color: white;
+        background: rgba(253, 126, 20, 0.22);
+        color: #fd7e14;
     }
 
     .nav-icon {
@@ -138,20 +153,20 @@
     }
 
     .nav-submenu .nav-link {
-        padding: 0.5rem 1rem 0.5rem 3rem;
-        font-size: 0.9rem;
-        color: #6c757d;
+        padding: 0.45rem 1rem 0.45rem 2.75rem;
+        font-size: 0.88rem;
+        color: #9ca3af;
         margin: 0 0.5rem;
     }
 
     .nav-submenu .nav-link:hover {
-        background-color: #f8f9fa;
-        color: #495057;
+        background-color: rgba(255, 255, 255, 0.06);
+        color: #f3f4f6;
     }
 
     .nav-submenu .nav-link.active {
-        background-color: #fd7e14;
-        color: white;
+        background: rgba(253, 126, 20, 0.16);
+        color: #fd7e14;
     }
 
     .sidebar-collapsed .nav-text,
@@ -164,8 +179,13 @@
         overflow: hidden;
     }
 
-    .sidebar-collapsed .nav-submenu {
+    .sidebar-collapsed .nav-submenu,
+    .sidebar-collapsed .sidebar-search {
         display: none;
+    }
+
+    .sidebar-collapsed .sidebar-nav {
+        height: calc(100vh - 70px);
     }
 
     .sidebar-collapsed .nav-link {
@@ -216,7 +236,7 @@
 
     .nav-divider {
         height: 1px;
-        background-color: #dee2e6;
+        background-color: rgba(255, 255, 255, 0.06);
         margin: 0.5rem 1rem;
     }
 
@@ -230,12 +250,12 @@
     }
 
     .sidebar-nav::-webkit-scrollbar-thumb {
-        background: #dee2e6;
+        background: rgba(255, 255, 255, 0.12);
         border-radius: 2px;
     }
 
     .sidebar-nav::-webkit-scrollbar-thumb:hover {
-        background: #adb5bd;
+        background: rgba(255, 255, 255, 0.22);
     }
 
     /* Tooltip for collapsed sidebar */
@@ -371,7 +391,7 @@
 
     <nav class="sidebar-nav">
         <ul class="nav flex-column">
-
+            <li class="nav-section-label">Home</li>
 
             <li class="nav-item">
                 <a href="/web/verified/dashboard" class="nav-link {{ request()->is('web/verified/dashboard') ? 'active' : '' }}">
@@ -379,7 +399,20 @@
                     <span class="nav-text">Dashboard</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('OVERVIEW') }}" class="nav-link {{ request()->is('web/verified/overview') ? 'active' : '' }}">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span class="nav-text">Overview</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('LOOKUP') }}" class="nav-link {{ request()->is('web/verified/lookup') ? 'active' : '' }}">
+                    <i class="fas fa-search nav-icon"></i>
+                    <span class="nav-text">Lookup</span>
+                </a>
+            </li>
 
+            <li class="nav-section-label">Players</li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#playersSubmenu" aria-expanded="false">
                     <i class="fas fa-users nav-icon"></i>
@@ -392,6 +425,8 @@
                     <a href="/web/verified/players/week" class="flyover-item {{ request()->is('web/verified/players/week') ? 'active' : '' }}">Weekly</a>
                     <a href="/web/verified/players/month" class="flyover-item {{ request()->is('web/verified/players/month') ? 'active' : '' }}">Monthly</a>
                     <a href="/web/verified/players" class="flyover-item {{ request()->is('web/verified/players') ? 'active' : '' }}">All Players</a>
+                    <a href="{{ route('RECENT_JOINS') }}" class="flyover-item {{ request()->is('web/verified/players/joins') ? 'active' : '' }}">Recent Joins</a>
+                    <a href="{{ route('WATCHLIST') }}" class="flyover-item {{ request()->is('web/verified/watchlist') ? 'active' : '' }}">Watchlist</a>
                 </div>
                 <div class="collapse nav-submenu" id="playersSubmenu">
                     <ul class="nav flex-column">
@@ -415,10 +450,21 @@
                                 All Players
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('RECENT_JOINS') }}" class="nav-link {{ request()->is('web/verified/players/joins') ? 'active' : '' }}">
+                                Recent Joins
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('WATCHLIST') }}" class="nav-link {{ request()->is('web/verified/watchlist') ? 'active' : '' }}">
+                                Watchlist
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
 
+            <li class="nav-section-label">Records</li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#recordsSubmenu" aria-expanded="false">
                     <i class="fas fa-file-alt nav-icon"></i>
@@ -435,6 +481,7 @@
                     <a href="/web/verified/records/notes" class="flyover-item {{ request()->is('web/verified/records/notes') ? 'active' : '' }}">Notes</a>
                     <a href="/web/verified/records/activity" class="flyover-item {{ request()->is('web/verified/records/activity') ? 'active' : '' }}">Activity</a>
                     <a href="/web/verified/records" class="flyover-item {{ request()->is('web/verified/records') ? 'active' : '' }}">All Records</a>
+                    <a href="{{ route('SHOW_BANS') }}" class="flyover-item {{ request()->is('web/bans') ? 'active' : '' }}">Public Bans</a>
                 </div>
                 <div class="collapse nav-submenu" id="recordsSubmenu">
                     <ul class="nav flex-column">
@@ -478,12 +525,17 @@
                                 All Records
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('SHOW_BANS') }}" class="nav-link {{ request()->is('web/bans') ? 'active' : '' }}">
+                                Public Bans
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
 
             <div class="nav-divider"></div>
-
+            <li class="nav-section-label">Staff</li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#managementSubmenu" aria-expanded="false">
                     <i class="fas fa-cogs nav-icon"></i>
@@ -492,6 +544,8 @@
                 </a>
                 <div class="nav-flyover" id="managementFlyover">
                     <div class="flyover-header">Management</div>
+                    <a href="{{ route('SHOW_PROFILE') }}" class="flyover-item {{ request()->is('web/profile') ? 'active' : '' }}">My Profile</a>
+                    <a href="{{ route('STAFF_PERFORMANCE') }}" class="flyover-item {{ request()->is('web/verified/management/performance') ? 'active' : '' }}">Staff Performance</a>
                     <a href="/web/verified/management/manage_staff" class="flyover-item {{ request()->is('web/verified/management/manage_staff') ? 'active' : '' }}">Manage Staff</a>
                     <a href="/web/verified/management/manage_roles" class="flyover-item {{ request()->is('web/verified/management/manage_roles') ? 'active' : '' }}">Manage Roles</a>
                     <a href="/web/verified/management/manage_tokens" class="flyover-item {{ request()->is('web/verified/management/manage_tokens') ? 'active' : '' }}">Manage Tokens</a>
@@ -500,6 +554,16 @@
                 </div>
                 <div class="collapse nav-submenu" id="managementSubmenu">
                     <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{{ route('SHOW_PROFILE') }}" class="nav-link {{ request()->is('web/profile') ? 'active' : '' }}">
+                                My Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('STAFF_PERFORMANCE') }}" class="nav-link {{ request()->is('web/verified/management/performance') ? 'active' : '' }}">
+                                Staff Performance
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a href="/web/verified/management/manage_staff" class="nav-link {{ request()->is('web/verified/management/manage_staff') ? 'active' : '' }}">
                                 Manage Staff

@@ -1,27 +1,9 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-@include('_partials._html_header')
-    <body class="background-sizing gta-bg1">
-        <div class="container-fluid master-contain">
-            @include('_partials._toast')
-            @include('_partials._sidebar')
-            <div class="content-wrapper">
-                <!-- Header Section -->
-                <div class="page-header d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h1 class="page-title">
-                            <i class="fas fa-database text-warning me-2"></i>
-                            All Records
-                        </h1>
-                        <p class="page-description">View all player records in one place</p>
-                    </div>
-                </div>
+@extends('verified.layout')
 
-                <!-- Include the records widget -->
-                @include('_widgets.records.widget_records')
-            </div>
-        </div>
+@section('icon', 'fa-database')
+@section('title', 'All Records')
+@section('subtitle', 'View all player records in one place')
 
-        @include('_partials._html_footer')
-    </body>
-</html>
+@section('content')
+    @include('_widgets.records.widget_records')
+@endsection

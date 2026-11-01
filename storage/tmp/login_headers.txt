@@ -1,0 +1,11 @@
+HTTP/1.1 302 Found
+Date: Sun, 01 Nov 2026 02:24:40 GMT
+Server: Apache/2.4.69 (Debian)
+X-Powered-By: PHP/8.2.35
+Cache-Control: no-cache, private
+Location: http://localhost:8080/web/verified/dashboard
+Set-Cookie: XSRF-TOKEN=eyJpdiI6IkU0bm51YnBydytHdTlMdGZ1QnFqYXc9PSIsInZhbHVlIjoiVWc0U283UGFBalVwTDBoTEVnVjNkdDdpdUtUTzFMdDZDUUMzMUN4bmJFdUc5c1V4NHJxdHhacng2bVJjSnFNVXZaRHR5Nk9LVUltNmNWSCtkRk5kaGoyOVhaSWVib1lhZncvV05oNGNEc2JnbS9NZmsrSy8wZTRXZXNra2lwbXciLCJtYWMiOiIyMTI3ZDc5NTk3NzZjYTQzNGZjMzI2ZTZlNDhkMDcyZTUyNDZlZGQ5YmI4NjY1MThlMGNmN2RkYmZiZjY1MzkxIiwidGFnIjoiIn0%3D; expires=Sun, 01 Nov 2026 12:24:41 GMT; Max-Age=36000; path=/; samesite=lax
+Set-Cookie: badgerstaffpanel_session=eyJpdiI6InBya2s3Tm5JaHFwT2lkakZZZEVXR3c9PSIsInZhbHVlIjoic3IyZ08ySHBGUm0vY0tlVUZnM3luMjlrcWVueXA3QzNUSm9YRFpWNzdJMnZvZFdiajBJdFpObGlVUEJIMG9rdVZQa1Vpbmh5NThkUXY3bjk1RUg2OWxCd25EQ0k5Y1h2TEllU1RiOXltNnBYR3hzQi9nRU14UjJqYUdtM25Fam8iLCJtYWMiOiJhMWJiOGY0MzI3NTgzYmM0NWU3ODQxNjVjNjExNmQ2YmRhOWFhYTAzZGI2MTljZWIwZTZjZDhiOTA3MmY4MGQ4IiwidGFnIjoiIn0%3D; path=/; httponly; samesite=lax
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=UTF-8
+

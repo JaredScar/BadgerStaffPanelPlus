@@ -61,6 +61,7 @@ class DemoDataSeeder extends Seeder
         }
 
         $this->seedDemoPlayers($server->server_id, $staff->staff_id);
+        $this->seedWatchlist($server->server_id, $staff->staff_id);
     }
 
     private function seedDemoPlayers(int $serverId, int $staffId): void
@@ -226,5 +227,31 @@ class DemoDataSeeder extends Seeder
                 'updated_at' => now(),
             ]);
         }
+    }
+
+    private function seedWatchlist(int $serverId, int $staffId): void
+    {
+        if (!Schema::hasTable('watchlist')) {
+            return;
+        }
+
+        $playerId = DB::table('players')->where('game_license', 'nhk88license')->value('player_id');
+        if (!$playerId) {
+            return;
+        }
+
+        $exists = DB::table('watchlist')->where('server_id', $serverId)->where('player_id', $playerId)->exists();
+        if ($exists) {
+            return;
+        }
+
+        DB::table('watchlist')->insert([
+            'server_id' => $serverId,
+            'player_id' => $playerId,
+            'staff_id' => $staffId,
+            'reason' => 'Repeat Fail RP and vehicle spam',
+            'created_at' => now()->subHours(6),
+            'updated_at' => now(),
+        ]);
     }
 }

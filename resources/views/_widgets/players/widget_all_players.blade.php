@@ -34,9 +34,8 @@ $avgTrustScore = $totalPlayers > 0 ?
 $data['data'] = $tabData->values()->all();
 ?>
 
-<!-- Statistics Cards -->
 <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-md-3 col-6 mb-3">
         <div class="stat-card">
             <div class="stat-icon stat-icon-green">
                 <i class="fas fa-signal"></i>
@@ -48,7 +47,7 @@ $data['data'] = $tabData->values()->all();
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-6 mb-3">
         <div class="stat-card">
             <div class="stat-icon stat-icon-orange">
                 <i class="fas fa-users"></i>
@@ -60,9 +59,9 @@ $data['data'] = $tabData->values()->all();
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-6 mb-3">
         <div class="stat-card">
-            <div class="stat-icon stat-icon-orange">
+            <div class="stat-icon stat-icon-blue">
                 <i class="fas fa-clock"></i>
             </div>
             <div class="stat-content">
@@ -72,7 +71,7 @@ $data['data'] = $tabData->values()->all();
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-6 mb-3">
         <div class="stat-card">
             <div class="stat-icon stat-icon-orange">
                 <i class="fas fa-star"></i>
@@ -84,36 +83,29 @@ $data['data'] = $tabData->values()->all();
             </div>
         </div>
     </div>
-    </div>
-
-<!-- Search and Filter Section -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" class="form-control" placeholder="Search players..." id="allPlayersSearch">
-        </div>
-    </div>
-    <div class="col-md-6">
-        <select class="form-select" id="allPlayersFilter">
-            <option value="">All Players</option>
-            <option value="online">Online Only</option>
-            <option value="offline">Offline Only</option>
-            <option value="high_trust">High Trust Score</option>
-            <option value="low_trust">Low Trust Score</option>
-        </select>
-    </div>
 </div>
 
-<!-- All Players Records Section -->
-<div class="section-header">
-    <h2>All Players (<?php echo $totalPlayers; ?>)</h2>
+<div class="panel-toolbar">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" class="form-control" placeholder="Search players..." id="allPlayersSearch">
+    </div>
+    <select class="form-select" id="allPlayersFilter">
+        <option value="">All Players</option>
+        <option value="online">Online Only</option>
+        <option value="offline">Offline Only</option>
+        <option value="high_trust">High Trust Score</option>
+        <option value="low_trust">Low Trust Score</option>
+    </select>
 </div>
 
-<!-- All Players Records Table -->
-<div class="table-responsive">
-    <?php if (!empty($data['data'])): ?>
-        <table class="table table-hover all-players-table">
+<div class="panel-card">
+    <div class="panel-card-header">
+        <i class="fas fa-users me-2"></i>All Players (<?php echo $totalPlayers; ?>)
+    </div>
+    <div class="table-responsive">
+        <?php if (!empty($data['data'])): ?>
+            <table class="table table-hover mb-0 profile-table all-players-table">
         <thead>
             <tr>
                 <th>Player ID</th>
@@ -200,15 +192,14 @@ $data['data'] = $tabData->values()->all();
             <?php endforeach; ?>
         </tbody>
     </table>
-    <?php else: ?>
-        <div class="no-data-message">
-            <div class="text-center py-5">
-                <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                <h4 class="text-muted">No players found</h4>
-                <p class="text-muted">No players are registered in the system.</p>
+        <?php else: ?>
+            <div class="empty-state">
+                <i class="fas fa-users fa-3x"></i>
+                <h4>No players found</h4>
+                <p>No players are registered on this server yet.</p>
             </div>
-        </div>
-    <?php endif; ?>
+        <?php endif; ?>
+    </div>
 </div>
 
 <style>

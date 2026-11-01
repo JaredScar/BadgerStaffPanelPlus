@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="m7uacj2lSK1nnlAACt6h3iHioYoHhTJZUkAxaJJS">
+    <meta name="csrf-token" content="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">
     <title>Demo Server</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" />
 
     <link rel="stylesheet" href="http://localhost:8080/css/global.css" />
-    <link rel="stylesheet" href="http://localhost:8080/css/players.css" />
+    <link rel="stylesheet" href="http://localhost:8080/css/players.css?v=1793499860" />
     </head>
 <body class="background-sizing gta-bg1">
     <div class="container-fluid master-contain">
@@ -84,9 +84,22 @@
         top: 0;
         z-index: 1000;
         transition: width 0.3s ease;
-        background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
-        border-right: 1px solid #dee2e6;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        background: #fff;
+        border-right: 1px solid #eceff3;
+        box-shadow: 6px 0 28px rgba(0, 0, 0, 0.12);
+    }
+
+    .nav-section-label {
+        padding: 0.85rem 1.25rem 0.3rem;
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #adb5bd;
+        font-weight: 700;
+    }
+
+    .sidebar-collapsed .nav-section-label {
+        display: none;
     }
 
     .sidebar-expanded {
@@ -139,8 +152,8 @@
     }
 
     .sidebar-nav {
-        padding: 1rem 0;
-        height: calc(100vh - 70px);
+        padding: 0.75rem 0 1.25rem;
+        height: calc(100vh - 132px);
         overflow-y: auto;
     }
 
@@ -167,8 +180,9 @@
     }
 
     .nav-link.active {
-        background-color: #fd7e14;
+        background: linear-gradient(135deg, #fd7e14, #e8590c);
         color: white;
+        box-shadow: 0 6px 14px rgba(253, 126, 20, 0.28);
     }
 
     .nav-link.active:hover {
@@ -242,8 +256,13 @@
         overflow: hidden;
     }
 
-    .sidebar-collapsed .nav-submenu {
+    .sidebar-collapsed .nav-submenu,
+    .sidebar-collapsed .sidebar-search {
         display: none;
+    }
+
+    .sidebar-collapsed .sidebar-nav {
+        height: calc(100vh - 70px);
     }
 
     .sidebar-collapsed .nav-link {
@@ -449,7 +468,7 @@
 
     <nav class="sidebar-nav">
         <ul class="nav flex-column">
-
+            <li class="nav-section-label">Home</li>
 
             <li class="nav-item">
                 <a href="/web/verified/dashboard" class="nav-link ">
@@ -457,7 +476,20 @@
                     <span class="nav-text">Dashboard</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="http://localhost:8080/web/verified/overview" class="nav-link ">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span class="nav-text">Overview</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="http://localhost:8080/web/verified/lookup" class="nav-link ">
+                    <i class="fas fa-search nav-icon"></i>
+                    <span class="nav-text">Lookup</span>
+                </a>
+            </li>
 
+            <li class="nav-section-label">Players</li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#playersSubmenu" aria-expanded="false">
                     <i class="fas fa-users nav-icon"></i>
@@ -470,6 +502,8 @@
                     <a href="/web/verified/players/week" class="flyover-item ">Weekly</a>
                     <a href="/web/verified/players/month" class="flyover-item ">Monthly</a>
                     <a href="/web/verified/players" class="flyover-item ">All Players</a>
+                    <a href="http://localhost:8080/web/verified/players/joins" class="flyover-item ">Recent Joins</a>
+                    <a href="http://localhost:8080/web/verified/watchlist" class="flyover-item ">Watchlist</a>
                 </div>
                 <div class="collapse nav-submenu" id="playersSubmenu">
                     <ul class="nav flex-column">
@@ -493,10 +527,21 @@
                                 All Players
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/players/joins" class="nav-link ">
+                                Recent Joins
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/watchlist" class="nav-link ">
+                                Watchlist
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
 
+            <li class="nav-section-label">Records</li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#recordsSubmenu" aria-expanded="false">
                     <i class="fas fa-file-alt nav-icon"></i>
@@ -513,6 +558,7 @@
                     <a href="/web/verified/records/notes" class="flyover-item ">Notes</a>
                     <a href="/web/verified/records/activity" class="flyover-item ">Activity</a>
                     <a href="/web/verified/records" class="flyover-item ">All Records</a>
+                    <a href="http://localhost:8080/web/bans" class="flyover-item ">Public Bans</a>
                 </div>
                 <div class="collapse nav-submenu" id="recordsSubmenu">
                     <ul class="nav flex-column">
@@ -556,12 +602,17 @@
                                 All Records
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/bans" class="nav-link ">
+                                Public Bans
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
 
             <div class="nav-divider"></div>
-
+            <li class="nav-section-label">Staff</li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#managementSubmenu" aria-expanded="false">
                     <i class="fas fa-cogs nav-icon"></i>
@@ -570,6 +621,8 @@
                 </a>
                 <div class="nav-flyover" id="managementFlyover">
                     <div class="flyover-header">Management</div>
+                    <a href="http://localhost:8080/web/profile" class="flyover-item ">My Profile</a>
+                    <a href="http://localhost:8080/web/verified/management/performance" class="flyover-item ">Staff Performance</a>
                     <a href="/web/verified/management/manage_staff" class="flyover-item ">Manage Staff</a>
                     <a href="/web/verified/management/manage_roles" class="flyover-item ">Manage Roles</a>
                     <a href="/web/verified/management/manage_tokens" class="flyover-item ">Manage Tokens</a>
@@ -578,6 +631,16 @@
                 </div>
                 <div class="collapse nav-submenu" id="managementSubmenu">
                     <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/profile" class="nav-link ">
+                                My Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/management/performance" class="nav-link ">
+                                Staff Performance
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a href="/web/verified/management/manage_staff" class="nav-link ">
                                 Manage Staff
@@ -787,275 +850,290 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
         <div class="content-wrapper">
-            
-            <a href="http://localhost:8080/web/verified/players" class="profile-back">
-                <i class="fas fa-arrow-left"></i> Back to Players
-            </a>
-
-            <div class="page-header d-flex justify-content-between align-items-start mb-4">
-                <div>
-                    <h1 class="page-title">
-                        <i class="fas fa-user me-2"></i>WolfBadger
-                    </h1>
-                    <p class="page-description">Player #1 · last seen 4 minutes ago</p>
-                </div>
-            </div>
-
                                     
-            <div class="profile-hero">
-                <div class="profile-hero-left">
-                    <div class="profile-avatar">W</div>
-                    <div class="profile-hero-info">
-                        <div class="profile-name">WolfBadger</div>
-                        <div class="profile-ids">
-                            Panel #1
-                             · license:abc12license                              · discord:394446211341615104                         </div>
-                        <div class="profile-chips">
-                            <span class="profile-chip warn">1 Warns</span>
-                            <span class="profile-chip kick">0 Kicks</span>
-                            <span class="profile-chip ban">0 Bans</span>
-                            <span class="profile-chip commend">1 Commends</span>
-                            <span class="profile-chip note">1 Notes</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="trust-ring">
-                    <div class="trust-ring-circle high">
-                        <span class="trust-ring-num">92</span>
-                        <span class="trust-ring-sub">Trust</span>
-                    </div>
+                                <a href="http://localhost:8080/web/verified/players" class="profile-back">
+        <i class="fas fa-arrow-left"></i> Back to Players
+    </a>
+            
+                <div class="profile-hero">
+        <div class="profile-hero-left">
+            <div class="profile-avatar">W</div>
+            <div class="profile-hero-info">
+                <div class="profile-name">WolfBadger</div>
+                <div class="profile-ids">
+                    Panel #1
+                     · license:abc12license                      · discord:394446211341615104                 </div>
+                <div class="profile-chips">
+                    <span class="profile-chip warn">2 Warns</span>
+                    <span class="profile-chip kick">0 Kicks</span>
+                    <span class="profile-chip ban">0 Bans</span>
+                    <span class="profile-chip commend">1 Commends</span>
+                    <span class="profile-chip note">1 Notes</span>
                 </div>
             </div>
-
-            <div class="row mb-4">
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon stat-icon-orange"><i class="fas fa-clock"></i></div>
-                        <div class="stat-content">
-                            <h3 class="stat-number">30h 20m</h3>
-                            <p class="stat-label">Playtime</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon stat-icon-blue"><i class="fas fa-sign-in-alt"></i></div>
-                        <div class="stat-content">
-                            <h3 class="stat-number">48</h3>
-                            <p class="stat-label">Connections</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon stat-icon-red"><i class="fas fa-gavel"></i></div>
-                        <div class="stat-content">
-                            <h3 class="stat-number">1</h3>
-                            <p class="stat-label">Infractions</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon stat-icon-green"><i class="fas fa-thumbs-up"></i></div>
-                        <div class="stat-content">
-                            <h3 class="stat-number">1</h3>
-                            <p class="stat-label">Commends</p>
-                        </div>
-                    </div>
-                </div>
+        </div>
+        <div class="trust-ring">
+            <div class="trust-ring-circle high">
+                <span class="trust-ring-num">92</span>
+                <span class="trust-ring-sub">Trust</span>
             </div>
-
-            <div class="row">
-                <div class="col-lg-7 mb-4">
-                    <div class="panel-card">
-                        <div class="panel-card-header"><i class="fas fa-gavel me-2"></i>Take Action</div>
-                        <form method="post" action="http://localhost:8080/web/verified/players/action" class="p-3">
-                            <input type="hidden" name="_token" value="m7uacj2lSK1nnlAACt6h3iHioYoHhTJZUkAxaJJS">                            <input type="hidden" name="player_id" value="1">
-                            <input type="hidden" name="action" id="actionType" value="warn">
-
-                            <div class="action-grid mb-3">
-                                                                    <button type="button" class="action-chip active" data-action="warn">Warn</button>
-                                                                    <button type="button" class="action-chip " data-action="kick">Kick</button>
-                                                                    <button type="button" class="action-chip " data-action="ban">Ban</button>
-                                                                    <button type="button" class="action-chip " data-action="commend">Commend</button>
-                                                                    <button type="button" class="action-chip " data-action="note">Note</button>
-                                                                    <button type="button" class="action-chip " data-action="trustscore">Trust</button>
-                                                            </div>
-
-                            <div id="durationWrap" class="mb-3 d-none">
-                                <label class="form-label">Duration</label>
-                                <select name="duration" class="form-select">
-                                    <option value="perm">Permanent</option>
-                                    <option value="1h">1 hour</option>
-                                    <option value="1d">1 day</option>
-                                    <option value="7d">7 days</option>
-                                    <option value="30d">30 days</option>
-                                </select>
-                            </div>
-
-                            <div id="scoreWrap" class="mb-3 d-none">
-                                <label class="form-label">Trust score (0–100)</label>
-                                <input type="number" min="0" max="100" name="trust_score" class="form-control" value="92">
-                            </div>
-
-                            <div id="reasonWrap" class="mb-3">
-                                <label class="form-label">Reason / note</label>
-                                <textarea name="reason" class="form-control" rows="3" maxlength="255" placeholder="Brief reason for the audit log..."></textarea>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-check me-1"></i> Submit action
-                            </button>
-                        </form>
-                    </div>
-
-                    <div class="panel-card mt-4">
-                        <div class="panel-card-header"><i class="fas fa-fingerprint me-2"></i>Identifiers</div>
-                        <div class="p-3 identifier-grid">
-                            <div><span>License</span>abc12license</div>
-                            <div><span>Steam</span>steam:11000010badger</div>
-                            <div><span>Discord</span>394446211341615104</div>
-                            <div><span>Live</span>—</div>
-                            <div><span>Xbox</span>—</div>
-                            <div><span>IP</span>10.0.0.12</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-5 mb-4">
-                    <div class="panel-card">
-                        <div class="panel-card-header"><i class="fas fa-clock-rotate-left me-2"></i>Recent Activity</div>
-                        <div class="activity-feed">
-                                                            <div class="activity-row">
-                                    <span class="badge bg-success">Commend</span>
-                                    <div>
-                                        <strong>admin</strong> commended this player
-                                        <div class="activity-reason">Helped a new player</div>
-                                        <small>17 hours ago</small>
-                                    </div>
-                                </div>
-                                                            <div class="activity-row">
-                                    <span class="badge bg-info">Note</span>
-                                    <div>
-                                        <strong>admin</strong> noted this player
-                                        <div class="activity-reason">Trusted community member</div>
-                                        <small>1 day ago</small>
-                                    </div>
-                                </div>
-                                                            <div class="activity-row">
-                                    <span class="badge bg-warning text-dark">Warn</span>
-                                    <div>
-                                        <strong>admin</strong> warned this player
-                                        <div class="activity-reason">RDM in Legion</div>
-                                        <small>1 day ago</small>
-                                    </div>
-                                </div>
-                                                    </div>
-                    </div>
-                </div>
-            </div>
-
-                            <div class="panel-card mb-4">
-                    <div class="panel-card-header">Warnings (1)</div>
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 profile-table">
-                            <thead>
-                                <tr>
-                                    <th>Detail</th>
-                                    <th>Staff</th>
-                                    <th>When</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                                                    <tr>
-                                        <td>RDM in Legion</td>
-                                        <td>admin</td>
-                                        <td>1 day ago</td>
-                                    </tr>
-                                                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                            <div class="panel-card mb-4">
-                    <div class="panel-card-header">Kicks (0)</div>
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 profile-table">
-                            <thead>
-                                <tr>
-                                    <th>Detail</th>
-                                    <th>Staff</th>
-                                    <th>When</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                                                    <tr><td colspan="3" class="text-muted">No kicks yet.</td></tr>
-                                                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                            <div class="panel-card mb-4">
-                    <div class="panel-card-header">Bans (0)</div>
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 profile-table">
-                            <thead>
-                                <tr>
-                                    <th>Detail</th>
-                                    <th>Staff</th>
-                                    <th>When</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                                                    <tr><td colspan="3" class="text-muted">No bans yet.</td></tr>
-                                                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                            <div class="panel-card mb-4">
-                    <div class="panel-card-header">Commends (1)</div>
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 profile-table">
-                            <thead>
-                                <tr>
-                                    <th>Detail</th>
-                                    <th>Staff</th>
-                                    <th>When</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                                                    <tr>
-                                        <td>Helped a new player</td>
-                                        <td>admin</td>
-                                        <td>17 hours ago</td>
-                                    </tr>
-                                                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                            <div class="panel-card mb-4">
-                    <div class="panel-card-header">Notes (1)</div>
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 profile-table">
-                            <thead>
-                                <tr>
-                                    <th>Detail</th>
-                                    <th>Staff</th>
-                                    <th>When</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                                                    <tr>
-                                        <td>Trusted community member</td>
-                                        <td>admin</td>
-                                        <td>1 day ago</td>
-                                    </tr>
-                                                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                    </div>
+        </div>
     </div>
-    <style>
+
+    <div class="row mb-4">
+        <div class="col-md-3 col-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-orange"><i class="fas fa-clock"></i></div>
+                <div class="stat-content">
+                    <h3 class="stat-number">30h 20m</h3>
+                    <p class="stat-label">Playtime</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-blue"><i class="fas fa-sign-in-alt"></i></div>
+                <div class="stat-content">
+                    <h3 class="stat-number">48</h3>
+                    <p class="stat-label">Connections</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-red"><i class="fas fa-gavel"></i></div>
+                <div class="stat-content">
+                    <h3 class="stat-number">2</h3>
+                    <p class="stat-label">Infractions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-green"><i class="fas fa-thumbs-up"></i></div>
+                <div class="stat-content">
+                    <h3 class="stat-number">1</h3>
+                    <p class="stat-label">Commends</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7 mb-4">
+            <div class="panel-card">
+                <div class="panel-card-header"><i class="fas fa-gavel me-2"></i>Take Action</div>
+                <form method="post" action="http://localhost:8080/web/verified/players/action" class="p-3">
+                    <input type="hidden" name="_token" value="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">                    <input type="hidden" name="player_id" value="1">
+                    <input type="hidden" name="action" id="actionType" value="warn">
+
+                    <div class="action-grid mb-3">
+                                                    <button type="button" class="action-chip active" data-action="warn">Warn</button>
+                                                    <button type="button" class="action-chip " data-action="kick">Kick</button>
+                                                    <button type="button" class="action-chip " data-action="ban">Ban</button>
+                                                    <button type="button" class="action-chip " data-action="commend">Commend</button>
+                                                    <button type="button" class="action-chip " data-action="note">Note</button>
+                                                    <button type="button" class="action-chip " data-action="trustscore">Trust</button>
+                                            </div>
+
+                    <div id="durationWrap" class="mb-3 d-none">
+                        <label class="form-label">Duration</label>
+                        <select name="duration" class="form-select">
+                            <option value="perm">Permanent</option>
+                            <option value="1h">1 hour</option>
+                            <option value="1d">1 day</option>
+                            <option value="7d">7 days</option>
+                            <option value="30d">30 days</option>
+                        </select>
+                    </div>
+
+                    <div id="scoreWrap" class="mb-3 d-none">
+                        <label class="form-label">Trust score (0–100)</label>
+                        <input type="number" min="0" max="100" name="trust_score" class="form-control" value="92">
+                    </div>
+
+                    <div id="reasonWrap" class="mb-3">
+                        <label class="form-label">Reason / note</label>
+                        <textarea name="reason" class="form-control" rows="3" maxlength="255" placeholder="Brief reason for the audit log..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check me-1"></i> Submit action
+                    </button>
+                </form>
+            </div>
+
+            <form method="post" action="http://localhost:8080/web/verified/watchlist" class="panel-card mt-4">
+                <input type="hidden" name="_token" value="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">                <div class="panel-card-header"><i class="fas fa-eye me-2"></i>Watchlist</div>
+                <div class="p-3">
+                    <input type="hidden" name="player_id" value="1">
+                    <div class="mb-3">
+                        <label class="form-label">Flag this player</label>
+                        <input type="text" name="reason" class="form-control" maxlength="255" placeholder="Why should staff watch them?">
+                    </div>
+                    <button class="btn btn-outline-warning" type="submit"><i class="fas fa-eye me-1"></i> Add to watchlist</button>
+                </div>
+            </form>
+
+            <div class="panel-card mt-4">
+                <div class="panel-card-header"><i class="fas fa-fingerprint me-2"></i>Identifiers</div>
+                <div class="p-3 identifier-grid">
+                    <div><span>License</span>abc12license</div>
+                    <div><span>Steam</span>steam:11000010badger</div>
+                    <div><span>Discord</span>394446211341615104</div>
+                    <div><span>Live</span>—</div>
+                    <div><span>Xbox</span>—</div>
+                    <div><span>IP</span>10.0.0.12</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5 mb-4">
+            <div class="panel-card">
+                <div class="panel-card-header"><i class="fas fa-clock-rotate-left me-2"></i>Recent Activity</div>
+                <div class="activity-feed">
+                                            <div class="activity-row">
+                            <span class="badge bg-warning text-dark">Warn</span>
+                            <div>
+                                <strong>admin</strong> warned this player
+                                <div class="activity-reason">Test warning from web panel</div>
+                                <small>11 minutes ago</small>
+                            </div>
+                        </div>
+                                            <div class="activity-row">
+                            <span class="badge bg-success">Commend</span>
+                            <div>
+                                <strong>admin</strong> commended this player
+                                <div class="activity-reason">Helped a new player</div>
+                                <small>17 hours ago</small>
+                            </div>
+                        </div>
+                                            <div class="activity-row">
+                            <span class="badge bg-info">Note</span>
+                            <div>
+                                <strong>admin</strong> noted this player
+                                <div class="activity-reason">Trusted community member</div>
+                                <small>1 day ago</small>
+                            </div>
+                        </div>
+                                            <div class="activity-row">
+                            <span class="badge bg-warning text-dark">Warn</span>
+                            <div>
+                                <strong>admin</strong> warned this player
+                                <div class="activity-reason">RDM in Legion</div>
+                                <small>1 day ago</small>
+                            </div>
+                        </div>
+                                    </div>
+            </div>
+        </div>
+    </div>
+
+            <div class="panel-card mb-4">
+            <div class="panel-card-header">Warnings (2)</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 profile-table">
+                    <thead>
+                        <tr>
+                            <th>Detail</th>
+                            <th>Staff</th>
+                            <th>When</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                    <tr>
+                                <td>Test warning from web panel</td>
+                                <td>admin</td>
+                                <td>11 minutes ago</td>
+                            </tr>
+                                                    <tr>
+                                <td>RDM in Legion</td>
+                                <td>admin</td>
+                                <td>1 day ago</td>
+                            </tr>
+                                            </tbody>
+                </table>
+            </div>
+        </div>
+            <div class="panel-card mb-4">
+            <div class="panel-card-header">Kicks (0)</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 profile-table">
+                    <thead>
+                        <tr>
+                            <th>Detail</th>
+                            <th>Staff</th>
+                            <th>When</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                    <tr><td colspan="3" class="text-muted">No kicks yet.</td></tr>
+                                            </tbody>
+                </table>
+            </div>
+        </div>
+            <div class="panel-card mb-4">
+            <div class="panel-card-header">Bans (0)</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 profile-table">
+                    <thead>
+                        <tr>
+                            <th>Detail</th>
+                            <th>Staff</th>
+                            <th>When</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                    <tr><td colspan="3" class="text-muted">No bans yet.</td></tr>
+                                            </tbody>
+                </table>
+            </div>
+        </div>
+            <div class="panel-card mb-4">
+            <div class="panel-card-header">Commends (1)</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 profile-table">
+                    <thead>
+                        <tr>
+                            <th>Detail</th>
+                            <th>Staff</th>
+                            <th>When</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                    <tr>
+                                <td>Helped a new player</td>
+                                <td>admin</td>
+                                <td>17 hours ago</td>
+                            </tr>
+                                            </tbody>
+                </table>
+            </div>
+        </div>
+            <div class="panel-card mb-4">
+            <div class="panel-card-header">Notes (1)</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 profile-table">
+                    <thead>
+                        <tr>
+                            <th>Detail</th>
+                            <th>Staff</th>
+                            <th>When</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                    <tr>
+                                <td>Trusted community member</td>
+                                <td>admin</td>
+                                <td>1 day ago</td>
+                            </tr>
+                                            </tbody>
+                </table>
+            </div>
+        </div>
+            </div>
+    </div>
+        <style>
     .max-height-70 {
         max-height: 70px;
     }
@@ -1090,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Include air-datepicker -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/i18n/datepicker.en.js"></script>
-    <script>
+                <script>
         document.querySelectorAll('.action-chip').forEach((btn) => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.action-chip').forEach((el) => el.classList.remove('active'));
@@ -1102,6 +1180,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('reasonWrap').classList.toggle('d-none', action === 'trustscore');
             });
         });
-                    </script>
+    </script>
 </body>
 </html>

@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InstallController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\PanelHubController;
 use App\Http\Controllers\PlayerProfileController;
 use App\Http\Controllers\TokenController;
 use App\Http\Controllers\WebActionController;
@@ -61,19 +62,9 @@ Route::post('/auth/login', [LoginController::class, 'authenticateWeb'])->name("L
 Route::post('/auth/login/discord', [LoginController::class, 'authenticateDiscord'])->name("LOGIN_DISCORD_SUBMIT");
 Route::post('/auth/forgot_password', function () {})->name("FORGOT_PASSWORD_SUBMIT");
 
-Route::get('/bans', function () {
-    // Show the bans for all users to see
-    if (env('PUBLIC_BANS')) {
-        // They get to see the bans list
-    } else {
-        // Take them back to not authorized page
-    }
-    // TODO
-})->name("SHOW_BANS");
+Route::get('/bans', [PanelHubController::class, 'publicBans'])->name("SHOW_BANS");
 
-Route::middleware('authWeb:web')->get('/profile', function () {
-    // Show the logged-in user's profile
-})->name("SHOW_PROFILE");
+Route::middleware('authWeb:web')->get('/profile', [PanelHubController::class, 'myProfile'])->name("SHOW_PROFILE");
 
 /**
  * COMMENDS
@@ -230,19 +221,21 @@ Route::middleware('authWeb:web')->get('/verified/players', function () {
     return view('verified/players/all_players', array('data' => $data));
 })->name("PLAYERS");
 Route::middleware('authWeb:web')->get('/verified/players/search', [PlayerProfileController::class, 'search'])->name("PLAYER_SEARCH");
+Route::middleware('authWeb:web')->get('/verified/players/joins', [PanelHubController::class, 'joins'])->name('RECENT_JOINS');
 Route::middleware('authWeb:web')->get('/verified/players/{playerId}', [PlayerProfileController::class, 'show'])->name("PLAYER_PROFILE");
 Route::middleware('authWeb:web')->post('/verified/players/action', [WebActionController::class, 'store'])->name("PLAYER_ACTION");
 
 /**
  * MANAGEMENT
  */
-Route::middleware('authWeb:web')->get('/verified/management/settings', function () {
-    $data = [];
-    $data['css_path'] = 'verified/management';
-    $data['view_name'] = 'SETTINGS';
-    $data['customize'] = false;
-    return view('verified/management/settings', array('data' => $data));
-})->name("SETTINGS");
+Route::middleware('authWeb:web')->get('/verified/overview', [PanelHubController::class, 'overview'])->name('OVERVIEW');
+Route::middleware('authWeb:web')->get('/verified/lookup', [PanelHubController::class, 'lookup'])->name('LOOKUP');
+Route::middleware('authWeb:web')->get('/verified/watchlist', [PanelHubController::class, 'watchlist'])->name('WATCHLIST');
+Route::middleware('authWeb:web')->post('/verified/watchlist', [PanelHubController::class, 'addWatch'])->name('WATCHLIST_ADD');
+Route::middleware('authWeb:web')->delete('/verified/watchlist/{id}', [PanelHubController::class, 'removeWatch'])->name('WATCHLIST_REMOVE');
+Route::middleware('authWeb:web')->get('/verified/management/performance', [PanelHubController::class, 'performance'])->name('STAFF_PERFORMANCE');
+Route::middleware('authWeb:web')->get('/verified/management/settings', [PanelHubController::class, 'settings'])->name("SETTINGS");
+Route::middleware('authWeb:web')->post('/verified/management/settings', [PanelHubController::class, 'saveSettings'])->name("SETTINGS_SAVE");
 Route::middleware('authWeb:web')->get('/verified/management/manage_tokens', function () {
     $data = [];
     $data['css_path'] = 'verified/management';

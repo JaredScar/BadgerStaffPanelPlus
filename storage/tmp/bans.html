@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">
+    <title>Demo Server</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.0/css/fixedHeader.dataTables.min.css" />
+    <!-- Include GridStack CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.0/gridstack.min.css" integrity="sha512-GEMqAs1Ai2iirp6QhD4N5Qt7tDn1RGgF1CY2xp57LrX3vqTDehSC88IOFewV/L84htjbN7aazcK10FyzH+eXSA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Include air-datepicker CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" />
+
+    <link rel="stylesheet" href="http://localhost:8080/css/global.css" />
+    <link rel="stylesheet" href="http://localhost:8080/css/players.css?v=1793499860" />
+            <link rel="stylesheet" href="http://localhost:8080/css/widgets/bans.css" />
+    </head>
+    <body class="background-sizing gta-bg1">
+        <div class="container-fluid master-contain">
+            <div class="toast-container position-absolute end-0 mt-3 mx-3" id="toast_container">
+    <div class="toast d-none bg-warning text-white" id="warning_toast" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="toast-header bg-warning text-white">
+            <strong class="me-auto"><i class="fa-solid fa-triangle-exclamation"></i> Warning</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="warning_toast_body">
+        </div>
+    </div>
+
+    <div class="toast d-none bg-danger text-white" id="error_toast" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="toast-header bg-danger text-white">
+            <strong class="me-auto"><i class="fa-solid fa-bomb"></i> Error Encountered</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="error_toast_body">
+        </div>
+    </div>
+
+    <div class="toast d-none bg-success text-white" id="success_toast" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto"><i class="fa-solid fa-circle-check"></i> Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="success_toast_body">
+        </div>
+    </div>
+</div>
+
+<script>
+    function getToastBody(toastId) {
+        let toast = document.getElementById(toastId);
+        if (toast) {
+            return toast.querySelector('.toast-body');
+        }
+        return null;
+    }
+    function showToast(toastId, msg) {
+        let toast = document.getElementById(toastId);
+        let toastBody = getToastBody(toastId);
+        if (toast && toastBody) {
+            toastBody.innerHTML = msg;
+            toast.classList.remove('d-none');
+            let bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+    }
+    function hideToast(toastId, msg) {
+        let toast = document.getElementById(toastId);
+        if (toast) {
+            toast.classList.add('d-none'); // Hide the toast
+        }
+    }
+</script>
+            <style>
+    .sidebar-container {
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        transition: width 0.3s ease;
+        background: #fff;
+        border-right: 1px solid #eceff3;
+        box-shadow: 6px 0 28px rgba(0, 0, 0, 0.12);
+    }
+
+    .nav-section-label {
+        padding: 0.85rem 1.25rem 0.3rem;
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #adb5bd;
+        font-weight: 700;
+    }
+
+    .sidebar-collapsed .nav-section-label {
+        display: none;
+    }
+
+    .sidebar-expanded {
+        width: 280px;
+    }
+
+    .sidebar-collapsed {
+        width: 60px;
+    }
+
+    .sidebar-header {
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 70px;
+    }
+
+    .sidebar-brand {
+        display: flex;
+        align-items: center;
+        color: #495057;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-brand img {
+        width: 32px;
+        height: 32px;
+        margin-right: 10px;
+    }
+
+    .sidebar-toggle {
+        background: none;
+        border: none;
+        color: #6c757d;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-toggle:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+    .sidebar-nav {
+        padding: 0.75rem 0 1.25rem;
+        height: calc(100vh - 132px);
+        overflow-y: auto;
+    }
+
+    .nav-item {
+        margin-bottom: 0.25rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        color: #6c757d;
+        text-decoration: none;
+        border-radius: 0;
+        transition: all 0.3s ease;
+        position: relative;
+        margin: 0 0.5rem;
+        border-radius: 0.5rem;
+    }
+
+    .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+    .nav-link.active {
+        background: linear-gradient(135deg, #fd7e14, #e8590c);
+        color: white;
+        box-shadow: 0 6px 14px rgba(253, 126, 20, 0.28);
+    }
+
+    .nav-link.active:hover {
+        background-color: #e8590c;
+        color: white;
+    }
+
+    .nav-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.75rem;
+        text-align: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .nav-text {
+        flex: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    .nav-arrow {
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+        margin-left: auto;
+    }
+
+    .nav-arrow.expanded {
+        transform: rotate(90deg);
+    }
+
+    /* Show down arrow when expanded, right arrow when collapsed */
+    .nav-link[aria-expanded="true"] .nav-arrow {
+        transform: rotate(270deg);
+    }
+
+    .nav-link[aria-expanded="false"] .nav-arrow {
+        transform: rotate(90deg);
+    }
+
+    .nav-submenu {
+        padding-left: 0;
+        margin-top: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .nav-submenu .nav-link {
+        padding: 0.5rem 1rem 0.5rem 3rem;
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin: 0 0.5rem;
+    }
+
+    .nav-submenu .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+    .nav-submenu .nav-link.active {
+        background-color: #fd7e14;
+        color: white;
+    }
+
+    .sidebar-collapsed .nav-text,
+    .sidebar-collapsed .nav-arrow,
+    .sidebar-collapsed .sidebar-brand span {
+        opacity: 0;
+        width: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .sidebar-collapsed .nav-submenu,
+    .sidebar-collapsed .sidebar-search {
+        display: none;
+    }
+
+    .sidebar-collapsed .sidebar-nav {
+        height: calc(100vh - 70px);
+    }
+
+    .sidebar-collapsed .nav-link {
+        justify-content: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .sidebar-collapsed .nav-icon {
+        margin-right: 0;
+    }
+
+    .sidebar-collapsed .sidebar-brand {
+        justify-content: center;
+    }
+
+    .sidebar-collapsed .sidebar-brand img {
+        margin-right: 0;
+    }
+
+    .sidebar-collapsed .sidebar-toggle {
+        position: absolute;
+        right: -15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #fd7e14;
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .sidebar-collapsed .sidebar-toggle:hover {
+        background: #e8590c;
+    }
+
+    .content-wrapper {
+        margin-left: 280px;
+        transition: margin-left 0.3s ease;
+        min-height: 100vh;
+    }
+
+    .content-wrapper.sidebar-collapsed {
+        margin-left: 60px;
+    }
+
+    .nav-divider {
+        height: 1px;
+        background-color: #dee2e6;
+        margin: 0.5rem 1rem;
+    }
+
+    /* Scrollbar styling */
+    .sidebar-nav::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb {
+        background: #dee2e6;
+        border-radius: 2px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb:hover {
+        background: #adb5bd;
+    }
+
+    /* Tooltip for collapsed sidebar */
+    .sidebar-collapsed .nav-link[data-bs-toggle="tooltip"] {
+        position: relative;
+    }
+
+    /* Flyover menu for collapsed sidebar */
+    .nav-flyover {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        min-width: 200px;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1050;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(-10px);
+        transition: all 0.2s ease;
+        margin-left: 10px;
+    }
+
+    .nav-flyover.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+    }
+
+    .nav-flyover::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 15px;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-right: 6px solid white;
+    }
+
+    .nav-flyover::after {
+        content: '';
+        position: absolute;
+        left: -7px;
+        top: 15px;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-right: 6px solid #dee2e6;
+    }
+
+    .flyover-header {
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 1px solid #dee2e6;
+        background: #f8f9fa;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .flyover-item {
+        display: block;
+        padding: 0.5rem 1rem;
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+    .flyover-item:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+    .flyover-item.active {
+        background-color: #fd7e14;
+        color: white;
+    }
+
+    .flyover-item:last-child {
+        border-bottom: none;
+        border-radius: 0 0 0.5rem 0.5rem;
+    }
+
+    /* Only show flyover when sidebar is collapsed */
+    .sidebar-expanded .nav-flyover {
+        display: none;
+    }
+
+    .sidebar-collapsed .nav-item {
+        position: relative;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar-container {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar-container.mobile-open {
+            transform: translateX(0);
+        }
+        
+        .content-wrapper {
+            margin-left: 0;
+        }
+
+        .nav-flyover {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="sidebar-container sidebar-expanded" id="sidebar">
+    <div class="sidebar-header">
+        <a href="/" class="sidebar-brand">
+            <img src="/img/badgerstaffpanel-logo.png" alt="Logo">
+            <span>Demo Server</span>
+        </a>
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-search">
+        <i class="fas fa-search"></i>
+        <input type="search" id="panelPlayerSearch" placeholder="Lookup player..." autocomplete="off">
+        <div class="sidebar-search-results" id="panelPlayerResults"></div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <ul class="nav flex-column">
+            <li class="nav-section-label">Home</li>
+
+            <li class="nav-item">
+                <a href="/web/verified/dashboard" class="nav-link ">
+                    <i class="fas fa-tachometer-alt nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="http://localhost:8080/web/verified/overview" class="nav-link ">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span class="nav-text">Overview</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="http://localhost:8080/web/verified/lookup" class="nav-link ">
+                    <i class="fas fa-search nav-icon"></i>
+                    <span class="nav-text">Lookup</span>
+                </a>
+            </li>
+
+            <li class="nav-section-label">Players</li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#playersSubmenu" aria-expanded="false">
+                    <i class="fas fa-users nav-icon"></i>
+                    <span class="nav-text">Players</span>
+                    <i class="fas fa-chevron-right nav-arrow"></i>
+                </a>
+                <div class="nav-flyover" id="playersFlyover">
+                    <div class="flyover-header">Players</div>
+                    <a href="/web/verified/players/today" class="flyover-item ">Today</a>
+                    <a href="/web/verified/players/week" class="flyover-item ">Weekly</a>
+                    <a href="/web/verified/players/month" class="flyover-item ">Monthly</a>
+                    <a href="/web/verified/players" class="flyover-item ">All Players</a>
+                    <a href="http://localhost:8080/web/verified/players/joins" class="flyover-item ">Recent Joins</a>
+                    <a href="http://localhost:8080/web/verified/watchlist" class="flyover-item ">Watchlist</a>
+                </div>
+                <div class="collapse nav-submenu" id="playersSubmenu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/web/verified/players/today" class="nav-link ">
+                                Today
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/players/week" class="nav-link ">
+                                Weekly
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/players/month" class="nav-link ">
+                                Monthly
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/players" class="nav-link ">
+                                All Players
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/players/joins" class="nav-link ">
+                                Recent Joins
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/watchlist" class="nav-link ">
+                                Watchlist
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-section-label">Records</li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#recordsSubmenu" aria-expanded="false">
+                    <i class="fas fa-file-alt nav-icon"></i>
+                    <span class="nav-text">Records</span>
+                    <i class="fas fa-chevron-right nav-arrow"></i>
+                </a>
+                <div class="nav-flyover" id="recordsFlyover">
+                    <div class="flyover-header">Records</div>
+                    <a href="/web/verified/records/bans" class="flyover-item active">Bans</a>
+                    <a href="/web/verified/records/warns" class="flyover-item ">Warns</a>
+                    <a href="/web/verified/records/kicks" class="flyover-item ">Kicks</a>
+                    <a href="/web/verified/records/commends" class="flyover-item ">Commends</a>
+                    <a href="/web/verified/records/trustscores" class="flyover-item ">Trust Scores</a>
+                    <a href="/web/verified/records/notes" class="flyover-item ">Notes</a>
+                    <a href="/web/verified/records/activity" class="flyover-item ">Activity</a>
+                    <a href="/web/verified/records" class="flyover-item ">All Records</a>
+                    <a href="http://localhost:8080/web/bans" class="flyover-item ">Public Bans</a>
+                </div>
+                <div class="collapse nav-submenu" id="recordsSubmenu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/web/verified/records/bans" class="nav-link active">
+                                Bans
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/warns" class="nav-link ">
+                                Warns
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/kicks" class="nav-link ">
+                                Kicks
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/commends" class="nav-link ">
+                                Commends
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/trustscores" class="nav-link ">
+                                Trust Scores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/notes" class="nav-link ">
+                                Notes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/activity" class="nav-link ">
+                                Activity
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records" class="nav-link ">
+                                All Records
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/bans" class="nav-link ">
+                                Public Bans
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <div class="nav-divider"></div>
+            <li class="nav-section-label">Staff</li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#managementSubmenu" aria-expanded="false">
+                    <i class="fas fa-cogs nav-icon"></i>
+                    <span class="nav-text">Management</span>
+                    <i class="fas fa-chevron-right nav-arrow"></i>
+                </a>
+                <div class="nav-flyover" id="managementFlyover">
+                    <div class="flyover-header">Management</div>
+                    <a href="http://localhost:8080/web/profile" class="flyover-item ">My Profile</a>
+                    <a href="http://localhost:8080/web/verified/management/performance" class="flyover-item ">Staff Performance</a>
+                    <a href="/web/verified/management/manage_staff" class="flyover-item ">Manage Staff</a>
+                    <a href="/web/verified/management/manage_roles" class="flyover-item ">Manage Roles</a>
+                    <a href="/web/verified/management/manage_tokens" class="flyover-item ">Manage Tokens</a>
+                    <a href="/web/verified/management/settings" class="flyover-item ">Settings</a>
+                    <a href="http://localhost:8080/web/install/welcome" class="flyover-item ">Installer</a>
+                </div>
+                <div class="collapse nav-submenu" id="managementSubmenu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/profile" class="nav-link ">
+                                My Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/management/performance" class="nav-link ">
+                                Staff Performance
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/management/manage_staff" class="nav-link ">
+                                Manage Staff
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/management/manage_roles" class="nav-link ">
+                                Manage Roles
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/management/manage_tokens" class="nav-link ">
+                                Manage Tokens
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/management/settings" class="nav-link ">
+                                Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/install/welcome" class="nav-link ">
+                                Installer
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <div class="nav-divider"></div>
+
+            <li class="nav-item">
+                <a href="/web/verified/signout" class="nav-link">
+                    <i class="fas fa-sign-out-alt nav-icon"></i>
+                    <span class="nav-text">Sign out</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const contentWrapper = document.querySelector('.content-wrapper');
+
+    // Toggle sidebar
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('sidebar-collapsed');
+        sidebar.classList.toggle('sidebar-expanded');
+        
+        if (contentWrapper) {
+            contentWrapper.classList.toggle('sidebar-collapsed');
+        }
+
+        // Hide all flyovers when expanding sidebar
+        if (sidebar.classList.contains('sidebar-expanded')) {
+            document.querySelectorAll('.nav-flyover').forEach(flyover => {
+                flyover.classList.remove('show');
+            });
+        }
+
+        // Update toggle icon
+        const icon = sidebarToggle.querySelector('i');
+        if (sidebar.classList.contains('sidebar-collapsed')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-chevron-right');
+        } else {
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-bars');
+        }
+    });
+
+    // Handle submenu arrows with Bootstrap collapse events
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function(element) {
+        const targetId = element.getAttribute('data-bs-target');
+        const collapseElement = document.querySelector(targetId);
+        
+        if (collapseElement) {
+            collapseElement.addEventListener('show.bs.collapse', function() {
+                element.setAttribute('aria-expanded', 'true');
+            });
+            
+            collapseElement.addEventListener('hide.bs.collapse', function() {
+                element.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+
+    // Initialize tooltips for collapsed sidebar
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Handle flyover menus for collapsed sidebar
+    function setupFlyovers() {
+        const flyoverItems = [
+            { trigger: '[data-bs-target="#playersSubmenu"]', flyover: '#playersFlyover' },
+            { trigger: '[data-bs-target="#recordsSubmenu"]', flyover: '#recordsFlyover' },
+            { trigger: '[data-bs-target="#managementSubmenu"]', flyover: '#managementFlyover' }
+        ];
+
+        flyoverItems.forEach(item => {
+            const triggerElement = document.querySelector(item.trigger);
+            const flyoverElement = document.querySelector(item.flyover);
+            
+            if (triggerElement && flyoverElement) {
+                let hoverTimeout;
+                
+                // Show flyover on mouse enter
+                triggerElement.parentElement.addEventListener('mouseenter', function() {
+                    clearTimeout(hoverTimeout);
+                    
+                    // Only show flyover if sidebar is collapsed
+                    if (sidebar.classList.contains('sidebar-collapsed')) {
+                        hoverTimeout = setTimeout(() => {
+                            flyoverElement.classList.add('show');
+                        }, 100);
+                    }
+                });
+                
+                // Hide flyover on mouse leave
+                triggerElement.parentElement.addEventListener('mouseleave', function() {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = setTimeout(() => {
+                        flyoverElement.classList.remove('show');
+                    }, 100);
+                });
+                
+                // Keep flyover open when hovering over it
+                flyoverElement.addEventListener('mouseenter', function() {
+                    clearTimeout(hoverTimeout);
+                });
+                
+                // Hide flyover when leaving it
+                flyoverElement.addEventListener('mouseleave', function() {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = setTimeout(() => {
+                        flyoverElement.classList.remove('show');
+                    }, 100);
+                });
+            }
+        });
+    }
+
+    // Initialize flyovers
+    setupFlyovers();
+
+    // Handle mobile responsive
+    function handleResize() {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.add('sidebar-collapsed');
+            sidebar.classList.remove('sidebar-expanded');
+            if (contentWrapper) {
+                contentWrapper.classList.add('sidebar-collapsed');
+            }
+        }
+    }
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial check
+
+    const lookupInput = document.getElementById('panelPlayerSearch');
+    const lookupResults = document.getElementById('panelPlayerResults');
+    let lookupTimer = null;
+    if (lookupInput && lookupResults) {
+        lookupInput.addEventListener('input', function () {
+            clearTimeout(lookupTimer);
+            const q = this.value.trim();
+            if (q.length < 1) {
+                lookupResults.style.display = 'none';
+                lookupResults.innerHTML = '';
+                return;
+            }
+            lookupTimer = setTimeout(() => {
+                fetch('http://localhost:8080/web/verified/players/search?q=' + encodeURIComponent(q), {
+                    headers: { 'Accept': 'application/json' }
+                })
+                    .then((res) => res.json())
+                    .then((payload) => {
+                        const players = payload.players || [];
+                        if (!players.length) {
+                            lookupResults.innerHTML = '<a href="#">No players found</a>';
+                            lookupResults.style.display = 'block';
+                            return;
+                        }
+                        lookupResults.innerHTML = players.map((player) => (
+                            '<a href="/web/verified/players/' + player.player_id + '">' +
+                            (player.last_player_name || 'Unknown') +
+                            ' <small>#' + player.player_id + '</small></a>'
+                        )).join('');
+                        lookupResults.style.display = 'block';
+                    })
+                    .catch(() => {
+                        lookupResults.style.display = 'none';
+                    });
+            }, 180);
+        });
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.sidebar-search')) {
+                lookupResults.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
+            <div class="content-wrapper">
+                <!-- Header Section -->
+                <div class="page-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-ban me-2"></i>
+                            Bans
+                        </h1>
+                        <p class="page-description">Manage and view player bans</p>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBanModal">
+                        <i class="fas fa-plus me-2"></i>
+                        Add Ban
+                    </button>
+                </div>
+
+                <!-- Include the bans widget -->
+                <!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-red">
+                <i class="fas fa-ban"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">0</h3>
+                <p class="stat-label">Active Bans</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-blue">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">0</h3>
+                <p class="stat-label">Expired Bans</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon stat-icon-orange">
+                <i class="fas fa-filter"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">1</h3>
+                <p class="stat-label">Total Bans</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel-toolbar">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" class="form-control" placeholder="Search bans..." id="banSearch">
+    </div>
+    <select class="form-select" id="statusFilter">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="expired">Expired</option>
+    </select>
+</div>
+
+<div class="panel-card">
+    <div class="panel-card-header"><i class="fas fa-ban me-2"></i>Ban Records (1)</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 profile-table bans-table">
+        <thead>
+            <tr>
+                <th>Player ID</th>
+                <th>Player Name</th>
+                <th>Discord</th>
+                <th>Reason</th>
+                <th>Duration</th>
+                <th>Date/Time</th>
+                <th>Staff Member</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+                                            <tr>
+                    <td>
+                        <span class="player-id">2</span>
+                    </td>
+                    <td>
+                        <div class="player-info">
+                            <div class="player-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span>WolfBadger</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="discord-tag">394446211341615104</span>
+                    </td>
+                    <td>
+                        <span class="ban-reason">Exploiting</span>
+                    </td>
+                    <td>
+                        <span class="ban-duration permanent">
+                            Permanent
+                        </span>
+                    </td>
+                    <td>
+                        <span class="ban-datetime">2026-10-28 22:13:07</span>
+                    </td>
+                    <td>
+                        <span class="staff-badge">badger</span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-active">
+                            Active
+                        </span>
+                    </td>
+                </tr>
+                    </tbody>
+    </table>
+    </div>
+</div>
+
+
+<script>
+    // Search functionality
+    document.getElementById('banSearch').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.bans-table tbody tr');
+        
+        rows.forEach(row => {
+            const playerId = row.cells[0].textContent.toLowerCase();
+            const playerName = row.cells[1].textContent.toLowerCase();
+            const discord = row.cells[2].textContent.toLowerCase();
+            const reason = row.cells[3].textContent.toLowerCase();
+            const staff = row.cells[6].textContent.toLowerCase();
+            
+            if (playerId.includes(searchTerm) || playerName.includes(searchTerm) || 
+                discord.includes(searchTerm) || reason.includes(searchTerm) || staff.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Status filter functionality
+    document.getElementById('statusFilter').addEventListener('change', function(e) {
+        const selectedStatus = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.bans-table tbody tr');
+        
+        rows.forEach(row => {
+            const statusCell = row.cells[7].textContent.toLowerCase();
+            
+            if (selectedStatus === '' || statusCell.includes(selectedStatus)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+            </div>
+        </div>
+
+        <!-- Add Ban Modal -->
+        <div class="modal fade" id="addBanModal" tabindex="-1" aria-labelledby="addBanModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addBanModalLabel">
+                            <i class="fas fa-ban me-2"></i>
+                            Add Ban Record
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addBanForm">
+                            <input type="hidden" name="_token" value="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">                            <div class="mb-3">
+                                <label for="playerSearch" class="form-label">Select Players</label>
+                                <div class="player-search-container">
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="playerSearch" placeholder="Search players by name or ID..." autocomplete="off">
+                                    </div>
+                                    <div class="search-results" id="searchResults" style="display: none;"></div>
+                                </div>
+                                <div class="selected-players mt-3" id="selectedPlayers">
+                                    <div class="selected-players-header">
+                                        <strong>Selected Players:</strong>
+                                        <span class="selected-count" id="selectedCount">0</span>
+                                    </div>
+                                    <div class="selected-players-list" id="selectedPlayersList">
+                                        <div class="no-players-selected text-muted">
+                                            <i class="fas fa-users me-2"></i>
+                                            No players selected. Search and click to add players.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="banDuration" class="form-label">Duration</label>
+                                    <select class="form-select" id="banDuration" required>
+                                        <option value="">Select Duration</option>
+                                        <option value="1 day">1 Day</option>
+                                        <option value="3 days">3 Days</option>
+                                        <option value="7 days">7 Days</option>
+                                        <option value="14 days">14 Days</option>
+                                        <option value="30 days">30 Days</option>
+                                        <option value="Permanent">Permanent</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="banDateTime" class="form-label">Date/Time</label>
+                                    <input type="datetime-local" class="form-control" id="banDateTime" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="banReason" class="form-label">Reason</label>
+                                <textarea class="form-control" id="banReason" rows="3" placeholder="Enter the reason for the ban..." required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expireDate" class="form-label">Expire Date (Auto-calculated)</label>
+                                <input type="datetime-local" class="form-control" id="expireDate" readonly>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" form="addBanForm">
+                            <i class="fas fa-ban me-2"></i>
+                            Add Ban
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .player-search-container {
+                position: relative;
+            }
+
+            .search-results {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                border: 1px solid #dee2e6;
+                border-top: none;
+                border-radius: 0 0 6px 6px;
+                max-height: 300px;
+                overflow-y: auto;
+                z-index: 1000;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .search-result-item {
+                padding: 12px 15px;
+                cursor: pointer;
+                border-bottom: 1px solid #f8f9fa;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                transition: background-color 0.2s ease;
+            }
+
+            .search-result-item:hover {
+                background-color: #f8f9fa;
+            }
+
+            .search-result-item:last-child {
+                border-bottom: none;
+            }
+
+            .search-result-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 14px;
+                flex-shrink: 0;
+            }
+
+            .search-result-info {
+                flex: 1;
+            }
+
+            .search-result-name {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 2px;
+            }
+
+            .search-result-id {
+                font-size: 0.85rem;
+                color: #6c757d;
+            }
+
+            .selected-players {
+                border: 1px solid #dee2e6;
+                border-radius: 6px;
+                padding: 15px;
+                background: #f8f9fa;
+            }
+
+            .selected-players-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+                color: #495057;
+            }
+
+            .selected-count {
+                background: #fd7e14;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .selected-player-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 8px 12px;
+                background: white;
+                border: 1px solid #dee2e6;
+                border-radius: 6px;
+                margin-bottom: 8px;
+                transition: all 0.2s ease;
+            }
+
+            .selected-player-item:last-child {
+                margin-bottom: 0;
+            }
+
+            .selected-player-avatar {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 12px;
+                flex-shrink: 0;
+            }
+
+            .selected-player-info {
+                flex: 1;
+            }
+
+            .selected-player-name {
+                font-weight: 600;
+                color: #333;
+                font-size: 0.9rem;
+            }
+
+            .selected-player-id {
+                font-size: 0.75rem;
+                color: #6c757d;
+            }
+
+            .remove-player-btn {
+                background: none;
+                border: none;
+                color: #dc3545;
+                cursor: pointer;
+                padding: 4px;
+                border-radius: 4px;
+                transition: all 0.2s ease;
+            }
+
+            .remove-player-btn:hover {
+                background: #dc3545;
+                color: white;
+            }
+
+            .no-players-selected {
+                text-align: center;
+                padding: 20px;
+                font-style: italic;
+            }
+
+            .no-results {
+                padding: 15px;
+                text-align: center;
+                color: #6c757d;
+                font-style: italic;
+            }
+        </style>
+
+        <style>
+    .max-height-70 {
+        max-height: 70px;
+    }
+</style>
+<footer class="text-center text-white fixed-bottom" style="background-color: black;">
+
+    <!-- Copyright -->
+    <div class="container-fluid max-height-70">
+        <a href="https://zap-hosting.com/badger" target="_blank">
+            <div class="row max-height-70">
+                <div class="col-4 max-height-70" style="background-color: #57BC54;">
+                </div>
+                <div class="col-4 px-0 max-height-70 d-flex">
+                    <div class="flex-grow-1" style="background-color: #57BC54"></div>
+                    <img src="/img/badger-partnership-zap-banner.png" style="height: 100%" />
+                </div>
+                <div class="col-4 max-height-70">
+                </div>
+            </div>
+        </a>
+    </div>
+    <!-- Copyright -->
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js" integrity="sha512-EKWWs1ZcA2ZY9lbLISPz8aGR2+L7JVYqBAYTq5AXgBkSjRSuQEGqWx8R1zAX16KdXPaCjOCaKE8MCpU0wcHlHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
+<!-- Include GridStack JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.0/gridstack-all.min.js" integrity="sha512-HrBVB/mAEb1KuouvSb7sE9dR43ziTePw/IibQWjK34nl5Mdqj2Dy7tfh2yiNLjyDGEJK4hXTrjlk7myXERaOsA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- Include air-datepicker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/i18n/datepicker.en.js"></script>
+
+        <script>
+            // Mock player data - In a real app, this would come from your backend
+            const mockPlayers = [
+                { id: 1, name: "John Doe", discord: "johndoe#1234" },
+                { id: 2, name: "Jane Smith", discord: "janesmith#5678" },
+                { id: 3, name: "Mike Johnson", discord: "mikej#9012" },
+                { id: 4, name: "Sarah Wilson", discord: "sarahw#3456" },
+                { id: 5, name: "Alex Brown", discord: "alexb#7890" },
+                { id: 10, name: "Chris Davis", discord: "chrisd#2468" },
+                { id: 15, name: "Emma Taylor", discord: "emmat#1357" },
+                { id: 20, name: "Ryan Miller", discord: "ryanm#8024" },
+                { id: 25, name: "Lisa Anderson", discord: "lisaa#4680" },
+                { id: 30, name: "David Garcia", discord: "davidg#9753" }
+            ];
+
+            let selectedPlayers = [];
+            let searchTimeout;
+
+            // Player search functionality
+            document.getElementById('playerSearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.trim().toLowerCase();
+                const searchResults = document.getElementById('searchResults');
+
+                clearTimeout(searchTimeout);
+
+                if (searchTerm.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    const filteredPlayers = mockPlayers.filter(player => 
+                        player.name.toLowerCase().includes(searchTerm) ||
+                        player.id.toString().includes(searchTerm) ||
+                        player.discord.toLowerCase().includes(searchTerm)
+                    ).filter(player => 
+                        !selectedPlayers.some(selected => selected.id === player.id)
+                    );
+
+                    displaySearchResults(filteredPlayers);
+                }, 300);
+            });
+
+            // Display search results
+            function displaySearchResults(players) {
+                const searchResults = document.getElementById('searchResults');
+                
+                if (players.length === 0) {
+                    searchResults.innerHTML = '<div class="no-results">No players found</div>';
+                } else {
+                    searchResults.innerHTML = players.map(player => `
+                        <div class="search-result-item" onclick="addPlayer(${player.id})">
+                            <div class="search-result-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="search-result-info">
+                                <div class="search-result-name">${player.name}</div>
+                                <div class="search-result-id">ID: ${player.id} • ${player.discord}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                searchResults.style.display = 'block';
+            }
+
+            // Add player to selection
+            function addPlayer(playerId) {
+                const player = mockPlayers.find(p => p.id === playerId);
+                if (player && !selectedPlayers.some(selected => selected.id === playerId)) {
+                    selectedPlayers.push(player);
+                    updateSelectedPlayersDisplay();
+                    
+                    document.getElementById('playerSearch').value = '';
+                    document.getElementById('searchResults').style.display = 'none';
+                }
+            }
+
+            // Remove player from selection
+            function removePlayer(playerId) {
+                selectedPlayers = selectedPlayers.filter(player => player.id !== playerId);
+                updateSelectedPlayersDisplay();
+            }
+
+            // Update selected players display
+            function updateSelectedPlayersDisplay() {
+                const selectedPlayersList = document.getElementById('selectedPlayersList');
+                const selectedCount = document.getElementById('selectedCount');
+                
+                selectedCount.textContent = selectedPlayers.length;
+
+                if (selectedPlayers.length === 0) {
+                    selectedPlayersList.innerHTML = `
+                        <div class="no-players-selected text-muted">
+                            <i class="fas fa-users me-2"></i>
+                            No players selected. Search and click to add players.
+                        </div>
+                    `;
+                } else {
+                    selectedPlayersList.innerHTML = selectedPlayers.map(player => `
+                        <div class="selected-player-item">
+                            <div class="selected-player-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="selected-player-info">
+                                <div class="selected-player-name">${player.name}</div>
+                                <div class="selected-player-id">ID: ${player.id} • ${player.discord}</div>
+                            </div>
+                            <button type="button" class="remove-player-btn" onclick="removePlayer(${player.id})" title="Remove player">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Hide search results when clicking outside
+            document.addEventListener('click', function(e) {
+                const searchContainer = document.querySelector('.player-search-container');
+                if (!searchContainer.contains(e.target)) {
+                    document.getElementById('searchResults').style.display = 'none';
+                }
+            });
+
+            // Set current date/time as default
+            document.getElementById('banDateTime').value = new Date().toISOString().slice(0, 16);
+
+            // Update expire date based on duration and start date
+            function updateExpireDate() {
+                const duration = document.getElementById('banDuration').value;
+                const startDate = new Date(document.getElementById('banDateTime').value);
+                const expireDateInput = document.getElementById('expireDate');
+                
+                if (duration === 'Permanent') {
+                    expireDateInput.value = '';
+                    expireDateInput.placeholder = 'Permanent ban - no expiration';
+                } else if (duration && startDate) {
+                    const days = parseInt(duration.split(' ')[0]);
+                    const expireDate = new Date(startDate);
+                    expireDate.setDate(expireDate.getDate() + days);
+                    expireDateInput.value = expireDate.toISOString().slice(0, 16);
+                    expireDateInput.placeholder = '';
+                }
+            }
+
+            // Add event listeners for duration and date changes
+            document.getElementById('banDuration').addEventListener('change', updateExpireDate);
+            document.getElementById('banDateTime').addEventListener('change', updateExpireDate);
+
+            // Add ban form submission
+            document.getElementById('addBanForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const duration = document.getElementById('banDuration').value;
+                const reason = document.getElementById('banReason').value;
+                const dateTime = document.getElementById('banDateTime').value;
+                const expireDate = document.getElementById('expireDate').value;
+                
+                // Validate form
+                if (selectedPlayers.length === 0) {
+                    alert('Please select at least one player to ban.');
+                    return;
+                }
+                
+                if (!duration || !reason.trim()) {
+                    alert('Please fill in duration and reason fields.');
+                    return;
+                }
+                
+                // Here you would typically send the data to your backend
+                console.log('Adding ban records for players:', { 
+                    players: selectedPlayers.map(p => ({ id: p.id, name: p.name })), 
+                    duration: duration, 
+                    reason: reason,
+                    dateTime: dateTime,
+                    expireDate: expireDate
+                });
+                
+                // Show success message and close modal
+                const playerCount = selectedPlayers.length;
+                const playerNames = selectedPlayers.map(p => p.name).join(', ');
+                alert(`Ban issued successfully to ${playerCount} player(s): ${playerNames}`);
+                
+                bootstrap.Modal.getInstance(document.getElementById('addBanModal')).hide();
+                
+                // Reset form and selections
+                this.reset();
+                selectedPlayers = [];
+                updateSelectedPlayersDisplay();
+                document.getElementById('banDateTime').value = new Date().toISOString().slice(0, 16);
+                document.getElementById('expireDate').value = '';
+            });
+        </script>
+    </body>
+</html>

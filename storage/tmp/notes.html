@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="m7uacj2lSK1nnlAACt6h3iHioYoHhTJZUkAxaJJS">
+    <meta name="csrf-token" content="epiukPayZ5GECZWveJORcM7kH6LlDuhf0Rbuok17">
     <title>Demo Server</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" />
 
     <link rel="stylesheet" href="http://localhost:8080/css/global.css" />
-    <link rel="stylesheet" href="http://localhost:8080/css/players.css" />
+    <link rel="stylesheet" href="http://localhost:8080/css/players.css?v=1793499860" />
     </head>
 <body class="background-sizing gta-bg1">
     <div class="container-fluid master-contain">
@@ -84,9 +84,22 @@
         top: 0;
         z-index: 1000;
         transition: width 0.3s ease;
-        background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
-        border-right: 1px solid #dee2e6;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        background: #fff;
+        border-right: 1px solid #eceff3;
+        box-shadow: 6px 0 28px rgba(0, 0, 0, 0.12);
+    }
+
+    .nav-section-label {
+        padding: 0.85rem 1.25rem 0.3rem;
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #adb5bd;
+        font-weight: 700;
+    }
+
+    .sidebar-collapsed .nav-section-label {
+        display: none;
     }
 
     .sidebar-expanded {
@@ -139,8 +152,8 @@
     }
 
     .sidebar-nav {
-        padding: 1rem 0;
-        height: calc(100vh - 70px);
+        padding: 0.75rem 0 1.25rem;
+        height: calc(100vh - 132px);
         overflow-y: auto;
     }
 
@@ -167,8 +180,9 @@
     }
 
     .nav-link.active {
-        background-color: #fd7e14;
+        background: linear-gradient(135deg, #fd7e14, #e8590c);
         color: white;
+        box-shadow: 0 6px 14px rgba(253, 126, 20, 0.28);
     }
 
     .nav-link.active:hover {
@@ -242,8 +256,13 @@
         overflow: hidden;
     }
 
-    .sidebar-collapsed .nav-submenu {
+    .sidebar-collapsed .nav-submenu,
+    .sidebar-collapsed .sidebar-search {
         display: none;
+    }
+
+    .sidebar-collapsed .sidebar-nav {
+        height: calc(100vh - 70px);
     }
 
     .sidebar-collapsed .nav-link {
@@ -449,7 +468,7 @@
 
     <nav class="sidebar-nav">
         <ul class="nav flex-column">
-
+            <li class="nav-section-label">Home</li>
 
             <li class="nav-item">
                 <a href="/web/verified/dashboard" class="nav-link ">
@@ -457,7 +476,20 @@
                     <span class="nav-text">Dashboard</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="http://localhost:8080/web/verified/overview" class="nav-link ">
+                    <i class="fas fa-chart-line nav-icon"></i>
+                    <span class="nav-text">Overview</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="http://localhost:8080/web/verified/lookup" class="nav-link ">
+                    <i class="fas fa-search nav-icon"></i>
+                    <span class="nav-text">Lookup</span>
+                </a>
+            </li>
 
+            <li class="nav-section-label">Players</li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#playersSubmenu" aria-expanded="false">
                     <i class="fas fa-users nav-icon"></i>
@@ -470,6 +502,8 @@
                     <a href="/web/verified/players/week" class="flyover-item ">Weekly</a>
                     <a href="/web/verified/players/month" class="flyover-item ">Monthly</a>
                     <a href="/web/verified/players" class="flyover-item ">All Players</a>
+                    <a href="http://localhost:8080/web/verified/players/joins" class="flyover-item ">Recent Joins</a>
+                    <a href="http://localhost:8080/web/verified/watchlist" class="flyover-item ">Watchlist</a>
                 </div>
                 <div class="collapse nav-submenu" id="playersSubmenu">
                     <ul class="nav flex-column">
@@ -493,10 +527,21 @@
                                 All Players
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/players/joins" class="nav-link ">
+                                Recent Joins
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/watchlist" class="nav-link ">
+                                Watchlist
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
 
+            <li class="nav-section-label">Records</li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#recordsSubmenu" aria-expanded="false">
                     <i class="fas fa-file-alt nav-icon"></i>
@@ -513,6 +558,7 @@
                     <a href="/web/verified/records/notes" class="flyover-item active">Notes</a>
                     <a href="/web/verified/records/activity" class="flyover-item ">Activity</a>
                     <a href="/web/verified/records" class="flyover-item ">All Records</a>
+                    <a href="http://localhost:8080/web/bans" class="flyover-item ">Public Bans</a>
                 </div>
                 <div class="collapse nav-submenu" id="recordsSubmenu">
                     <ul class="nav flex-column">
@@ -556,12 +602,17 @@
                                 All Records
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/bans" class="nav-link ">
+                                Public Bans
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
 
             <div class="nav-divider"></div>
-
+            <li class="nav-section-label">Staff</li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#managementSubmenu" aria-expanded="false">
                     <i class="fas fa-cogs nav-icon"></i>
@@ -570,6 +621,8 @@
                 </a>
                 <div class="nav-flyover" id="managementFlyover">
                     <div class="flyover-header">Management</div>
+                    <a href="http://localhost:8080/web/profile" class="flyover-item ">My Profile</a>
+                    <a href="http://localhost:8080/web/verified/management/performance" class="flyover-item ">Staff Performance</a>
                     <a href="/web/verified/management/manage_staff" class="flyover-item ">Manage Staff</a>
                     <a href="/web/verified/management/manage_roles" class="flyover-item ">Manage Roles</a>
                     <a href="/web/verified/management/manage_tokens" class="flyover-item ">Manage Tokens</a>
@@ -578,6 +631,16 @@
                 </div>
                 <div class="collapse nav-submenu" id="managementSubmenu">
                     <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/profile" class="nav-link ">
+                                My Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/verified/management/performance" class="nav-link ">
+                                Staff Performance
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a href="/web/verified/management/manage_staff" class="nav-link ">
                                 Manage Staff
@@ -787,13 +850,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
         <div class="content-wrapper">
-            <div class="page-header d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="page-title"><i class="fas fa-sticky-note me-2"></i>Notes</h1>
-                    <p class="page-description">Staff notes attached to players</p>
+                                    
+                            <div class="page-header d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-sticky-note me-2"></i>
+                            Notes                        </h1>
+                        <p class="page-description">Staff notes attached to players</p>
+                    </div>
+                    <div></div>
                 </div>
-            </div>
-                        <div class="panel-card">
+            
+                <div class="panel-card">
     <div class="table-responsive">
         <table class="table table-hover mb-0 profile-table">
             <thead>
@@ -841,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
         </div>
     </div>
-    <style>
+        <style>
     .max-height-70 {
         max-height: 70px;
     }
@@ -876,5 +944,5 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Include air-datepicker -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/i18n/datepicker.en.js"></script>
-</body>
+            </body>
 </html>

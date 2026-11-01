@@ -15,7 +15,7 @@
                         </h1>
                         <p class="page-description">Manage and view player commendations</p>
                     </div>
-                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCommendModal">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCommendModal">
                         <i class="fas fa-plus me-2"></i>
                         Add Commend
                     </button>

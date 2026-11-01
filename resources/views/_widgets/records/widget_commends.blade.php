@@ -77,35 +77,26 @@ $totalCommends = collect($tabData)->count();
     </div>
 </div>
 
-<!-- Search and Filter Section -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" class="form-control" placeholder="Search commends..." id="commendSearch">
-        </div>
+<div class="panel-toolbar">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" class="form-control" placeholder="Search commends..." id="commendSearch">
     </div>
-    <div class="col-md-6">
-        <select class="form-select" id="typeFilter">
-            <option value="">All Types</option>
-            <option value="Excellent Roleplay">Excellent Roleplay</option>
-            <option value="Helpful Behavior">Helpful Behavior</option>
-            <option value="Good Sportsmanship">Good Sportsmanship</option>
-            <option value="Community Contribution">Community Contribution</option>
-            <option value="Leadership">Leadership</option>
-            <option value="Other">Other</option>
-        </select>
-    </div>
+    <select class="form-select" id="typeFilter">
+        <option value="">All Types</option>
+        <option value="Excellent Roleplay">Excellent Roleplay</option>
+        <option value="Helpful Behavior">Helpful Behavior</option>
+        <option value="Good Sportsmanship">Good Sportsmanship</option>
+        <option value="Community Contribution">Community Contribution</option>
+        <option value="Leadership">Leadership</option>
+        <option value="Other">Other</option>
+    </select>
 </div>
 
-<!-- Commend Records Section -->
-<div class="section-header">
-    <h2>Commend Records ({{ $totalCommends }})</h2>
-</div>
-
-<!-- Commend Records Table -->
-<div class="table-responsive">
-    <table class="table table-hover commends-table">
+<div class="panel-card">
+    <div class="panel-card-header"><i class="fas fa-thumbs-up me-2"></i>Commend Records ({{ $totalCommends }})</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 profile-table commends-table">
         <thead>
             <tr>
                 <th>Player ID</th>
@@ -150,15 +141,14 @@ $totalCommends = collect($tabData)->count();
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 
 @if(collect($tabData)->isEmpty())
-    <div class="no-data-message">
-        <div class="text-center py-5">
-            <i class="fas fa-star fa-3x text-muted mb-3"></i>
-            <h4 class="text-muted">No commend records found</h4>
-            <p class="text-muted">There are no commend records to display.</p>
-        </div>
+    <div class="empty-state">
+        <i class="fas fa-star fa-3x"></i>
+        <h4>No commend records found</h4>
+        <p>There are no commend records to display.</p>
     </div>
 @endif
 

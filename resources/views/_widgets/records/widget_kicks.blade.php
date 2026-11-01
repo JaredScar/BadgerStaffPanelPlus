@@ -78,32 +78,23 @@ if (!$mostActiveStaff) {
     </div>
 </div>
 
-<!-- Search and Filter Section -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" class="form-control" placeholder="Search kicks..." id="kickSearch">
-        </div>
+<div class="panel-toolbar">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" class="form-control" placeholder="Search kicks..." id="kickSearch">
     </div>
-    <div class="col-md-6">
-        <select class="form-select" id="staffFilter">
-            <option value="">All Staff</option>
-            @foreach($kickData->pluck('getStaff.staff_username')->unique()->filter() as $staff)
-                <option value="{{ $staff }}">{{ $staff }}</option>
-            @endforeach
-        </select>
-    </div>
+    <select class="form-select" id="staffFilter">
+        <option value="">All Staff</option>
+        @foreach($kickData->pluck('getStaff.staff_username')->unique()->filter() as $staff)
+            <option value="{{ $staff }}">{{ $staff }}</option>
+        @endforeach
+    </select>
 </div>
 
-<!-- Kick Records Section -->
-<div class="section-header">
-    <h2>Kick Records ({{ $kickData->count() }})</h2>
-</div>
-
-<!-- Kick Records Table -->
-<div class="table-responsive">
-    <table class="table table-hover kicks-table">
+<div class="panel-card">
+    <div class="panel-card-header"><i class="fas fa-user-times me-2"></i>Kick Records ({{ $kickData->count() }})</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 profile-table kicks-table">
         <thead>
             <tr>
                 <th>Player ID</th>
@@ -144,15 +135,14 @@ if (!$mostActiveStaff) {
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 
 @if($kickData->isEmpty())
-    <div class="no-data-message">
-        <div class="text-center py-5">
-            <i class="fas fa-user-times fa-3x text-muted mb-3"></i>
-            <h4 class="text-muted">No kick records found</h4>
-            <p class="text-muted">There are no kick records to display.</p>
-        </div>
+    <div class="empty-state">
+        <i class="fas fa-user-times fa-3x"></i>
+        <h4>No kick records found</h4>
+        <p>There are no kick records to display.</p>
     </div>
 @endif
 

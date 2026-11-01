@@ -15,7 +15,7 @@
                         </h1>
                         <p class="page-description">Manage and view player warnings</p>
                     </div>
-                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addWarningModal">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addWarningModal">
                         <i class="fas fa-plus me-2"></i>Add Warning
                     </button>
                 </div>

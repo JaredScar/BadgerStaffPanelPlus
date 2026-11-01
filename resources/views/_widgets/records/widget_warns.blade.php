@@ -64,32 +64,23 @@ $totalWarnings = $tabData->count();
     </div>
 </div>
 
-<!-- Search and Filter Section -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" class="form-control" placeholder="Search warnings..." id="warnSearch">
-        </div>
+<div class="panel-toolbar">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" class="form-control" placeholder="Search warnings..." id="warnSearch">
     </div>
-    <div class="col-md-6">
-        <select class="form-select" id="severityFilter">
-            <option value="">All Severities</option>
-            <option value="High">High Severity</option>
-            <option value="Medium">Medium Severity</option>
-            <option value="Low">Low Severity</option>
-        </select>
-    </div>
+    <select class="form-select" id="severityFilter">
+        <option value="">All Severities</option>
+        <option value="High">High Severity</option>
+        <option value="Medium">Medium Severity</option>
+        <option value="Low">Low Severity</option>
+    </select>
 </div>
 
-<!-- Warn Records Section -->
-<div class="section-header">
-    <h2>Warning Records ({{ $totalWarnings }})</h2>
-</div>
-
-<!-- Warn Records Table -->
-<div class="table-responsive">
-    <table class="table table-hover warns-table">
+<div class="panel-card">
+    <div class="panel-card-header"><i class="fas fa-exclamation-triangle me-2"></i>Warning Records ({{ $totalWarnings }})</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 profile-table warns-table">
         <thead>
             <tr>
                 <th>Player ID</th>
@@ -136,15 +127,14 @@ $totalWarnings = $tabData->count();
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 
 @if($tabData->isEmpty())
-    <div class="no-data-message">
-        <div class="text-center py-5">
-            <i class="fas fa-exclamation-triangle fa-3x text-muted mb-3"></i>
-            <h4 class="text-muted">No warning records found</h4>
-            <p class="text-muted">There are no warning records to display.</p>
-        </div>
+    <div class="empty-state">
+        <i class="fas fa-exclamation-triangle fa-3x"></i>
+        <h4>No warning records found</h4>
+        <p>There are no warning records to display.</p>
     </div>
 @endif
 

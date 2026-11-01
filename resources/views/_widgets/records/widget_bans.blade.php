@@ -61,31 +61,22 @@ $totalBans = $tabData->count();
     </div>
 </div>
 
-<!-- Search and Filter Section -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" class="form-control" placeholder="Search bans..." id="banSearch">
-        </div>
+<div class="panel-toolbar">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" class="form-control" placeholder="Search bans..." id="banSearch">
     </div>
-    <div class="col-md-6">
-        <select class="form-select" id="statusFilter">
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="expired">Expired</option>
-        </select>
-    </div>
+    <select class="form-select" id="statusFilter">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="expired">Expired</option>
+    </select>
 </div>
 
-<!-- Ban Records Section -->
-<div class="section-header">
-    <h2>Ban Records ({{ $totalBans }})</h2>
-</div>
-
-<!-- Ban Records Table -->
-<div class="table-responsive">
-    <table class="table table-hover bans-table">
+<div class="panel-card">
+    <div class="panel-card-header"><i class="fas fa-ban me-2"></i>Ban Records ({{ $totalBans }})</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 profile-table bans-table">
         <thead>
             <tr>
                 <th>Player ID</th>
@@ -160,15 +151,14 @@ $totalBans = $tabData->count();
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 
 @if($tabData->isEmpty())
-    <div class="no-data-message">
-        <div class="text-center py-5">
-            <i class="fas fa-ban fa-3x text-muted mb-3"></i>
-            <h4 class="text-muted">No ban records found</h4>
-            <p class="text-muted">There are no ban records to display.</p>
-        </div>
+    <div class="empty-state">
+        <i class="fas fa-ban fa-3x"></i>
+        <h4>No ban records found</h4>
+        <p>There are no ban records to display.</p>
     </div>
 @endif
 

@@ -384,18 +384,21 @@
 .master-contain {
     padding: 0;
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
+    height: auto;
+    overflow: visible;
 }
 
 .page-contain {
-    height: 100vh;
-    overflow-y: auto;
+    min-height: 100vh;
+    overflow: visible;
     padding: 0;
 }
 
 .content-wrapper {
-    padding: 20px;
+    padding: 28px 32px 120px;
     min-height: 100vh;
+    overflow: visible;
     transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
@@ -717,8 +720,14 @@
 }
 
 /* Widget System */
+.dashboard-content {
+    padding-bottom: 16px;
+    overflow: visible;
+}
+
 .grid-stack {
     background: transparent;
+    overflow: visible;
 }
 
 .widget-container {
@@ -736,7 +745,8 @@
 
 .widget-wrapper {
     border-radius: 12px;
-    overflow: hidden;
+    overflow: auto;
+    height: 100%;
 }
 
 .widget-header {
@@ -776,6 +786,7 @@
 
 .widget-content {
     height: 100%;
+    overflow: auto;
     background: white;
     border-radius: 0 0 12px 12px;
 }

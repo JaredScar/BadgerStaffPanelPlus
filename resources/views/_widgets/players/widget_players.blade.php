@@ -53,9 +53,8 @@ $avgTrustScore = $todayPlayers->count() > 0 ?
 $data['data'] = $todayPlayers->values()->all();
 ?>
 
-<!-- Statistics Cards -->
 <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-md-3 col-6 mb-3">
         <div class="stat-card">
             <div class="stat-icon stat-icon-orange">
                 <i class="fas fa-users"></i>
@@ -63,11 +62,11 @@ $data['data'] = $todayPlayers->values()->all();
             <div class="stat-content">
                 <h3 class="stat-number"><?php echo $totalPlayers; ?></h3>
                 <p class="stat-label">Total Players</p>
-                <small class="text-muted">joined today</small>
+                <small class="text-muted">in this range</small>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-6 mb-3">
         <div class="stat-card">
             <div class="stat-icon stat-icon-green">
                 <i class="fas fa-circle"></i>
@@ -79,19 +78,19 @@ $data['data'] = $todayPlayers->values()->all();
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-6 mb-3">
         <div class="stat-card">
-            <div class="stat-icon stat-icon-orange">
+            <div class="stat-icon stat-icon-blue">
                 <i class="fas fa-clock"></i>
             </div>
             <div class="stat-content">
                 <h3 class="stat-number"><?php echo $totalPlaytimeHours; ?>h <?php echo $totalPlaytimeRemainder; ?>m</h3>
                 <p class="stat-label">Total Playtime</p>
-                <small class="text-muted">combined today</small>
+                <small class="text-muted">combined</small>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-6 mb-3">
         <div class="stat-card">
             <div class="stat-icon stat-icon-orange">
                 <i class="fas fa-star"></i>
@@ -105,31 +104,24 @@ $data['data'] = $todayPlayers->values()->all();
     </div>
 </div>
 
-<!-- Search and Filter Section -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" class="form-control" placeholder="Search players..." id="playersSearch">
-        </div>
+<div class="panel-toolbar">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" class="form-control" placeholder="Search players..." id="playersSearch">
     </div>
-    <div class="col-md-6">
-        <select class="form-select" id="playersStatusFilter">
-            <option value="">All Status</option>
-            <option value="online">Online</option>
-            <option value="offline">Offline</option>
-        </select>
-    </div>
+    <select class="form-select" id="playersStatusFilter">
+        <option value="">All Status</option>
+        <option value="online">Online</option>
+        <option value="offline">Offline</option>
+    </select>
 </div>
 
-<!-- Players Records Section -->
-<div class="section-header">
-    <h2>Players (<?php echo $totalPlayers; ?>)</h2>
-</div>
-
-<!-- Players Records Table -->
-<div class="table-responsive">
-    <table class="table table-hover players-table">
+<div class="panel-card">
+    <div class="panel-card-header">
+        <i class="fas fa-users me-2"></i>Players (<?php echo $totalPlayers; ?>)
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 profile-table players-table">
         <thead>
             <tr>
                 <th>Player</th>
@@ -219,6 +211,7 @@ $data['data'] = $todayPlayers->values()->all();
             <?php endif; ?>
         </tbody>
     </table>
+    </div>
 </div>
 
 <style>
