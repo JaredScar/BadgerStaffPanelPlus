@@ -1,23 +1,40 @@
 <?php
 use App\Models\Player;
+use App\Support\PanelActivity;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
 
-if (isset($data['selected_pid']))
-    $tabData = Player::with('getPlayerData')->withCount(['kicks', 'bans', 'warns', 'notes', 'commends'])
-        ->where('player_id', $data['selected_pid'])->get();
-else
-    $tabData = Player::with('getPlayerData')->withCount(['kicks', 'bans', 'warns', 'notes', 'commends'])->get();
+$serverId = Session::get('server_id');
+$query = Player::with('getPlayerData')->withCount(['kicks', 'bans', 'warns', 'notes', 'commends']);
+if (isset($data['selected_pid'])) {
+    $query->where('player_id', $data['selected_pid']);
+}
+if ($serverId) {
+    $query->where('server_id', $serverId);
+}
+$tabData = $query->get();
 
-// Filter players who joined today
-$today = Carbon::today();
-$todayPlayers = collect($tabData)->filter(function ($player) use ($today) {
-    return $player->getPlayerData && Carbon::parse($player->getPlayerData->last_join_date)->isToday();
+$viewName = $data['view_name'] ?? 'PLAYERS_TODAY';
+$todayPlayers = collect($tabData)->filter(function ($player) use ($viewName) {
+    if (!$player->getPlayerData || !$player->getPlayerData->last_join_date) {
+        return false;
+    }
+    $date = Carbon::parse($player->getPlayerData->last_join_date);
+    if ($viewName === 'PLAYERS_WEEKLY') {
+        return $date->isCurrentWeek();
+    }
+    if ($viewName === 'PLAYERS_MONTHLY') {
+        return $date->isCurrentMonth();
+    }
+    return $date->isToday();
 });
 
 // Calculate statistics
 $totalPlayers = $todayPlayers->count();
 $currentlyOnline = $todayPlayers->filter(function ($player) {
-    return $player->getPlayerData && $player->getPlayerData->online_status === 'online';
+    return $player->getPlayerData
+        && $player->getPlayerData->last_join_date
+        && Carbon::parse($player->getPlayerData->last_join_date)->gt(now()->subMinutes(15));
 })->count();
 
 // Calculate total playtime for today (in minutes, then convert to hours and minutes)
@@ -32,9 +49,6 @@ $avgTrustScore = $todayPlayers->count() > 0 ?
     round($todayPlayers->avg(function ($player) {
         return $player->getPlayerData ? $player->getPlayerData->trust_score : 0;
     })) : 0;
-
-// Sample locations for demo
-$locations = ['Los Santos', 'Sandy Shores', 'Paleto Bay', 'Vinewood', 'Mirror Park'];
 
 $data['data'] = $todayPlayers->values()->all();
 ?>
@@ -122,7 +136,7 @@ $data['data'] = $todayPlayers->values()->all();
                 <th>Status</th>
                 <th>Join Time</th>
                 <th>Playtime</th>
-                <th>Location</th>
+                <th>Discord</th>
                 <th>Trust Score</th>
                 <th>Warnings</th>
                 <th>Commends</th>
@@ -136,38 +150,29 @@ $data['data'] = $todayPlayers->values()->all();
                         <div class="no-data-message">
                             <i class="fas fa-users fa-3x text-muted mb-3"></i>
                             <h4 class="text-muted">No players found</h4>
-                            <p class="text-muted">No players have joined today.</p>
+                            <p class="text-muted">No players match this time range.</p>
                         </div>
                     </td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($data['data'] as $index => $player): ?>
                                         <?php
-                                        // Demo data for mockup
-                                        $isOnline = $index < 3; // First 3 players are online
-                                        $joinTimes = ['03:30 AM', '04:15 AM', '05:00 AM', '06:30 AM', '07:45 AM'];
-                                        $playtimes = ['5h 30m', '4h 15m', '3h 45m', '2h 20m', '1h 15m'];
-                                        $location = $locations[array_rand($locations)];
-                                        $trustScores = [85, 92, 78, 95, 88];
-                                        $warnings = [0, 1, 2, 0, 1];
-                                        $commends = [12, 8, 5, 15, 9];
-                                        
-                                        $playerJoinTime = $joinTimes[$index] ?? '08:00 AM';
-                                        $playerPlaytime = $playtimes[$index] ?? '1h 0m';
-                                        $playerTrustScore = $trustScores[$index] ?? ($player->getPlayerData ? $player->getPlayerData->trust_score : 75);
-                                        $playerWarnings = $warnings[$index] ?? $player->warns_count;
-                                        $playerCommends = $commends[$index] ?? $player->commends_count;
+                                        $playerData = $player->getPlayerData;
+                                        $lastJoin = $playerData && $playerData->last_join_date ? Carbon::parse($playerData->last_join_date) : null;
+                                        $isOnline = $lastJoin && $lastJoin->gt(now()->subMinutes(15));
+                                        $playerTrustScore = $playerData->trust_score ?? 0;
+                                        $playerWarnings = $player->warns_count;
+                                        $playerCommends = $player->commends_count;
                     ?>
-                    <tr>
+                    <tr class="clickable-row" onclick="window.location='/web/verified/players/<?php echo $player->player_id; ?>'">
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="player-avatar me-3">
-                                    <img src="https://via.placeholder.com/40x40?text=<?php echo substr($player->getPlayerData->last_player_name ?? 'P', 0, 1); ?>"
-                                         alt="Player Avatar" class="rounded-circle">
+                                    <span><?php echo htmlspecialchars(PanelActivity::initials($player->last_player_name)); ?></span>
                                 </div>
                                 <div class="player-info">
-                                    <div class="player-name"><?php echo $player->getPlayerData->last_player_name ?? 'PlayerName'; ?></div>
-                                    <div class="player-steam-id"><?php echo $player->player_id; ?></div>
+                                    <div class="player-name"><?php echo htmlspecialchars($player->last_player_name ?: 'Unknown'); ?></div>
+                                    <div class="player-steam-id">#<?php echo $player->player_id; ?></div>
                                 </div>
                             </div>
                         </td>
@@ -177,13 +182,13 @@ $data['data'] = $todayPlayers->values()->all();
                             </span>
                         </td>
                         <td>
-                            <div class="join-time"><?php echo $playerJoinTime; ?></div>
+                            <div class="join-time"><?php echo $lastJoin ? $lastJoin->format('M j, g:ia') : '—'; ?></div>
                         </td>
                         <td>
-                            <div class="playtime"><?php echo $playerPlaytime; ?></div>
+                            <div class="playtime"><?php echo PanelActivity::playtime($playerData->playtime ?? 0); ?></div>
                         </td>
                         <td>
-                            <div class="location"><?php echo $location; ?></div>
+                            <div class="location"><?php echo $player->discord_id ?: '—'; ?></div>
                         </td>
                         <td>
                             <div class="trust-score trust-score-<?php echo $playerTrustScore >= 80 ? 'high' : ($playerTrustScore >= 60 ? 'medium' : 'low'); ?>">
@@ -205,20 +210,9 @@ $data['data'] = $todayPlayers->values()->all();
                             <?php endif; ?>
                         </td>
                         <td>
-                            <div class="btn-group action-buttons" role="group">
-                                <button type="button" class="btn btn-sm btn-outline-primary" title="View Player">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-info" title="Message">
-                                    <i class="fas fa-comments"></i>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-warning" title="Warn">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-danger" title="Kick">
-                                    <i class="fas fa-user-times"></i>
-                                </button>
-                            </div>
+                            <a class="btn btn-sm btn-outline-primary" href="/web/verified/players/<?php echo $player->player_id; ?>" onclick="event.stopPropagation();" title="View Player">
+                                <i class="fas fa-eye"></i>
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

@@ -1841,3 +1841,20 @@ p.dashboard-subtitle {
         padding: 0 5px;
     }
 }
+
+.sidebar-search { padding: 10px 12px; border-bottom: 1px solid #dee2e6; position: relative; }
+.sidebar-search input {
+    width: 100%; border: 1px solid #dee2e6; border-radius: 8px;
+    padding: 8px 10px 8px 32px; font-size: 0.85rem;
+}
+.sidebar-search i.fa-search { position: absolute; left: 22px; top: 22px; color: #6c757d; pointer-events: none; }
+.sidebar-search-results {
+    position: absolute; left: 12px; right: 12px; top: calc(100% - 4px); z-index: 30;
+    background: #fff; border: 1px solid #dee2e6; border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12); display: none; overflow: hidden;
+}
+.sidebar-search-results a {
+    display: block; padding: 8px 12px; color: #333; text-decoration: none; font-size: 0.85rem;
+}
+.sidebar-search-results a:hover { background: #fff4ea; color: #fd7e14; }
+.clickable-row { cursor: pointer; }

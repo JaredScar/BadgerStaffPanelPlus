@@ -1,14 +1,21 @@
 <?php
 use App\Models\Player;
+use App\Support\PanelActivity;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
 
-// Get all players with their data
-$tabData = Player::with('getPlayerData')->withCount(['kicks', 'bans', 'warns', 'notes', 'commends'])->get();
+$serverId = Session::get('server_id');
+$tabData = Player::with('getPlayerData')
+    ->withCount(['kicks', 'bans', 'warns', 'notes', 'commends'])
+    ->when($serverId, fn ($query) => $query->where('server_id', $serverId))
+    ->get();
 
 // Calculate statistics
 $totalPlayers = $tabData->count();
 $currentlyOnline = $tabData->filter(function ($player) {
-    return $player->getPlayerData && $player->getPlayerData->online_status === 'online';
+    return $player->getPlayerData
+        && $player->getPlayerData->last_join_date
+        && Carbon::parse($player->getPlayerData->last_join_date)->gt(now()->subMinutes(15));
 })->count();
 
 // Calculate total playtime for all players (in minutes, then convert to hours and minutes)
@@ -119,37 +126,37 @@ $data['data'] = $tabData->values()->all();
                 <th>Status</th>
                 <th>Trust Score</th>
                 <th>Last Seen</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($data['data'] as $index => $player): ?>
                                     <?php
                                     $playerData = $player->getPlayerData;
-                                    $isOnline = $playerData && $playerData->online_status === 'online';
+                                    $lastJoin = $playerData && $playerData->last_join_date ? Carbon::parse($playerData->last_join_date) : null;
+                                    $isOnline = $lastJoin && $lastJoin->gt(now()->subMinutes(15));
                                     $trustScore = $playerData ? $playerData->trust_score : 0;
                                     $playtimeMinutes = $playerData ? $playerData->playtime : 0;
                                     $playtimeHours = floor($playtimeMinutes / 60);
                                     $playtimeRemainder = $playtimeMinutes % 60;
                                     $joins = $playerData ? $playerData->joins : 0;
-                                    $lastJoin = $playerData ? Carbon::parse($playerData->last_join_date) : null;
                 ?>
-                <tr>
+                <tr class="clickable-row" onclick="window.location='/web/verified/players/<?php echo $player->player_id; ?>'">
                     <td>
                         <strong><?php echo $player->player_id; ?></strong>
                     </td>
                     <td>
                         <div class="d-flex align-items-center">
                             <div class="player-avatar">
-                                <img src="https://via.placeholder.com/32x32/fd7e14/ffffff?text=<?php echo substr($player->last_player_name, 0, 1); ?>"
-                                     alt="Avatar" class="avatar-sm">
+                                <span><?php echo htmlspecialchars(PanelActivity::initials($player->last_player_name)); ?></span>
                             </div>
                             <div class="ms-2">
-                                <div class="player-name"><?php echo $player->last_player_name; ?></div>
+                                <div class="player-name"><?php echo htmlspecialchars($player->last_player_name); ?></div>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <span class="discord-tag"><?php echo $player->last_player_name; ?>#<?php echo substr($player->player_id, -4); ?></span>
+                        <span class="discord-tag"><?php echo $player->discord_id ?: '—'; ?></span>
                     </td>
                     <td>
                         <span class="playtime-badge"><?php echo $playtimeHours; ?>h <?php echo $playtimeRemainder; ?>m</span>
@@ -183,19 +190,11 @@ $data['data'] = $tabData->values()->all();
                         <?php if ($isOnline): ?>
                             <span class="last-seen-online">Currently online</span>
                         <?php else: ?>
-                            <span class="last-seen-offline">
-                                <?php
-                                $timeDiff = rand(1, 7);
-                                if ($timeDiff == 1) {
-                                    echo $timeDiff . ' hour ago';
-                                } elseif ($timeDiff <= 24) {
-                                    echo $timeDiff . ' hours ago';
-                                } else {
-                                    echo floor($timeDiff / 24) . ' week ago';
-                                }
-                                ?>
-                            </span>
+                            <span class="last-seen-offline"><?php echo $lastJoin ? $lastJoin->diffForHumans() : 'Never'; ?></span>
                         <?php endif; ?>
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-secondary" href="/web/verified/players/<?php echo $player->player_id; ?>" onclick="event.stopPropagation();">View</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

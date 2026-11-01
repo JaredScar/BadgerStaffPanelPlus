@@ -16,5 +16,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" />
 
     <link rel="stylesheet" href="{{ asset('css/global.css') }}" />
-    <link rel="stylesheet" href="{{ asset('/css/' . $data['css_path'] . '.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/players.css') }}" />
+    @if (!empty($data['css_path']) && $data['css_path'] !== 'players')
+        <link rel="stylesheet" href="{{ asset('/css/' . $data['css_path'] . '.css') }}" />
+    @endif
 </head>

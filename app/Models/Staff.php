@@ -74,6 +74,11 @@ class Staff extends Authenticatable {
         return null; // Staff not found
     }
 
+    public function server()
+    {
+        return $this->belongsTo(Server::class, 'server_id', 'server_id');
+    }
+
     public function kicks() {
         return $this->hasMany('App\Models\Kick', 'staff_id');
     }

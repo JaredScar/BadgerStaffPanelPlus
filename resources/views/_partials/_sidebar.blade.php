@@ -363,6 +363,12 @@
         </button>
     </div>
 
+    <div class="sidebar-search">
+        <i class="fas fa-search"></i>
+        <input type="search" id="panelPlayerSearch" placeholder="Lookup player..." autocomplete="off">
+        <div class="sidebar-search-results" id="panelPlayerResults"></div>
+    </div>
+
     <nav class="sidebar-nav">
         <ul class="nav flex-column">
 
@@ -426,6 +432,8 @@
                     <a href="/web/verified/records/kicks" class="flyover-item {{ request()->is('web/verified/records/kicks') ? 'active' : '' }}">Kicks</a>
                     <a href="/web/verified/records/commends" class="flyover-item {{ request()->is('web/verified/records/commends') ? 'active' : '' }}">Commends</a>
                     <a href="/web/verified/records/trustscores" class="flyover-item {{ request()->is('web/verified/records/trustscores') ? 'active' : '' }}">Trust Scores</a>
+                    <a href="/web/verified/records/notes" class="flyover-item {{ request()->is('web/verified/records/notes') ? 'active' : '' }}">Notes</a>
+                    <a href="/web/verified/records/activity" class="flyover-item {{ request()->is('web/verified/records/activity') ? 'active' : '' }}">Activity</a>
                     <a href="/web/verified/records" class="flyover-item {{ request()->is('web/verified/records') ? 'active' : '' }}">All Records</a>
                 </div>
                 <div class="collapse nav-submenu" id="recordsSubmenu">
@@ -453,6 +461,16 @@
                         <li class="nav-item">
                             <a href="/web/verified/records/trustscores" class="nav-link {{ request()->is('web/verified/records/trustscores') ? 'active' : '' }}">
                                 Trust Scores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/notes" class="nav-link {{ request()->is('web/verified/records/notes') ? 'active' : '' }}">
+                                Notes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/activity" class="nav-link {{ request()->is('web/verified/records/activity') ? 'active' : '' }}">
+                                Activity
                             </a>
                         </li>
                         <li class="nav-item">
@@ -645,5 +663,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.addEventListener('resize', handleResize);
     handleResize(); // Initial check
+
+    const lookupInput = document.getElementById('panelPlayerSearch');
+    const lookupResults = document.getElementById('panelPlayerResults');
+    let lookupTimer = null;
+    if (lookupInput && lookupResults) {
+        lookupInput.addEventListener('input', function () {
+            clearTimeout(lookupTimer);
+            const q = this.value.trim();
+            if (q.length < 1) {
+                lookupResults.style.display = 'none';
+                lookupResults.innerHTML = '';
+                return;
+            }
+            lookupTimer = setTimeout(() => {
+                fetch('{{ route("PLAYER_SEARCH") }}?q=' + encodeURIComponent(q), {
+                    headers: { 'Accept': 'application/json' }
+                })
+                    .then((res) => res.json())
+                    .then((payload) => {
+                        const players = payload.players || [];
+                        if (!players.length) {
+                            lookupResults.innerHTML = '<a href="#">No players found</a>';
+                            lookupResults.style.display = 'block';
+                            return;
+                        }
+                        lookupResults.innerHTML = players.map((player) => (
+                            '<a href="/web/verified/players/' + player.player_id + '">' +
+                            (player.last_player_name || 'Unknown') +
+                            ' <small>#' + player.player_id + '</small></a>'
+                        )).join('');
+                        lookupResults.style.display = 'block';
+                    })
+                    .catch(() => {
+                        lookupResults.style.display = 'none';
+                    });
+            }, 180);
+        });
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.sidebar-search')) {
+                lookupResults.style.display = 'none';
+            }
+        });
+    }
 });
 </script>

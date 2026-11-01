@@ -1,0 +1,2734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="m7uacj2lSK1nnlAACt6h3iHioYoHhTJZUkAxaJJS">
+    <title>Demo Server</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.0/css/fixedHeader.dataTables.min.css" />
+    <!-- Include GridStack CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.0/gridstack.min.css" integrity="sha512-GEMqAs1Ai2iirp6QhD4N5Qt7tDn1RGgF1CY2xp57LrX3vqTDehSC88IOFewV/L84htjbN7aazcK10FyzH+eXSA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Include air-datepicker CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/css/datepicker.min.css" />
+
+    <link rel="stylesheet" href="http://localhost:8080/css/global.css" />
+    <link rel="stylesheet" href="http://localhost:8080/css/players.css" />
+            <link rel="stylesheet" href="http://localhost:8080/css/verified/dashboard.css" />
+    </head>
+<body class="background-sizing gta-bg1">
+    <div class="container-fluid master-contain">
+        <div class="toast-container position-absolute end-0 mt-3 mx-3" id="toast_container">
+    <div class="toast d-none bg-warning text-white" id="warning_toast" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="toast-header bg-warning text-white">
+            <strong class="me-auto"><i class="fa-solid fa-triangle-exclamation"></i> Warning</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="warning_toast_body">
+        </div>
+    </div>
+
+    <div class="toast d-none bg-danger text-white" id="error_toast" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="toast-header bg-danger text-white">
+            <strong class="me-auto"><i class="fa-solid fa-bomb"></i> Error Encountered</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="error_toast_body">
+        </div>
+    </div>
+
+    <div class="toast d-none bg-success text-white" id="success_toast" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto"><i class="fa-solid fa-circle-check"></i> Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="success_toast_body">
+        </div>
+    </div>
+</div>
+
+<script>
+    function getToastBody(toastId) {
+        let toast = document.getElementById(toastId);
+        if (toast) {
+            return toast.querySelector('.toast-body');
+        }
+        return null;
+    }
+    function showToast(toastId, msg) {
+        let toast = document.getElementById(toastId);
+        let toastBody = getToastBody(toastId);
+        if (toast && toastBody) {
+            toastBody.innerHTML = msg;
+            toast.classList.remove('d-none');
+            let bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+    }
+    function hideToast(toastId, msg) {
+        let toast = document.getElementById(toastId);
+        if (toast) {
+            toast.classList.add('d-none'); // Hide the toast
+        }
+    }
+</script>
+        <style>
+    .sidebar-container {
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        transition: width 0.3s ease;
+        background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+        border-right: 1px solid #dee2e6;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-expanded {
+        width: 280px;
+    }
+
+    .sidebar-collapsed {
+        width: 60px;
+    }
+
+    .sidebar-header {
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 70px;
+    }
+
+    .sidebar-brand {
+        display: flex;
+        align-items: center;
+        color: #495057;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-brand img {
+        width: 32px;
+        height: 32px;
+        margin-right: 10px;
+    }
+
+    .sidebar-toggle {
+        background: none;
+        border: none;
+        color: #6c757d;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-toggle:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+    .sidebar-nav {
+        padding: 1rem 0;
+        height: calc(100vh - 70px);
+        overflow-y: auto;
+    }
+
+    .nav-item {
+        margin-bottom: 0.25rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        color: #6c757d;
+        text-decoration: none;
+        border-radius: 0;
+        transition: all 0.3s ease;
+        position: relative;
+        margin: 0 0.5rem;
+        border-radius: 0.5rem;
+    }
+
+    .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+    .nav-link.active {
+        background-color: #fd7e14;
+        color: white;
+    }
+
+    .nav-link.active:hover {
+        background-color: #e8590c;
+        color: white;
+    }
+
+    .nav-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.75rem;
+        text-align: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .nav-text {
+        flex: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    .nav-arrow {
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+        margin-left: auto;
+    }
+
+    .nav-arrow.expanded {
+        transform: rotate(90deg);
+    }
+
+    /* Show down arrow when expanded, right arrow when collapsed */
+    .nav-link[aria-expanded="true"] .nav-arrow {
+        transform: rotate(270deg);
+    }
+
+    .nav-link[aria-expanded="false"] .nav-arrow {
+        transform: rotate(90deg);
+    }
+
+    .nav-submenu {
+        padding-left: 0;
+        margin-top: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .nav-submenu .nav-link {
+        padding: 0.5rem 1rem 0.5rem 3rem;
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin: 0 0.5rem;
+    }
+
+    .nav-submenu .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+    .nav-submenu .nav-link.active {
+        background-color: #fd7e14;
+        color: white;
+    }
+
+    .sidebar-collapsed .nav-text,
+    .sidebar-collapsed .nav-arrow,
+    .sidebar-collapsed .sidebar-brand span {
+        opacity: 0;
+        width: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .sidebar-collapsed .nav-submenu {
+        display: none;
+    }
+
+    .sidebar-collapsed .nav-link {
+        justify-content: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .sidebar-collapsed .nav-icon {
+        margin-right: 0;
+    }
+
+    .sidebar-collapsed .sidebar-brand {
+        justify-content: center;
+    }
+
+    .sidebar-collapsed .sidebar-brand img {
+        margin-right: 0;
+    }
+
+    .sidebar-collapsed .sidebar-toggle {
+        position: absolute;
+        right: -15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #fd7e14;
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .sidebar-collapsed .sidebar-toggle:hover {
+        background: #e8590c;
+    }
+
+    .content-wrapper {
+        margin-left: 280px;
+        transition: margin-left 0.3s ease;
+        min-height: 100vh;
+    }
+
+    .content-wrapper.sidebar-collapsed {
+        margin-left: 60px;
+    }
+
+    .nav-divider {
+        height: 1px;
+        background-color: #dee2e6;
+        margin: 0.5rem 1rem;
+    }
+
+    /* Scrollbar styling */
+    .sidebar-nav::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb {
+        background: #dee2e6;
+        border-radius: 2px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb:hover {
+        background: #adb5bd;
+    }
+
+    /* Tooltip for collapsed sidebar */
+    .sidebar-collapsed .nav-link[data-bs-toggle="tooltip"] {
+        position: relative;
+    }
+
+    /* Flyover menu for collapsed sidebar */
+    .nav-flyover {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        min-width: 200px;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1050;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(-10px);
+        transition: all 0.2s ease;
+        margin-left: 10px;
+    }
+
+    .nav-flyover.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+    }
+
+    .nav-flyover::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 15px;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-right: 6px solid white;
+    }
+
+    .nav-flyover::after {
+        content: '';
+        position: absolute;
+        left: -7px;
+        top: 15px;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-right: 6px solid #dee2e6;
+    }
+
+    .flyover-header {
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 1px solid #dee2e6;
+        background: #f8f9fa;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .flyover-item {
+        display: block;
+        padding: 0.5rem 1rem;
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+    .flyover-item:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+
+    .flyover-item.active {
+        background-color: #fd7e14;
+        color: white;
+    }
+
+    .flyover-item:last-child {
+        border-bottom: none;
+        border-radius: 0 0 0.5rem 0.5rem;
+    }
+
+    /* Only show flyover when sidebar is collapsed */
+    .sidebar-expanded .nav-flyover {
+        display: none;
+    }
+
+    .sidebar-collapsed .nav-item {
+        position: relative;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar-container {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar-container.mobile-open {
+            transform: translateX(0);
+        }
+        
+        .content-wrapper {
+            margin-left: 0;
+        }
+
+        .nav-flyover {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="sidebar-container sidebar-expanded" id="sidebar">
+    <div class="sidebar-header">
+        <a href="/" class="sidebar-brand">
+            <img src="/img/badgerstaffpanel-logo.png" alt="Logo">
+            <span>Demo Server</span>
+        </a>
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-search">
+        <i class="fas fa-search"></i>
+        <input type="search" id="panelPlayerSearch" placeholder="Lookup player..." autocomplete="off">
+        <div class="sidebar-search-results" id="panelPlayerResults"></div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <ul class="nav flex-column">
+
+
+            <li class="nav-item">
+                <a href="/web/verified/dashboard" class="nav-link active">
+                    <i class="fas fa-tachometer-alt nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#playersSubmenu" aria-expanded="false">
+                    <i class="fas fa-users nav-icon"></i>
+                    <span class="nav-text">Players</span>
+                    <i class="fas fa-chevron-right nav-arrow"></i>
+                </a>
+                <div class="nav-flyover" id="playersFlyover">
+                    <div class="flyover-header">Players</div>
+                    <a href="/web/verified/players/today" class="flyover-item ">Today</a>
+                    <a href="/web/verified/players/week" class="flyover-item ">Weekly</a>
+                    <a href="/web/verified/players/month" class="flyover-item ">Monthly</a>
+                    <a href="/web/verified/players" class="flyover-item ">All Players</a>
+                </div>
+                <div class="collapse nav-submenu" id="playersSubmenu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/web/verified/players/today" class="nav-link ">
+                                Today
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/players/week" class="nav-link ">
+                                Weekly
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/players/month" class="nav-link ">
+                                Monthly
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/players" class="nav-link ">
+                                All Players
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#recordsSubmenu" aria-expanded="false">
+                    <i class="fas fa-file-alt nav-icon"></i>
+                    <span class="nav-text">Records</span>
+                    <i class="fas fa-chevron-right nav-arrow"></i>
+                </a>
+                <div class="nav-flyover" id="recordsFlyover">
+                    <div class="flyover-header">Records</div>
+                    <a href="/web/verified/records/bans" class="flyover-item ">Bans</a>
+                    <a href="/web/verified/records/warns" class="flyover-item ">Warns</a>
+                    <a href="/web/verified/records/kicks" class="flyover-item ">Kicks</a>
+                    <a href="/web/verified/records/commends" class="flyover-item ">Commends</a>
+                    <a href="/web/verified/records/trustscores" class="flyover-item ">Trust Scores</a>
+                    <a href="/web/verified/records/notes" class="flyover-item ">Notes</a>
+                    <a href="/web/verified/records/activity" class="flyover-item ">Activity</a>
+                    <a href="/web/verified/records" class="flyover-item ">All Records</a>
+                </div>
+                <div class="collapse nav-submenu" id="recordsSubmenu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/web/verified/records/bans" class="nav-link ">
+                                Bans
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/warns" class="nav-link ">
+                                Warns
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/kicks" class="nav-link ">
+                                Kicks
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/commends" class="nav-link ">
+                                Commends
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/trustscores" class="nav-link ">
+                                Trust Scores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/notes" class="nav-link ">
+                                Notes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records/activity" class="nav-link ">
+                                Activity
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/records" class="nav-link ">
+                                All Records
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <div class="nav-divider"></div>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#managementSubmenu" aria-expanded="false">
+                    <i class="fas fa-cogs nav-icon"></i>
+                    <span class="nav-text">Management</span>
+                    <i class="fas fa-chevron-right nav-arrow"></i>
+                </a>
+                <div class="nav-flyover" id="managementFlyover">
+                    <div class="flyover-header">Management</div>
+                    <a href="/web/verified/management/manage_staff" class="flyover-item ">Manage Staff</a>
+                    <a href="/web/verified/management/manage_roles" class="flyover-item ">Manage Roles</a>
+                    <a href="/web/verified/management/manage_tokens" class="flyover-item ">Manage Tokens</a>
+                    <a href="/web/verified/management/settings" class="flyover-item ">Settings</a>
+                    <a href="http://localhost:8080/web/install/welcome" class="flyover-item ">Installer</a>
+                </div>
+                <div class="collapse nav-submenu" id="managementSubmenu">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="/web/verified/management/manage_staff" class="nav-link ">
+                                Manage Staff
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/management/manage_roles" class="nav-link ">
+                                Manage Roles
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/management/manage_tokens" class="nav-link ">
+                                Manage Tokens
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/web/verified/management/settings" class="nav-link ">
+                                Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="http://localhost:8080/web/install/welcome" class="nav-link ">
+                                Installer
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <div class="nav-divider"></div>
+
+            <li class="nav-item">
+                <a href="/web/verified/signout" class="nav-link">
+                    <i class="fas fa-sign-out-alt nav-icon"></i>
+                    <span class="nav-text">Sign out</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const contentWrapper = document.querySelector('.content-wrapper');
+
+    // Toggle sidebar
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('sidebar-collapsed');
+        sidebar.classList.toggle('sidebar-expanded');
+        
+        if (contentWrapper) {
+            contentWrapper.classList.toggle('sidebar-collapsed');
+        }
+
+        // Hide all flyovers when expanding sidebar
+        if (sidebar.classList.contains('sidebar-expanded')) {
+            document.querySelectorAll('.nav-flyover').forEach(flyover => {
+                flyover.classList.remove('show');
+            });
+        }
+
+        // Update toggle icon
+        const icon = sidebarToggle.querySelector('i');
+        if (sidebar.classList.contains('sidebar-collapsed')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-chevron-right');
+        } else {
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-bars');
+        }
+    });
+
+    // Handle submenu arrows with Bootstrap collapse events
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function(element) {
+        const targetId = element.getAttribute('data-bs-target');
+        const collapseElement = document.querySelector(targetId);
+        
+        if (collapseElement) {
+            collapseElement.addEventListener('show.bs.collapse', function() {
+                element.setAttribute('aria-expanded', 'true');
+            });
+            
+            collapseElement.addEventListener('hide.bs.collapse', function() {
+                element.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+
+    // Initialize tooltips for collapsed sidebar
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Handle flyover menus for collapsed sidebar
+    function setupFlyovers() {
+        const flyoverItems = [
+            { trigger: '[data-bs-target="#playersSubmenu"]', flyover: '#playersFlyover' },
+            { trigger: '[data-bs-target="#recordsSubmenu"]', flyover: '#recordsFlyover' },
+            { trigger: '[data-bs-target="#managementSubmenu"]', flyover: '#managementFlyover' }
+        ];
+
+        flyoverItems.forEach(item => {
+            const triggerElement = document.querySelector(item.trigger);
+            const flyoverElement = document.querySelector(item.flyover);
+            
+            if (triggerElement && flyoverElement) {
+                let hoverTimeout;
+                
+                // Show flyover on mouse enter
+                triggerElement.parentElement.addEventListener('mouseenter', function() {
+                    clearTimeout(hoverTimeout);
+                    
+                    // Only show flyover if sidebar is collapsed
+                    if (sidebar.classList.contains('sidebar-collapsed')) {
+                        hoverTimeout = setTimeout(() => {
+                            flyoverElement.classList.add('show');
+                        }, 100);
+                    }
+                });
+                
+                // Hide flyover on mouse leave
+                triggerElement.parentElement.addEventListener('mouseleave', function() {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = setTimeout(() => {
+                        flyoverElement.classList.remove('show');
+                    }, 100);
+                });
+                
+                // Keep flyover open when hovering over it
+                flyoverElement.addEventListener('mouseenter', function() {
+                    clearTimeout(hoverTimeout);
+                });
+                
+                // Hide flyover when leaving it
+                flyoverElement.addEventListener('mouseleave', function() {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = setTimeout(() => {
+                        flyoverElement.classList.remove('show');
+                    }, 100);
+                });
+            }
+        });
+    }
+
+    // Initialize flyovers
+    setupFlyovers();
+
+    // Handle mobile responsive
+    function handleResize() {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.add('sidebar-collapsed');
+            sidebar.classList.remove('sidebar-expanded');
+            if (contentWrapper) {
+                contentWrapper.classList.add('sidebar-collapsed');
+            }
+        }
+    }
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial check
+
+    const lookupInput = document.getElementById('panelPlayerSearch');
+    const lookupResults = document.getElementById('panelPlayerResults');
+    let lookupTimer = null;
+    if (lookupInput && lookupResults) {
+        lookupInput.addEventListener('input', function () {
+            clearTimeout(lookupTimer);
+            const q = this.value.trim();
+            if (q.length < 1) {
+                lookupResults.style.display = 'none';
+                lookupResults.innerHTML = '';
+                return;
+            }
+            lookupTimer = setTimeout(() => {
+                fetch('http://localhost:8080/web/verified/players/search?q=' + encodeURIComponent(q), {
+                    headers: { 'Accept': 'application/json' }
+                })
+                    .then((res) => res.json())
+                    .then((payload) => {
+                        const players = payload.players || [];
+                        if (!players.length) {
+                            lookupResults.innerHTML = '<a href="#">No players found</a>';
+                            lookupResults.style.display = 'block';
+                            return;
+                        }
+                        lookupResults.innerHTML = players.map((player) => (
+                            '<a href="/web/verified/players/' + player.player_id + '">' +
+                            (player.last_player_name || 'Unknown') +
+                            ' <small>#' + player.player_id + '</small></a>'
+                        )).join('');
+                        lookupResults.style.display = 'block';
+                    })
+                    .catch(() => {
+                        lookupResults.style.display = 'none';
+                    });
+            }, 180);
+        });
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.sidebar-search')) {
+                lookupResults.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
+        <div class="content-wrapper">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="dashboard-title">
+                        <i class="fas fa-tachometer-alt me-2"></i>
+                        Dashboard
+                    </h1>
+                    <p class="dashboard-subtitle">Welcome back! Here's what's happening with your server.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="dashboard-selector me-3">
+                        <div class="input-group">
+                            <select class="form-select" id="dashboardSelect">
+                                                                    <option value="main" selected>
+                                        Main Dashboard
+                                    </option>
+                                                            </select>
+                            <button type="button" class="btn btn-outline-primary" id="createDashboardBtn" title="Create New Dashboard">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                                            </div>
+                    <div class="action-buttons">
+                        <!-- Normal Mode Buttons -->
+                        <div class="normal-mode-buttons">
+                            <button type="button" class="btn btn-outline-secondary" id="customizeBtn">
+                                <i class="fas fa-cog me-2"></i>
+                                Customize
+                            </button>
+                        </div>
+                        <!-- Customize Mode Buttons -->
+                        <div class="customize-mode-buttons d-none">
+                            <button type="button" class="btn btn-success me-2" id="addWidgetBtn">
+                                <i class="fas fa-plus me-2"></i>
+                                Add Widget
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary me-2" id="resetLayoutBtn">
+                                <i class="fas fa-undo me-2"></i>
+                                Reset Layout
+                            </button>
+                            <button type="button" class="btn btn-primary" id="doneBtn">
+                                <i class="fas fa-check me-2"></i>
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="grid-stack" id="dashboard-grid">
+                                                                        <div class="grid-stack-item widget-container" 
+                                 gs-x="0" gs-y="0" gs-w="6" gs-h="8" 
+                                 data-widget-type="widget_notes"
+                                 data-widget-id="2">
+                                <div class="widget-wrapper h-100">
+                                    <div class="widget-header d-none">
+                                        <div class="widget-title">Notes</div>
+                                        <div class="widget-controls">
+                                            <button class="widget-control-btn" data-action="expand">
+                                                <i class="fas fa-expand"></i>
+                                            </button>
+                                            <button class="widget-control-btn" data-action="drag">
+                                                <i class="fas fa-grip-vertical"></i>
+                                            </button>
+                                            <button class="widget-control-btn" data-action="remove">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="widget-content">
+                                        <div class="notes-widget h-100">
+    <div class="widget-content h-100 p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="widget-subtitle mb-0">Quick Notes</h6>
+            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addNoteModal">
+                <i class="fas fa-plus me-1"></i>
+                Add Note
+            </button>
+        </div>
+
+        <div class="notes-list">
+                                                <div class="note-item mb-3">
+                        <div class="note-content">
+                            Server maintenance scheduled for tomorrow at 3 AM EST                        </div>
+                        <div class="note-meta d-flex justify-content-between align-items-center mt-2">
+                            <span class="note-author">Admin • 7/13/2025</span>
+                            <button type="button" class="btn btn-link btn-sm text-danger p-0">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                                    </div>
+    </div>
+</div>
+
+<!-- Add Note Modal -->
+<div class="modal fade" id="addNoteModal" tabindex="-1" aria-labelledby="addNoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNoteModalLabel">
+                    <i class="fas fa-sticky-note me-2"></i>
+                    Add New Note
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addNoteForm">
+                    <div class="mb-3">
+                        <label for="noteContent" class="form-label">Note Content</label>
+                        <textarea class="form-control" id="noteContent" rows="4" placeholder="Enter your note here..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="noteAuthor" class="form-label">Author</label>
+                        <input type="text" class="form-control" id="noteAuthor" value="Admin" readonly>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveNote">
+                    <i class="fas fa-save me-2"></i>
+                    Save Note
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.notes-widget {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+.widget-subtitle {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #fd7e14 0%, #ff9f40 100%);
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #e96b00 0%, #fd7e14 100%);
+    transform: translateY(-1px);
+}
+
+.note-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    border-left: 3px solid #fd7e14;
+}
+
+.note-content {
+    color: #2c3e50;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.note-meta {
+    font-size: 0.8rem;
+}
+
+.note-author {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.btn-link {
+    color: #dc3545 !important;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    color: #c82333 !important;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #fd7e14 0%, #ff9f40 100%);
+    color: white;
+    border-bottom: none;
+}
+
+.modal-header .modal-title {
+    color: white;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #e3e6f0;
+    padding: 10px 12px;
+}
+
+.form-control:focus {
+    border-color: #fd7e14;
+    box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 6px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const saveNoteBtn = document.getElementById('saveNote');
+    const noteForm = document.getElementById('addNoteForm');
+    const modal = new bootstrap.Modal(document.getElementById('addNoteModal'));
+
+    if (saveNoteBtn) {
+        saveNoteBtn.addEventListener('click', function() {
+            const content = document.getElementById('noteContent').value.trim();
+            const author = document.getElementById('noteAuthor').value.trim();
+
+            if (!content) {
+                alert('Please enter note content');
+                return;
+            }
+
+            // In a real implementation, this would save to the database
+            console.log('Saving note:', { content, author });
+            
+            // Show success message
+            alert('Note saved successfully!');
+            
+            // Reset form and close modal
+            noteForm.reset();
+            document.getElementById('noteAuthor').value = 'Admin';
+            modal.hide();
+            
+            // In real implementation, reload the widget or add the note to the list
+        });
+    }
+});
+</script>                                     </div>
+                                </div>
+                            </div>
+                                                    <div class="grid-stack-item widget-container" 
+                                 gs-x="6" gs-y="0" gs-w="6" gs-h="8" 
+                                 data-widget-type="widget_trust_scores"
+                                 data-widget-id="3">
+                                <div class="widget-wrapper h-100">
+                                    <div class="widget-header d-none">
+                                        <div class="widget-title">Trust_scores</div>
+                                        <div class="widget-controls">
+                                            <button class="widget-control-btn" data-action="expand">
+                                                <i class="fas fa-expand"></i>
+                                            </button>
+                                            <button class="widget-control-btn" data-action="drag">
+                                                <i class="fas fa-grip-vertical"></i>
+                                            </button>
+                                            <button class="widget-control-btn" data-action="remove">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="widget-content">
+                                        <div class="trust-scores-widget h-100">
+    <div class="widget-content h-100 p-3">
+        <div class="trust-score-display text-center">
+            <div class="mb-3">
+                <span class="trust-score-label">Average Trust Score</span>
+                <i class="fas fa-chart-line ms-2 text-muted"></i>
+            </div>
+            
+            <div class="trust-score-value mb-3">
+                87            </div>
+            
+            <div class="trust-score-trend">
+                <span class="trend-indicator text-success">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    +5%
+                </span>
+                <span class="trend-period text-muted">This week</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.trust-scores-widget {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trust-score-display {
+    width: 100%;
+}
+
+.trust-score-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.trust-score-value {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+}
+
+.trust-score-trend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.trend-indicator {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.trend-period {
+    font-size: 0.85rem;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+@media (max-width: 768px) {
+    .trust-score-value {
+        font-size: 2.5rem;
+    }
+    
+    .trust-score-label {
+        font-size: 0.8rem;
+    }
+}
+</style>                                     </div>
+                                </div>
+                            </div>
+                                                    <div class="grid-stack-item widget-container" 
+                                 gs-x="0" gs-y="8" gs-w="12" gs-h="10" 
+                                 data-widget-type="widget_recent_activity"
+                                 data-widget-id="4">
+                                <div class="widget-wrapper h-100">
+                                    <div class="widget-header d-none">
+                                        <div class="widget-title">Recent_activity</div>
+                                        <div class="widget-controls">
+                                            <button class="widget-control-btn" data-action="expand">
+                                                <i class="fas fa-expand"></i>
+                                            </button>
+                                            <button class="widget-control-btn" data-action="drag">
+                                                <i class="fas fa-grip-vertical"></i>
+                                            </button>
+                                            <button class="widget-control-btn" data-action="remove">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="widget-content">
+                                        <div class="recent-activity-widget h-100">
+    <div class="widget-content h-100 p-3">
+        <div class="activity-header mb-3">
+            <h6 class="widget-subtitle mb-0">Recent Activity</h6>
+        </div>
+
+        <div class="activity-list-container">
+            <div class="activity-list">
+                                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-warning text-dark activity-badge">
+                                            Warn                                        </span>
+                                        <span class="activity-time">1 second ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">warned</span>
+                                    <a href="/web/verified/players/1">
+                                        <strong>WolfBadger</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: Test warning from web panel</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-orange activity-badge">
+                                            Kick                                        </span>
+                                        <span class="activity-time">4 hours ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">kicked</span>
+                                    <a href="/web/verified/players/2">
+                                        <strong>NightHawk</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: Combat logging</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-success activity-badge">
+                                            Commend                                        </span>
+                                        <span class="activity-time">8 hours ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">commended</span>
+                                    <a href="/web/verified/players/4">
+                                        <strong>GhostMedic</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: Mass casualty response</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-warning text-dark activity-badge">
+                                            Warn                                        </span>
+                                        <span class="activity-time">15 hours ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">warned</span>
+                                    <a href="/web/verified/players/2">
+                                        <strong>NightHawk</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: Metagame</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-success activity-badge">
+                                            Commend                                        </span>
+                                        <span class="activity-time">17 hours ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">commended</span>
+                                    <a href="/web/verified/players/1">
+                                        <strong>WolfBadger</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: Helped a new player</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-info activity-badge">
+                                            Note                                        </span>
+                                        <span class="activity-time">1 day ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">noted</span>
+                                    <a href="/web/verified/players/2">
+                                        <strong>NightHawk</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: Watch for vehicle spam</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-info activity-badge">
+                                            Note                                        </span>
+                                        <span class="activity-time">1 day ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">noted</span>
+                                    <a href="/web/verified/players/1">
+                                        <strong>WolfBadger</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: Trusted community member</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-success activity-badge">
+                                            Commend                                        </span>
+                                        <span class="activity-time">1 day ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">commended</span>
+                                    <a href="/web/verified/players/3">
+                                        <strong>RileyV</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: Great scene</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-info activity-badge">
+                                            Note                                        </span>
+                                        <span class="activity-time">1 day ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">noted</span>
+                                    <a href="/web/verified/players/4">
+                                        <strong>GhostMedic</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: EMS lead on weekends</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-warning text-dark activity-badge">
+                                            Warn                                        </span>
+                                        <span class="activity-time">1 day ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">warned</span>
+                                    <a href="/web/verified/players/2">
+                                        <strong>NightHawk</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: Fail RP</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-warning text-dark activity-badge">
+                                            Warn                                        </span>
+                                        <span class="activity-time">1 day ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">warned</span>
+                                    <a href="/web/verified/players/1">
+                                        <strong>WolfBadger</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: RDM in Legion</small>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="activity-item mb-3">
+                            <div class="activity-content">
+                                <div class="d-flex align-items-start justify-content-between mb-2">
+                                    <div class="activity-main">
+                                        <span class="badge bg-danger activity-badge">
+                                            Ban                                        </span>
+                                        <span class="activity-time">3 days ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-details">
+                                    <strong>admin</strong>
+                                    <span class="activity-action">banned</span>
+                                    <a href="/web/verified/players/2">
+                                        <strong>NightHawk</strong>
+                                    </a>
+                                </div>
+                                <div class="activity-reason">
+                                    <small>Reason: Exploiting</small>
+                                </div>
+                            </div>
+                        </div>
+                                                </div>
+        </div>
+    </div>
+</div>
+                                    </div>
+                                </div>
+                            </div>
+                                                            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Dashboard Modal -->
+    <div class="modal fade" id="createDashboardModal" tabindex="-1" aria-labelledby="createDashboardModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createDashboardModalLabel">
+                        <i class="fas fa-plus me-2"></i>
+                        Create New Dashboard
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newDashboardName" class="form-label">Dashboard Name</label>
+                        <input type="text" class="form-control" id="newDashboardName" placeholder="Enter dashboard name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmCreateDashboard">
+                        <i class="fas fa-plus me-2"></i>
+                        Create Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Widget Modal -->
+    <div class="modal fade" id="addWidgetModal" tabindex="-1" aria-labelledby="addWidgetModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addWidgetModalLabel">
+                        <i class="fas fa-plus me-2"></i>
+                        Add Widget to Dashboard
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="widget-categories">
+                        <!-- General Widgets -->
+                        <div class="widget-category mb-4">
+                            <h6 class="category-title">
+                                <i class="fas fa-layer-group me-2"></i>
+                                General Widgets
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="widget_notes" data-widget-category="general">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-sticky-note"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>Notes</h6>
+                                            <p>Quick notes and reminders</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="widget_trust_scores" data-widget-category="general">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>Trust Scores</h6>
+                                            <p>Player trust score overview</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="widget_recent_activity" data-widget-category="general">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>Recent Activity</h6>
+                                            <p>Latest server activities</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Player Widgets -->
+                        <div class="widget-category mb-4">
+                            <h6 class="category-title">
+                                <i class="fas fa-users me-2"></i>
+                                Player Widgets
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="widget_players" data-widget-category="players">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>Players</h6>
+                                            <p>Current online players</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="widget_all_players" data-widget-category="players">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>All Players</h6>
+                                            <p>Complete player database</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Records Widgets -->
+                        <div class="widget-category mb-4">
+                            <h6 class="category-title">
+                                <i class="fas fa-clipboard-list me-2"></i>
+                                Records Widgets
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="records.widget_records" data-widget-category="records">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-list"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>All Records</h6>
+                                            <p>Complete records overview</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="records.widget_bans" data-widget-category="records">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-ban"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>Bans</h6>
+                                            <p>Player ban records</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="records.widget_warns" data-widget-category="records">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>Warnings</h6>
+                                            <p>Player warning records</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="records.widget_kicks" data-widget-category="records">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-sign-out-alt"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>Kicks</h6>
+                                            <p>Player kick records</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="records.widget_commends" data-widget-category="records">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-thumbs-up"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>Commends</h6>
+                                            <p>Player commendation records</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="widget-option" data-widget-type="records.widget_trustscores" data-widget-category="records">
+                                        <div class="widget-option-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="widget-option-info">
+                                            <h6>Trust Score Records</h6>
+                                            <p>Detailed trust score history</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmAddWidget" disabled>
+                        <i class="fas fa-plus me-2"></i>
+                        Add Selected Widget
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .max-height-70 {
+        max-height: 70px;
+    }
+</style>
+<footer class="text-center text-white fixed-bottom" style="background-color: black;">
+
+    <!-- Copyright -->
+    <div class="container-fluid max-height-70">
+        <a href="https://zap-hosting.com/badger" target="_blank">
+            <div class="row max-height-70">
+                <div class="col-4 max-height-70" style="background-color: #57BC54;">
+                </div>
+                <div class="col-4 px-0 max-height-70 d-flex">
+                    <div class="flex-grow-1" style="background-color: #57BC54"></div>
+                    <img src="/img/badger-partnership-zap-banner.png" style="height: 100%" />
+                </div>
+                <div class="col-4 max-height-70">
+                </div>
+            </div>
+        </a>
+    </div>
+    <!-- Copyright -->
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js" integrity="sha512-EKWWs1ZcA2ZY9lbLISPz8aGR2+L7JVYqBAYTq5AXgBkSjRSuQEGqWx8R1zAX16KdXPaCjOCaKE8MCpU0wcHlHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.2.0/js/dataTables.fixedHeader.min.js"></script>
+<!-- Include GridStack JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/10.1.0/gridstack-all.min.js" integrity="sha512-HrBVB/mAEb1KuouvSb7sE9dR43ziTePw/IibQWjK34nl5Mdqj2Dy7tfh2yiNLjyDGEJK4hXTrjlk7myXERaOsA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- Include air-datepicker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/air-datepicker/2.2.3/js/i18n/datepicker.en.js"></script>
+</body>
+</html>
+
+<style>
+/* Dashboard specific styles */
+.master-contain {
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+}
+
+.page-contain {
+    height: 100vh;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.content-wrapper {
+    padding: 20px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.dashboard-header {
+    margin-bottom: 30px;
+}
+
+.dashboard-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.dashboard-subtitle {
+    color: #6c757d;
+    margin: 0;
+    font-size: 16px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-selector {
+    margin-right: 20px;
+}
+
+.dashboard-selector .input-group {
+    min-width: 200px;
+    display: flex;
+    align-items: stretch;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.dashboard-selector .input-group .form-select {
+    flex: 1;
+    border-radius: 8px 0 0 8px;
+    border: 2px solid #e3e6f0;
+    border-right: 1px solid #e3e6f0;
+    font-weight: 500;
+    padding: 8px 12px;
+}
+
+.dashboard-selector .input-group .form-select:focus {
+    border-color: #fd7e14;
+    box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+    z-index: 2;
+}
+
+.dashboard-selector .input-group .btn {
+    flex: 0 0 auto;
+    border-radius: 0 8px 8px 0;
+    border: 2px solid #e3e6f0;
+    border-left: 1px solid #e3e6f0;
+    padding: 8px 12px;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #fd7e14 !important;
+    transition: all 0.3s ease;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none !important;
+}
+
+.dashboard-selector .input-group .btn:hover {
+    border-color: #fd7e14 !important;
+    background-color: #fd7e14 !important;
+    background-image: none !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: none !important;
+}
+
+.dashboard-selector .input-group .btn:hover i.fas.fa-plus {
+    color: white !important;
+}
+
+.dashboard-selector .input-group .btn i.fas.fa-plus {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.dashboard-selector .input-group:focus-within .btn {
+    border-color: #fd7e14;
+    border-left-color: #fd7e14;
+}
+
+.dashboard-selector .input-group:focus-within .form-select {
+    border-right-color: #fd7e14;
+}
+
+/* Style for the delete button */
+.dashboard-selector #deleteDashboardBtn {
+    margin-top: 8px;
+    margin-left: 0;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+/* Ensure proper input group spacing */
+.dashboard-selector .input-group > * + * {
+    margin-left: -1px;
+}
+
+/* Fix any Bootstrap input group issues */
+.dashboard-selector .input-group .form-select:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.dashboard-selector .input-group .btn:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #fd7e14 0%, #ff9f40 100%);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #e96b00 0%, #fd7e14 100%);
+    transform: translateY(-1px);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background: #6c757d;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    color: white;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    border: 2px solid #fd7e14;
+    color: #fd7e14;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: #fd7e14;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-outline-danger {
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    background: transparent;
+}
+
+.btn-outline-danger:hover {
+    background: #dc3545;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Add Widget Modal Styles */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #fd7e14 0%, #ff9f40 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+    border-bottom: none;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+.widget-categories {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.widget-category {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 20px;
+}
+
+.widget-category:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.category-title {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #fd7e14;
+    display: inline-block;
+}
+
+.widget-option {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.widget-option:hover {
+    border-color: #fd7e14;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(253, 126, 20, 0.15);
+}
+
+.widget-option.selected {
+    border-color: #fd7e14;
+    background: rgba(253, 126, 20, 0.05);
+    box-shadow: 0 0 0 3px rgba(253, 126, 20, 0.1);
+}
+
+.widget-option-icon {
+    font-size: 24px;
+    color: #fd7e14;
+    margin-right: 12px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.widget-option-info h6 {
+    margin: 0 0 4px 0;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.widget-option-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+}
+
+/* Blank Widget Styles */
+.blank-widget {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 2px dashed #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #6c757d;
+    min-height: 200px;
+    transition: all 0.3s ease;
+}
+
+.blank-widget:hover {
+    border-color: #fd7e14;
+    background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%);
+    color: #fd7e14;
+}
+
+.blank-widget-content {
+    padding: 20px;
+}
+
+.blank-widget-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.7;
+}
+
+.blank-widget h5 {
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.blank-widget p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Widget System */
+.grid-stack {
+    background: transparent;
+}
+
+.widget-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.widget-container.customize-mode {
+    border-color: #fd7e14;
+    box-shadow: 0 4px 20px rgba(253, 126, 20, 0.15);
+}
+
+.widget-wrapper {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.widget-header {
+    background: linear-gradient(135deg, #fd7e14 0%, #ff9f40 100%);
+    color: white;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.widget-title {
+    flex-grow: 1;
+}
+
+.widget-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.widget-control-btn {
+    background: none;
+    border: none;
+    color: white;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+}
+
+.widget-control-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.widget-content {
+    height: 100%;
+    background: white;
+    border-radius: 0 0 12px 12px;
+}
+
+/* Customize mode styles */
+.customize-mode .widget-header {
+    display: flex !important;
+}
+
+/* Grid Stack Overrides */
+.grid-stack-item {
+    transition: all 0.3s ease;
+}
+
+.grid-stack-item-content {
+    background: transparent;
+    border-radius: 12px;
+}
+
+.grid-stack-item.ui-draggable-dragging {
+    transform: rotate(5deg);
+    z-index: 1000;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .header-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .dashboard-selector {
+        margin-right: 0 !important;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-title {
+        font-size: 24px;
+    }
+    
+    .dashboard-subtitle {
+        font-size: 14px;
+    }
+    
+    .content-wrapper {
+        padding: 15px;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .dashboard-selector .input-group {
+        min-width: 100%;
+    }
+    
+    .dashboard-selector .form-select {
+        min-width: 100%;
+    }
+    
+    .action-buttons {
+        width: 100%;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    .customize-mode-buttons {
+        display: flex !important;
+        gap: 10px;
+    }
+    
+    .customize-mode-buttons .btn {
+        flex: 1;
+        margin-bottom: 0 !important;
+    }
+}
+</style>
+
+<script>
+// Base URL configuration for AJAX requests
+const BASE_URL = '/web';
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize GridStack
+    const grid = GridStack.init({
+        cellHeight: 50,
+        verticalMargin: 10,
+        horizontalMargin: 10,
+        animate: true,
+        float: false,
+        disableDrag: true,
+        disableResize: true,
+        acceptWidgets: true
+    });
+
+    // UI Elements
+    const customizeBtn = document.getElementById('customizeBtn');
+    const doneBtn = document.getElementById('doneBtn');
+    const resetLayoutBtn = document.getElementById('resetLayoutBtn');
+    const addWidgetBtn = document.getElementById('addWidgetBtn');
+    const normalModeButtons = document.querySelector('.normal-mode-buttons');
+    const customizeModeButtons = document.querySelector('.customize-mode-buttons');
+    const widgets = document.querySelectorAll('.widget-container');
+    const dashboardSelect = document.getElementById('dashboardSelect');
+    const createDashboardBtn = document.getElementById('createDashboardBtn');
+    const deleteDashboardBtn = document.getElementById('deleteDashboardBtn');
+
+    let isCustomizeMode = false;
+    let selectedWidgetType = null;
+    let widgetCounter = 0;
+    let currentDashboard = dashboardSelect.value;
+
+    // Add Widget Modal Elements
+    const addWidgetModal = new bootstrap.Modal(document.getElementById('addWidgetModal'));
+    const widgetOptions = document.querySelectorAll('.widget-option');
+    const confirmAddWidgetBtn = document.getElementById('confirmAddWidget');
+
+    // Create Dashboard Modal Elements
+    const createDashboardModal = new bootstrap.Modal(document.getElementById('createDashboardModal'));
+    const newDashboardNameInput = document.getElementById('newDashboardName');
+    const confirmCreateDashboardBtn = document.getElementById('confirmCreateDashboard');
+
+    // Dashboard switching
+    dashboardSelect.addEventListener('change', function() {
+        const selectedDashboard = this.value;
+        if (selectedDashboard !== currentDashboard) {
+            switchDashboard(selectedDashboard);
+        }
+    });
+
+    // Create dashboard
+    createDashboardBtn.addEventListener('click', function() {
+        newDashboardNameInput.value = '';
+        createDashboardModal.show();
+    });
+
+    // Confirm create dashboard
+    confirmCreateDashboardBtn.addEventListener('click', function() {
+        const dashboardName = newDashboardNameInput.value.trim();
+        if (dashboardName) {
+            createDashboard(dashboardName);
+        }
+    });
+
+    // Delete dashboard
+    if (deleteDashboardBtn) {
+        deleteDashboardBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this dashboard? This action cannot be undone.')) {
+                deleteDashboard(currentDashboard);
+            }
+        });
+    }
+
+    // Customize Mode Toggle
+    customizeBtn.addEventListener('click', function() {
+        enableCustomizeMode();
+    });
+
+    doneBtn.addEventListener('click', function() {
+        disableCustomizeMode();
+    });
+
+    resetLayoutBtn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to reset the layout to default?')) {
+            resetLayout();
+        }
+    });
+
+    // Add Widget functionality
+    addWidgetBtn.addEventListener('click', function() {
+        selectedWidgetType = null;
+        confirmAddWidgetBtn.disabled = true;
+        // Reset selections
+        widgetOptions.forEach(option => option.classList.remove('selected'));
+        addWidgetModal.show();
+    });
+
+    // Widget option selection
+    widgetOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove previous selection
+            widgetOptions.forEach(opt => opt.classList.remove('selected'));
+            // Add selection to clicked option
+            this.classList.add('selected');
+            
+            selectedWidgetType = this.getAttribute('data-widget-type');
+            confirmAddWidgetBtn.disabled = false;
+        });
+    });
+
+    // Confirm add widget
+    confirmAddWidgetBtn.addEventListener('click', function() {
+        if (selectedWidgetType) {
+            addBlankWidget(selectedWidgetType);
+            addWidgetModal.hide();
+        }
+    });
+
+    function switchDashboard(dashboardName) {
+        // Show loading indicator
+        showNotification('Loading dashboard...', 'info', 0);
+        
+        // Simple page reload approach - more reliable than complex AJAX widget rendering
+        console.log('Switching to dashboard:', dashboardName);
+        
+        // Reload the page with the new dashboard parameter
+        window.location.href = `${BASE_URL}/verified/dashboard?dashboard=${dashboardName}`;
+    }
+
+    function createDashboard(dashboardName) {
+        fetch(`${BASE_URL}/verified/dashboard/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ dashboard_name: dashboardName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                showNotification(data.message, 'success');
+                createDashboardModal.hide();
+                
+                // Reload page to show new dashboard
+                window.location.href = `${BASE_URL}/verified/dashboard?dashboard=${dashboardName}`;
+            } else {
+                showNotification(data.error || 'Error creating dashboard', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error creating dashboard:', error);
+            showNotification('Error creating dashboard. Please try again.', 'danger');
+        });
+    }
+
+    function deleteDashboard(dashboardName) {
+        fetch(`${BASE_URL}/verified/dashboard/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ dashboard_name: dashboardName })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                showNotification(data.message, 'success');
+                
+                // Reload page to show main dashboard
+                window.location.href = `${BASE_URL}/verified/dashboard?dashboard=main`;
+            } else {
+                showNotification(data.error || 'Error deleting dashboard', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting dashboard:', error);
+            showNotification('Error deleting dashboard. Please try again.', 'danger');
+        });
+        }
+
+    function updateDashboardActions() {
+        // Update delete button visibility
+        if (deleteDashboardBtn) {
+            if (currentDashboard === 'main') {
+                deleteDashboardBtn.style.display = 'none';
+            } else {
+                deleteDashboardBtn.style.display = 'inline-block';
+            }
+        }
+    }
+
+    function addWidgetToGrid(widget) {
+        const widgetHTML = `
+            <div class="grid-stack-item widget-container" 
+                 gs-x="${widget.col}" gs-y="${widget.row}" gs-w="${widget.size_x}" gs-h="${widget.size_y}" 
+                 data-widget-type="${widget.widget_type}"
+                 data-widget-id="${widget.layout_id}">
+                <div class="widget-wrapper h-100">
+                    <div class="widget-header ${isCustomizeMode ? '' : 'd-none'}">
+                        <div class="widget-title">${getWidgetTitle(widget.widget_type)}</div>
+                        <div class="widget-controls">
+                            <button class="widget-control-btn" data-action="expand">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                            <button class="widget-control-btn" data-action="drag">
+                                <i class="fas fa-grip-vertical"></i>
+                            </button>
+                            <button class="widget-control-btn" data-action="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="widget-content">
+                        <div class="blank-widget">
+                            <div class="blank-widget-content">
+                                <div class="blank-widget-icon">
+                                    <i class="fas fa-puzzle-piece"></i>
+                                </div>
+                                <h5>${getWidgetTitle(widget.widget_type)}</h5>
+                                <p>Widget content will be loaded here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        
+        grid.addWidget(widgetHTML);
+    }
+
+    function createDefaultLayout() {
+        // For default layout, we need to fetch the rendered content from the server
+        // This will be handled by the switchDashboard function when it creates a new dashboard
+        showNotification('Creating default layout...', 'info');
+        
+        // Create a simple placeholder layout
+        const defaultWidgets = [
+            { widget_type: 'widget_notes', col: 0, row: 0, size_x: 6, size_y: 8 },
+            { widget_type: 'widget_trust_scores', col: 6, row: 0, size_x: 6, size_y: 8 },
+            { widget_type: 'widget_recent_activity', col: 0, row: 8, size_x: 12, size_y: 10 }
+        ];
+
+        defaultWidgets.forEach(widget => {
+            addWidgetToGrid(widget);
+        });
+    }
+    
+
+
+    function getWidgetTitle(widgetType) {
+        const titleMap = {
+            'widget_notes': 'Notes',
+            'widget_trust_scores': 'Trust Scores',
+            'widget_recent_activity': 'Recent Activity',
+            'widget_players': 'Players',
+            'widget_all_players': 'All Players',
+            'records.widget_records': 'All Records',
+            'records.widget_bans': 'Bans',
+            'records.widget_warns': 'Warnings',
+            'records.widget_kicks': 'Kicks',
+            'records.widget_commends': 'Commends',
+            'records.widget_trustscores': 'Trust Score Records'
+        };
+        
+        return titleMap[widgetType] || widgetType.replace('widget_', '').replace('records.widget_', '').replace('players.widget_', '');
+    }
+
+
+
+    function enableCustomizeMode() {
+        isCustomizeMode = true;
+        
+        // Toggle UI
+        normalModeButtons.classList.add('d-none');
+        customizeModeButtons.classList.remove('d-none');
+        
+        // Enable grid interactions
+        grid.enableMove(true);
+        grid.enableResize(true);
+        
+        // Add customize styling to all widgets
+        document.querySelectorAll('.widget-container').forEach(widget => {
+            widget.classList.add('customize-mode');
+        });
+        
+        // Show widget headers
+        document.querySelectorAll('.widget-header').forEach(header => {
+            header.classList.remove('d-none');
+        });
+    }
+
+    function disableCustomizeMode() {
+        isCustomizeMode = false;
+        
+        // Toggle UI
+        normalModeButtons.classList.remove('d-none');
+        customizeModeButtons.classList.add('d-none');
+        
+        // Disable grid interactions
+        grid.enableMove(false);
+        grid.enableResize(false);
+        
+        // Remove customize styling from all widgets
+        document.querySelectorAll('.widget-container').forEach(widget => {
+            widget.classList.remove('customize-mode');
+        });
+        
+        // Hide widget headers
+        document.querySelectorAll('.widget-header').forEach(header => {
+            header.classList.add('d-none');
+        });
+        
+        // Save layout
+        saveLayout();
+    }
+
+    function resetLayout() {
+        // Reset to default positions
+        const defaultLayout = [
+            { x: 0, y: 0, w: 6, h: 8, id: 'widget_notes' },
+            { x: 6, y: 0, w: 6, h: 8, id: 'widget_trust_scores' },
+            { x: 0, y: 8, w: 12, h: 10, id: 'widget_recent_activity' }
+        ];
+        
+        // Clear current grid
+        grid.removeAll();
+        
+        // Apply default layout
+        defaultLayout.forEach(item => {
+            const widget = {
+                widget_type: item.id,
+                col: item.x,
+                row: item.y,
+                size_x: item.w,
+                size_y: item.h
+            };
+            addWidgetToGrid(widget);
+        });
+    }
+
+    function saveLayout() {
+        const widgetDataList = [];
+        
+        grid.getGridItems().forEach(item => {
+            const node = item.gridstackNode;
+            const widgetType = item.getAttribute('data-widget-type');
+            const widgetId = item.getAttribute('data-widget-id');
+            const isNew = item.getAttribute('data-is-new');
+            
+            widgetDataList.push({
+                widgetType: widgetType,
+                widgetId: widgetId,
+                x: node.x,
+                y: node.y,
+                w: node.w,
+                h: node.h
+            });
+            
+            console.log(`Saving widget: type=${widgetType}, id=${widgetId}, isNew=${isNew}, position=(${node.x},${node.y},${node.w},${node.h})`);
+        });
+
+        // Show saving indicator
+        const savingToast = showNotification('Saving dashboard layout...', 'info', 0);
+
+        // Send layout to backend
+        fetch(`${BASE_URL}/verified/dashboard/save`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                dashboard: currentDashboard,
+                widgets: widgetDataList
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message && data.message.includes('successfully')) {
+                // Update widget IDs for newly created widgets
+                if (data.widget_mappings && data.widget_mappings.length > 0) {
+                    data.widget_mappings.forEach(mapping => {
+                        // Find the widget with the original ID and update it
+                        const widgetElement = document.querySelector(`[data-widget-id="${mapping.original_id}"]`);
+                        if (widgetElement) {
+                            widgetElement.setAttribute('data-widget-id', mapping.new_id);
+                            widgetElement.removeAttribute('data-is-new');
+                            
+                            console.log(`Updated widget ID from ${mapping.original_id} to ${mapping.new_id}`);
+                        }
+                    });
+                }
+                
+                showNotification('Dashboard saved successfully!', 'success');
+            } else {
+                showNotification('Error saving dashboard: ' + (data.message || 'Unknown error'), 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error saving layout:', error);
+            showNotification('Error saving dashboard layout. Please try again.', 'danger');
+        });
+    }
+
+    // Add blank widget to grid function
+    function addBlankWidget(widgetType) {
+        widgetCounter++;
+        const widgetId = `new_${widgetCounter}`;
+        
+        // Get widget title and icon
+        const widgetInfo = getWidgetInfo(widgetType);
+        
+        // Find a good position for the new widget (bottom of the grid)
+        const existingItems = grid.getGridItems();
+        let maxY = 0;
+        existingItems.forEach(item => {
+            const node = item.gridstackNode;
+            maxY = Math.max(maxY, node.y + node.h);
+        });
+        
+        // Create blank widget HTML
+        const widgetHTML = `
+            <div class="grid-stack-item widget-container ${isCustomizeMode ? 'customize-mode' : ''}" 
+                 gs-x="0" gs-y="${maxY}" gs-w="6" gs-h="8" 
+                 data-widget-type="${widgetType}"
+                 data-widget-id="${widgetId}"
+                 data-is-new="true">
+                <div class="widget-wrapper h-100">
+                    <div class="widget-header ${isCustomizeMode ? '' : 'd-none'}">
+                        <div class="widget-title">${widgetInfo.title}</div>
+                        <div class="widget-controls">
+                            <button class="widget-control-btn" data-action="expand">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                            <button class="widget-control-btn" data-action="drag">
+                                <i class="fas fa-grip-vertical"></i>
+                            </button>
+                            <button class="widget-control-btn" data-action="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="widget-content">
+                        <div class="blank-widget">
+                            <div class="blank-widget-content">
+                                <div class="blank-widget-icon">
+                                    <i class="${widgetInfo.icon}"></i>
+                                </div>
+                                <h5>${widgetInfo.title}</h5>
+                                <p>This widget will be loaded after saving changes</p>
+                                <small class="text-muted">Position this widget where you want it, then click "Done"</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        
+        // Add widget to grid
+        const newWidget = grid.addWidget(widgetHTML);
+        
+        // Show a brief notification
+        showNotification(`${widgetInfo.title} widget added! Position it where you want and click "Done" to save.`, 'success');
+    }
+
+    // Helper function to get widget info
+    function getWidgetInfo(widgetType) {
+        const widgetInfoMap = {
+            'widget_notes': { title: 'Notes', icon: 'fas fa-sticky-note' },
+            'widget_trust_scores': { title: 'Trust Scores', icon: 'fas fa-shield-alt' },
+            'widget_recent_activity': { title: 'Recent Activity', icon: 'fas fa-clock' },
+            'widget_players': { title: 'Players', icon: 'fas fa-user' },
+            'widget_all_players': { title: 'All Players', icon: 'fas fa-users' },
+            'records.widget_records': { title: 'All Records', icon: 'fas fa-list' },
+            'records.widget_bans': { title: 'Bans', icon: 'fas fa-ban' },
+            'records.widget_warns': { title: 'Warnings', icon: 'fas fa-exclamation-triangle' },
+            'records.widget_kicks': { title: 'Kicks', icon: 'fas fa-sign-out-alt' },
+            'records.widget_commends': { title: 'Commends', icon: 'fas fa-thumbs-up' },
+            'records.widget_trustscores': { title: 'Trust Score Records', icon: 'fas fa-star' }
+        };
+        
+        return widgetInfoMap[widgetType] || { 
+            title: widgetType.charAt(0).toUpperCase() + widgetType.slice(1), 
+            icon: 'fas fa-puzzle-piece' 
+        };
+    }
+
+    // Helper function to show notifications
+    function showNotification(message, type = 'info', duration = 3000) {
+        const toastContainer = document.querySelector('.toast-container') || createToastContainer();
+        
+        const toastId = 'toast-' + Date.now();
+        const toastHTML = `
+            <div class="toast align-items-center text-white bg-${type}" role="alert" id="${toastId}">
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>`;
+        
+        toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+        
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, { delay: duration });
+        toast.show();
+        
+        // Remove toast element after it's hidden
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastElement.remove();
+        });
+        
+        return toast;
+    }
+
+    // Create toast container if it doesn't exist
+    function createToastContainer() {
+        const container = document.createElement('div');
+        container.className = 'toast-container position-fixed top-0 end-0 p-3';
+        container.style.zIndex = '9999';
+        document.body.appendChild(container);
+        return container;
+    }
+
+    // Widget control handlers
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.widget-control-btn')) {
+            const btn = e.target.closest('.widget-control-btn');
+            const action = btn.getAttribute('data-action');
+            const widget = btn.closest('.widget-container');
+            
+            switch(action) {
+                case 'expand':
+                    // Toggle widget size
+                    const currentW = parseInt(widget.getAttribute('gs-w'));
+                    const newW = currentW === 12 ? 6 : 12;
+                    grid.update(widget, { w: newW });
+                    break;
+                    
+                case 'remove':
+                    if (confirm('Are you sure you want to remove this widget?')) {
+                        grid.removeWidget(widget);
+                    }
+                    break;
+                    
+                case 'drag':
+                    // Drag functionality is handled by GridStack
+                    break;
+            }
+        }
+    });
+
+    // Initialize dashboard actions
+    updateDashboardActions();
+});
+</script>

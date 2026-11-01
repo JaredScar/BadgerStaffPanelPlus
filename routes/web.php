@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InstallController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\PlayerProfileController;
 use App\Http\Controllers\TokenController;
+use App\Http\Controllers\WebActionController;
 use App\Models\Layout;
 use App\Models\Server;
 use Illuminate\Database\Query\Builder;
@@ -183,8 +186,17 @@ Route::middleware('authWeb:web')->get('/verified/records/player/{pid}', function
     $data['view_name'] = 'RECORDS_SINGLE';
     $data['customize'] = false;
     $data['selected_pid'] = $playerId;
-    return view('verified/records', array('data' => $data));
+    return view('verified/records/records', array('data' => $data));
 })->name("RECORDS_SINGLE");
+
+Route::middleware('authWeb:web')->get('/verified/records/notes', function () {
+    $data = [];
+    $data['css_path'] = 'players';
+    $data['view_name'] = 'NOTES';
+    $data['customize'] = false;
+    return view('verified/records/notes', array('data' => $data));
+})->name("NOTES");
+Route::middleware('authWeb:web')->get('/verified/records/activity', [ActivityController::class, 'index'])->name("ACTIVITY");
 
 /**
  * PLAYERS
@@ -217,6 +229,9 @@ Route::middleware('authWeb:web')->get('/verified/players', function () {
     $data['customize'] = false;
     return view('verified/players/all_players', array('data' => $data));
 })->name("PLAYERS");
+Route::middleware('authWeb:web')->get('/verified/players/search', [PlayerProfileController::class, 'search'])->name("PLAYER_SEARCH");
+Route::middleware('authWeb:web')->get('/verified/players/{playerId}', [PlayerProfileController::class, 'show'])->name("PLAYER_PROFILE");
+Route::middleware('authWeb:web')->post('/verified/players/action', [WebActionController::class, 'store'])->name("PLAYER_ACTION");
 
 /**
  * MANAGEMENT
